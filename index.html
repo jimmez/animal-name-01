@@ -7,7 +7,7 @@
   <meta name="mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
-  <title>Alliteration Animal Namer — v14</title>
+  <title>Alliteration Animal Namer — v15</title>
   <style>
     :root{
       --bg:#0b0b0c; --card:#151518; --text:#f6f7fb; --muted:#a9adc1; --ring:#3b82f6;
@@ -78,6 +78,10 @@
     body.focus .emo, body.focus .animal, body.focus .name{ display:block; text-align:left; }
     @media (orientation:landscape){ body.focus .emo, body.focus .animal, body.focus .name{ display:inline; text-align:left; } body.focus .banner .output{ text-align:left; } }
 
+    /* Focus controls overlay */
+    .focusControls{position:fixed;top:10px;right:12px;z-index:130;display:none;gap:8px}
+    body.focus .focusControls{display:flex}
+
     .footer{margin:28px 2px 12px;color:var(--muted);font-size:12px}
   </style>
 </head>
@@ -86,6 +90,12 @@
     <!-- Sticky Prompt Banner at the very top -->
     <div class="banner">
       <div class="output" id="result" title="Click for New phrase (also click empty space)">Your phrase will appear here…</div>
+    </div>
+
+    <!-- Focus-mode overlay controls -->
+    <div class="focusControls" id="focusControls">
+      <button class="btn small" id="minimizeBtn" title="Exit enlarged view">Minimize</button>
+      <button class="btn small" id="focusPlayBtn" title="Play / Stop">Play</button>
     </div>
 
     <header>
@@ -114,10 +124,11 @@
       </div>
 
       <div class="row" style="margin-top:12px">
-        <button class="btn" id="newPhraseBtn">New phrase</</button>
+        <button class="btn" id="newPhraseBtn">New phrase</button>
         <button class="btn" id="newAnimalBtn">New animal</button>
         <button class="btn" id="newNameBtn">New name</button>
         <button class="btn" id="openSheet">Open pages</button>
+        <button class="btn" id="enlargeBtn">Enlarge</button>
       </div>
     </div>
 
@@ -165,7 +176,7 @@
   </div>
 
   <!-- Startup splash (shows for 30s then fades) -->
-  <div class="splash" id="splash"><div class="pill">Jimmy James 24.09.2025 - v14</div></div>
+  <div class="splash" id="splash"><div class="pill">Jimmy James 24.09.2025 - v15</div></div>
 
   <script>
     // ==== DATA ==============================================================
@@ -239,9 +250,9 @@
 
     // ==== ELEMENTS & STATE ================================================
     const result = document.getElementById('result');
-    const appArea = document.getElementById('appArea');
 
     const playBtn = document.getElementById('playBtn');
+    const focusPlayBtn = document.getElementById('focusPlayBtn');
     const audioBtn = document.getElementById('audioBtn');
     const settingsBtn = document.getElementById('settingsBtn');
 
@@ -249,6 +260,7 @@
     const newAnimalBtn = document.getElementById('newAnimalBtn');
     const newNameBtn = document.getElementById('newNameBtn');
     const openSheetBtn = document.getElementById('openSheet');
+    const enlargeBtn = document.getElementById('enlargeBtn');
 
     const alphaToggle = document.getElementById('alphaToggle');
 
@@ -323,6 +335,7 @@
       }
       current.word = w; current.letter = first;
       result.innerHTML = buildPhrase(w, { keepAnimal:true, keepName:true }) || 'Your phrase will appear here…';
+      updatePlayButtons();
       speakCurrent();
     }
 
@@ -398,10 +411,14 @@
     newAnimalBtn.addEventListener('click', newAnimal);
     newNameBtn.addEventListener('click', newName);
 
+    // New: Enlarge (enter focus) & Minimize (exit focus)
+    enlargeBtn.addEventListener('click', ()=> document.body.classList.add('focus'));
+    document.getElementById('minimizeBtn').addEventListener('click', ()=> document.body.classList.remove('focus'));
+
     // Clicking prompt or empty space => new phrase
     result.addEventListener('click', ()=> newPhrase());
     document.body.addEventListener('click', (e)=>{
-      if(e.target.closest('button, input, .sheet, .suggestions, .toggle, .output')) return;
+      if(e.target.closest('button, input, .sheet, .suggestions, .toggle, .output, .focusControls')) return;
       newPhrase();
     });
 
@@ -417,9 +434,9 @@
     flipNext.addEventListener('click', ()=>{ curPage = (curPage+1)%4; applyPage(); });
     document.addEventListener('keydown', e=>{ if(!sheet.classList.contains('open')) return; if(e.key==='ArrowRight'){ e.preventDefault(); flipNext.click(); } if(e.key==='ArrowLeft'){ e.preventDefault(); flipPrev.click(); } });
 
-    // ==== Gestures: easier, anywhere swipes ================================
+    // ==== Gestures: anywhere swipes =======================================
     let startX=null, startY=null, handled=false;
-    const H=35, V=60; // looser thresholds
+    const H=35, V=60; // thresholds
     window.addEventListener('pointerdown', e=>{ startX=e.clientX; startY=e.clientY; handled=false; }, {passive:false});
     window.addEventListener('pointermove', e=>{
       if(startX===null) return;
@@ -429,32 +446,29 @@
 
       if(ax>H && ax>ay){ // horizontal
         if(sheet.classList.contains('open')){
-          if(dx>0){ // prev page
-            curPage=(curPage+3)%4; applyPage();
-          } else { // next page
-            curPage=(curPage+1)%4; applyPage();
-          }
+          if(dx>0){ curPage=(curPage+3)%4; applyPage(); } else { curPage=(curPage+1)%4; applyPage(); }
         } else {
           if(dx>0){ document.body.classList.add('focus'); } else { document.body.classList.remove('focus'); }
         }
         handled=true; e.preventDefault(); return;
       }
       if(ay>V && ay>ax){ // vertical
-        if(dy<0){ // up
-          openSheet();
-        } else { // down
-          if(sheet.classList.contains('open')) closeSheet();
-        }
+        if(dy<0){ openSheet(); } else { if(sheet.classList.contains('open')) closeSheet(); }
         handled=true; e.preventDefault(); return;
       }
     }, {passive:false});
     window.addEventListener('pointerup', ()=>{ startX=null; startY=null; handled=false; }, {passive:false});
 
     // ==== Auto-play & Settings ============================================
-    function updatePlayButtons(){ playBtn.classList.toggle('active',playing); }
+    function updatePlayButtons(){
+      playBtn.classList.toggle('active',playing);
+      focusPlayBtn.classList.toggle('active',playing);
+      focusPlayBtn.textContent = playing ? 'Stop' : 'Play';
+    }
     function scheduleNext(){ if(!playing) return; const ms=gapSec*1000; clearTimeout(timer); timer=setTimeout(()=>{ newPhrase(); scheduleNext(); }, ms); }
     function togglePlay(){ playing=!playing; updatePlayButtons(); if(playing) scheduleNext(); else clearTimeout(timer); }
     playBtn.addEventListener('click', togglePlay);
+    focusPlayBtn.addEventListener('click', togglePlay);
 
     // Settings sheet toggle & highlight
     const settingsSheet = document.getElementById('settings');
