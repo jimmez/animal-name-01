@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
-  <title>Alliteration Animal Namer — v9</title>
+  <title>Alliteration Animal Namer — v10</title>
   <style>
     :root{
       --bg:#0b0b0c; --card:#151518; --text:#f6f7fb; --muted:#a9adc1; --ring:#3b82f6;
@@ -34,10 +34,10 @@
 
     .row{display:flex;gap:12px;align-items:center;flex-wrap:wrap}
 
-    .output{margin-top:16px;padding:18px;border-radius:14px;background:#0f1117;border:1px solid #2a2e3d;font-size:22px;line-height:1.4}
-    .emo{color:var(--red);font-weight:800}
-    .animal{color:var(--green);font-weight:800}
-    .name{color:var(--blue);font-weight:800}
+    .output{margin-top:16px;padding:22px;border-radius:16px;background:#0f1117;border:1px solid #2a2e3d;font-size:clamp(28px,6vw,56px);line-height:1.2;cursor:pointer;user-select:none}
+    .emo{color:var(--red);font-weight:900}
+    .animal{color:var(--green);font-weight:900}
+    .name{color:var(--blue);font-weight:900}
 
     /* Page 1 search + suggestions */
     .field{position:relative}
@@ -58,19 +58,16 @@
     .sheet .handle{width:54px;height:6px;background:#2a2f3d;border-radius:10px;margin:10px auto}
     .sheet .tabs{display:flex;gap:8px;justify-content:center;margin:8px 0;flex-wrap:wrap}
     .tab{padding:6px 10px;border-radius:999px;border:1px solid #2a2f3d;background:#15171f;color:#fff;font-weight:700;cursor:pointer}
+    .navFlip{display:flex;gap:8px;justify-content:center;margin:0 0 8px}
     .pages{display:flex;transition:transform .25s ease}
     .page{min-width:100vw;max-width:100vw;padding:12px}
-    .pageHeader{display:flex;gap:8px;align-items:center;margin:0 0 8px}
-    .pageHeader input{flex:1;padding:10px 34px 10px 12px;border-radius:10px;border:1px solid #2a2f3d;background:#0c0f17;color:#fff}
-    .pageHeader .clear{position:relative}
-    .pageHeader .clearBtn{position:absolute;right:8px;top:50%;transform:translateY(-50%);border:none;background:#22283a;color:#fff;border-radius:8px;padding:2px 8px;cursor:pointer}
-    .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(120px,1fr));gap:10px;max-height:40vh;overflow:auto;padding-right:4px}
+    .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(120px,1fr));gap:10px;max-height:46vh;overflow:auto;padding-right:4px}
 
     .footer{margin:28px 2px 12px;color:var(--muted);font-size:12px}
   </style>
 </head>
 <body>
-  <div class="wrap">
+  <div class="wrap" id="appArea">
     <header>
       <button class="btn play" id="playBtn" title="Auto play">
         <svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M8 5v14l11-7z"/></svg>
@@ -78,7 +75,7 @@
       </button>
       <span class="logo" aria-label="Jimmy James Logo">JJ</span>
       <h1>Alliteration Animal Namer</h1>
-      <div class="sig"><strong>Jimmy James 24.09.2025 - v9</strong></div>
+      <div class="sig"><strong>Jimmy James 24.09.2025 - v10</strong></div>
       <div class="toolbar" style="margin-left:auto">
         <button class="btn" id="settingsBtn" title="Settings">⚙ Settings</button>
       </div>
@@ -89,90 +86,42 @@
         <label class="toggle"><input type="checkbox" id="alphaToggle" /> ABC next-letter</label>
       </div>
       <div class="field">
-        <input id="page1Search" type="text" placeholder="Type a prefix. Use ↑/↓ to navigate, Enter to select. ← previous • → next • Enter = New phrase" autocomplete="off" />
+        <input id="page1Search" type="text" placeholder="Type a prefix. ↑/↓ navigate, Enter select. ← prev • → next • Enter = New phrase" autocomplete="off" />
         <div class="suggestions" id="p1Suggest"></div>
       </div>
 
       <div class="row" style="margin-top:12px">
-        <button class="btn" id="openSheet">Open pages</button>
         <button class="btn" id="newPhraseBtn">New phrase</button>
-        <button class="btn" id="newEmotionBtn">New emotion</button>
-        <button class="btn" id="newMovementBtn">New movement</button>
         <button class="btn" id="newAnimalBtn">New animal</button>
         <button class="btn" id="newNameBtn">New name</button>
+        <button class="btn" id="openSheet">Open pages</button>
       </div>
 
-      <div class="output" id="result">Your phrase will appear here…</div>
+      <div class="output" id="result" title="Click for New phrase">Your phrase will appear here…</div>
     </div>
 
-    <p class="footer">Colored output: <span class="emo">emotion/movement</span> <span class="animal">animal</span> <span class="name">name</span>. Prefix-only search. On PC: ↑/↓ = move in suggestions, Enter = select or New phrase, ←/→ = previous/next letter phrase.</p>
+    <p class="footer">Colored output: <span class="emo">emotion/movement</span> <span class="animal">animal</span> <span class="name">name</span>. Prefix-only search. Click the prompt or any empty area for **New phrase**. On PC: ↑/↓ = move in suggestions, Enter = select/new phrase, ←/→ = previous/next letter phrase.</p>
   </div>
 
-  <!-- Bottom sheet with 5 pages -->
+  <!-- Bottom sheet: list-only pages with fast flip -->
   <div class="sheet" id="sheet">
     <div class="handle"></div>
     <div class="tabs">
-      <button class="tab" data-ix="0">Page 1</button>
-      <button class="tab" data-ix="1">A–E</button>
-      <button class="tab" data-ix="2">F–J</button>
-      <button class="tab" data-ix="3">K–O</button>
-      <button class="tab" data-ix="4">P–Z</button>
+      <button class="tab" data-ix="0">A–E</button>
+      <button class="tab" data-ix="1">F–J</button>
+      <button class="tab" data-ix="2">K–O</button>
+      <button class="tab" data-ix="3">P–Z</button>
       <button class="tab" id="closeSheet">Close</button>
     </div>
+    <div class="navFlip">
+      <button class="btn small" id="flipPrev">‹ Prev</button>
+      <button class="btn small" id="flipNext">Next ›</button>
+    </div>
     <div class="pages" id="pages">
-      <div class="page" id="page0">
-        <div class="row" style="flex-wrap:wrap;gap:10px">
-          <button class="btn" id="p1NewPhrase">New phrase</button>
-          <button class="btn" id="p1NewEmotion">New emotion</button>
-          <button class="btn" id="p1NewMovement">New movement</button>
-          <button class="btn" id="p1NewAnimal">New animal</button>
-          <button class="btn" id="p1NewName">New name</button>
-          <button class="btn play" id="p1Play">
-            <svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M8 5v14l11-7z"/></svg>
-            <span>Play</span>
-          </button>
-        </div>
-      </div>
-      <div class="page" id="page1">
-        <div class="pageHeader">
-          <div class="clear" style="flex:1;position:relative">
-            <input id="search12" type="text" placeholder="Search A–E (prefix; filters ALL)" />
-            <button class="clearBtn" data-clear="search12">×</button>
-          </div>
-          <button class="btn" id="randomFromSearch12">Random from results</button>
-        </div>
-        <div class="grid" id="grid12"></div>
-      </div>
-      <div class="page" id="page2">
-        <div class="pageHeader">
-          <div class="clear" style="flex:1;position:relative">
-            <input id="searchFJ" type="text" placeholder="Search F–J (prefix; filters ALL)" />
-            <button class="clearBtn" data-clear="searchFJ">×</button>
-          </div>
-          <button class="btn" id="randomFromSearchFJ">Random from results</button>
-        </div>
-        <div class="grid" id="gridFJ"></div>
-      </div>
-      <div class="page" id="page3">
-        <div class="pageHeader">
-          <div class="clear" style="flex:1;position:relative">
-            <input id="searchKO" type="text" placeholder="Search K–O (prefix; filters ALL)" />
-            <button class="clearBtn" data-clear="searchKO">×</button>
-          </div>
-          <button class="btn" id="randomFromSearchKO">Random from results</button>
-        </div>
-        <div class="grid" id="gridKO"></div>
-      </div>
-      <div class="page" id="page4">
-        <div class="pageHeader">
-          <div class="clear" style="flex:1;position:relative">
-            <input id="searchPZ" type="text" placeholder="Search P–Z (prefix; filters ALL)" />
-            <button class="clearBtn" data-clear="searchPZ">×</button>
-          </div>
-          <button class="btn" id="randomFromSearchPZ">Random from results</button>
-        </div>
-        <div class="grid" id="gridPZ"></div>
-      </div>
+      <div class="page"><div class="grid" id="grid12"></div></div>
+      <div class="page"><div class="grid" id="gridFJ"></div></div>
+      <div class="page"><div class="grid" id="gridKO"></div></div>
+      <div class="page"><div class="grid" id="gridPZ"></div></div>
     </div>
   </div>
 
@@ -259,43 +208,32 @@
     ];
     const extraAttributes = ['bad','brisk','bright','bouncy','bold','soft','strong','swift','sturdy','spry','sleepy','soggy','silky','harmful','haphazardful'];
 
-    const emotionSet = new Set(emotionList);
-    const movementSet = new Set(movementList);
     const words = Array.from(new Set([...emotionList, ...movementList, ...extraAttributes])).sort((a,b)=>a.localeCompare(b));
 
     // ==== ELEMENTS & STATE ================================================
     const result = document.getElementById('result');
+    const appArea = document.getElementById('appArea');
+
     const playBtn = document.getElementById('playBtn');
-    const p1Play = document.getElementById('p1Play');
 
     const newPhraseBtn = document.getElementById('newPhraseBtn');
-    const newEmotionBtn = document.getElementById('newEmotionBtn');
-    const newMovementBtn = document.getElementById('newMovementBtn');
     const newAnimalBtn = document.getElementById('newAnimalBtn');
     const newNameBtn = document.getElementById('newNameBtn');
+    const openSheetBtn = document.getElementById('openSheet');
 
     const alphaToggle = document.getElementById('alphaToggle');
 
-    const openSheetBtn = document.getElementById('openSheet');
     const sheet = document.getElementById('sheet');
     const pages = document.getElementById('pages');
     const tabs = document.querySelectorAll('.tab[data-ix]');
     const closeSheetBtn = document.getElementById('closeSheet');
+    const flipPrev = document.getElementById('flipPrev');
+    const flipNext = document.getElementById('flipNext');
 
     const grid12 = document.getElementById('grid12');
     const gridFJ = document.getElementById('gridFJ');
     const gridKO = document.getElementById('gridKO');
     const gridPZ = document.getElementById('gridPZ');
-
-    const search12 = document.getElementById('search12');
-    const searchFJ = document.getElementById('searchFJ');
-    const searchKO = document.getElementById('searchKO');
-    const searchPZ = document.getElementById('searchPZ');
-
-    const randomFromSearch12 = document.getElementById('randomFromSearch12');
-    const randomFromSearchFJ = document.getElementById('randomFromSearchFJ');
-    const randomFromSearchKO = document.getElementById('randomFromSearchKO');
-    const randomFromSearchPZ = document.getElementById('randomFromSearchPZ');
 
     let playing=false; let timer=null; let range=[10,15];
 
@@ -328,41 +266,40 @@
     function render(word, opts={}){
       const w = (word||current.word).toLowerCase();
       const first = w[0]||current.letter;
-      if(!opts.keepAnimal){ current.animal = opts.forceAnimal ?? rand(animalsByLetter[first]||['creature']); }
-      if(!opts.keepName){ current.name = opts.forceName ? cap(opts.forceName) : cap(rand(namesByLetter[first]||['Alex'])); }
+      if(!opts.keepAnimal){
+        // choose different animal when possible
+        const bank = animalsByLetter[first]||['creature'];
+        let choice = rand(bank);
+        if(choice===current.animal && bank.length>1){ choice = bank[(bank.indexOf(choice)+1)%bank.length]; }
+        current.animal = choice;
+      }
+      if(!opts.keepName){
+        const bank = namesByLetter[first]||['Alex'];
+        let choice = cap(rand(bank));
+        if(choice===current.name && bank.length>1){ choice = cap(bank[(bank.indexOf(choice)+1)%bank.length]); }
+        current.name = choice;
+      }
       current.word = w; current.letter = first;
       result.innerHTML = buildPhrase(w, { keepAnimal:true, keepName:true }) || 'Your phrase will appear here…';
     }
 
-    function groupIdxForWord(w){ const f=w[0].toLowerCase(); if(f<'f') return 1; if(f<'k') return 2; if(f<'p') return 3; return 4; }
+    function groupIdxForWord(w){ const f=w[0].toLowerCase(); if(f<'f') return 0; if(f<'k') return 1; if(f<'p') return 2; return 3; }
 
     function highlightPrefix(text, prefix){ if(!prefix) return cap(text); const t=text.toLowerCase(), s=prefix.toLowerCase(); if(!t.startsWith(s)) return cap(text); const first = cap(text).slice(0, s.length); const rest = text.slice(s.length); return `<strong>${first}</strong>${rest}`; }
 
-    function makeWordButton(word){ const b=document.createElement('button'); b.className='btn small'; b.dataset.word=word; b.innerHTML=cap(word); b.addEventListener('click',()=>{ render(word); }); return b; }
+    function makeWordBtn(word){ const b=document.createElement('button'); b.className='btn small'; b.dataset.word=word; b.innerHTML=cap(word); return b; }
 
-    const emotionSetOnly = new Set(emotionList);
-
-    const bins = {1:grid12,2:gridFJ,3:gridKO,4:gridPZ};
-    function fillAllGrids(filter=''){
-      const q = filter.trim().toLowerCase();
-      Object.values(bins).forEach(grid=>grid.innerHTML='');
-      const list = words.filter(w=> !q || w.toLowerCase().startsWith(q));
-      list.forEach(w=>{ const ix=groupIdxForWord(w); const btn=makeWordButton(w); btn.innerHTML=highlightPrefix(w,q); bins[ix].appendChild(btn); });
-      [randomFromSearch12,randomFromSearchFJ,randomFromSearchKO,randomFromSearchPZ].forEach(btn=>{ if(!btn) return; btn.disabled=list.length===0; btn.style.opacity=list.length?1:.6; });
-      return list;
+    function fillGrids(){
+      [grid12,gridFJ,gridKO,gridPZ].forEach(g=>g.innerHTML='');
+      words.forEach(w=>{ const ix=groupIdxForWord(w); const btn=makeWordBtn(w); ( [grid12,gridFJ,gridKO,gridPZ][ix] ).appendChild(btn); });
     }
 
-    // Build next/prev letter phrase ----------------------------------------
-    function pickWordForLetter(l){ const list=words.filter(w=>w.startsWith(l)); return list.length?rand(list):null; }
-    function newPhraseAlpha(step=1){
-      let l=current.letter||'a';
-      if(alphaToggle.checked){ l = step>0? nextLetter(l) : prevLetter(l); }
-      let w = pickWordForLetter(l);
-      if(!w){ // find nearest with wrap
-        for(let i=0;i<26;i++){ l = step>0? nextLetter(l) : prevLetter(l); w = pickWordForLetter(l); if(w) break; }
-      }
-      render(w||rand(words), { keepAnimal:false, keepName:false });
-    }
+    // Clicking grid buttons: show prompt; clicking same button re-rolls animal/name
+    function onGridClick(e){ const b = e.target.closest('button.btn'); if(!b) return; const w=b.dataset.word; if(!w) return; if(current.word===w){ render(w, { keepAnimal:false, keepName:false }); } else { render(w, { keepAnimal:false, keepName:false }); } }
+    grid12.addEventListener('click', onGridClick);
+    gridFJ.addEventListener('click', onGridClick);
+    gridKO.addEventListener('click', onGridClick);
+    gridPZ.addEventListener('click', onGridClick);
 
     // ==== PAGE 1: Typing + suggestions with keyboard control ==============
     function p1RenderSuggest(list, query){
@@ -381,7 +318,7 @@
       const newLetter=q[0];
       if(newLetter!==current.letter){ render(q,{keepAnimal:false,keepName:false}); } else { render(q,{keepAnimal:true,keepName:true}); }
       p1List = words.filter(w=>w.startsWith(q));
-      p1Index = p1List.length?0:-1; // default highlight first
+      p1Index = p1List.length?0:-1;
       p1RenderSuggest(p1List,q);
     });
 
@@ -399,76 +336,69 @@
       if(key==='ArrowLeft'){ e.preventDefault(); newPhraseAlpha(-1); return; }
     });
 
-    // ==== Buttons ==========================================================
-    function pickEmotionSameLetter(){ const letter=current.letter; const emos=emotionList.filter(w=>w.startsWith(letter)); return emos.length?rand(emos):rand(emotionList); }
-    function pickMovementSameLetter(){ const letter=current.letter; const moves=movementList.filter(w=>w.startsWith(letter)); return moves.length?rand(moves):rand(movementList); }
+    // ==== Buttons & phrase generation =====================================
+    function pickWordForLetter(l){ const list=words.filter(w=>w.startsWith(l)); return list.length?rand(list):null; }
+    function newPhraseAlpha(step=1){
+      let l=current.letter||'a';
+      if(alphaToggle.checked){ l = step>0? nextLetter(l) : prevLetter(l); }
+      let w = pickWordForLetter(l);
+      if(!w){ for(let i=0;i<26;i++){ l = step>0? nextLetter(l) : prevLetter(l); w = pickWordForLetter(l); if(w) break; } }
+      render(w||rand(words), { keepAnimal:false, keepName:false });
+    }
 
     function newPhrase(){ if(alphaToggle.checked) newPhraseAlpha(+1); else render(rand(words), { keepAnimal:false, keepName:false }); }
-    function newEmotion(){ render(pickEmotionSameLetter(), { keepAnimal:true, keepName:true }); }
-    function newMovement(){ render(pickMovementSameLetter(), { keepAnimal:true, keepName:true }); }
     function newAnimal(){ const letter=current.letter; const bank=animalsByLetter[letter]||[]; if(!bank.length) return; let choices=bank.filter(a=>a!==current.animal); if(!choices.length) choices=bank; render(current.word,{ forceAnimal:rand(choices), keepName:true }); }
     function newName(){ const letter=current.letter; const bank=namesByLetter[letter]||[]; if(!bank.length) return; let choices=bank.filter(n=>n!==current.name); if(!choices.length) choices=bank; render(current.word,{ forceName:rand(choices), keepAnimal:true }); }
 
     newPhraseBtn.addEventListener('click', newPhrase);
-    newEmotionBtn.addEventListener('click', newEmotion);
-    newMovementBtn.addEventListener('click', newMovement);
     newAnimalBtn.addEventListener('click', newAnimal);
     newNameBtn.addEventListener('click', newName);
 
-    // Mirror on Page 0 in sheet
-    document.getElementById('p1NewPhrase').addEventListener('click', newPhrase);
-    document.getElementById('p1NewEmotion').addEventListener('click', newEmotion);
-    document.getElementById('p1NewMovement').addEventListener('click', newMovement);
-    document.getElementById('p1NewAnimal').addEventListener('click', newAnimal);
-    document.getElementById('p1NewName').addEventListener('click', newName);
-
-    // Global PC shortcuts: Enter=new phrase, ←/→ prev/next when not in input
-    document.addEventListener('keydown', e=>{
-      if(document.activeElement===p1Search) return; // input handles its own
-      if(e.key==='Enter'){ e.preventDefault(); newPhraseAlpha(+1); }
-      if(e.key==='ArrowRight'){ e.preventDefault(); newPhraseAlpha(+1); }
-      if(e.key==='ArrowLeft'){ e.preventDefault(); newPhraseAlpha(-1); }
+    // Clicking prompt or empty space => new phrase
+    result.addEventListener('click', ()=> newPhrase());
+    document.body.addEventListener('click', (e)=>{
+      if(e.target.closest('button, input, .sheet, .suggestions, .toggle, .output')) return;
+      newPhrase();
     });
 
-    // ==== Bottom sheet & search grids =====================================
+    // ==== Bottom sheet controls ===========================================
+    let curPage = 0; // 0..3
+    function applyPage(){ pages.style.transform = `translateX(-${curPage*100}vw)`; tabs.forEach(t=>t.classList.remove('active')); const active = Array.from(tabs).find(t=>Number(t.dataset.ix)===curPage); if(active) active.classList.add('active'); }
     function openSheet(){ sheet.classList.add('open'); }
     function closeSheet(){ sheet.classList.remove('open'); }
     openSheetBtn.addEventListener('click', openSheet);
     closeSheetBtn.addEventListener('click', closeSheet);
-    tabs.forEach(t=> t.addEventListener('click', ()=>{ const ix=Number(t.dataset.ix)||0; pages.style.transform=`translateX(-${ix*100}vw)`; }));
+    tabs.forEach(t=> t.addEventListener('click', ()=>{ curPage = Number(t.dataset.ix)||0; applyPage(); }));
+    flipPrev.addEventListener('click', ()=>{ curPage = (curPage+3)%4; applyPage(); });
+    flipNext.addEventListener('click', ()=>{ curPage = (curPage+1)%4; applyPage(); });
+    document.addEventListener('keydown', e=>{ if(!sheet.classList.contains('open')) return; if(e.key==='ArrowRight'){ e.preventDefault(); flipNext.click(); } if(e.key==='ArrowLeft'){ e.preventDefault(); flipPrev.click(); } });
 
-    let startY=null,startX=null; // touch swipe
+    // Touch swipe
+    let startY=null,startX=null;
     window.addEventListener('touchstart', e=>{ const t=e.touches[0]; startY=t.clientY; startX=t.clientX; }, {passive:true});
-    window.addEventListener('touchmove', e=>{ if(startY===null) return; const t=e.touches[0]; const dy=startY-t.clientY; const dx=startX-t.clientX; if(dy>40 && !sheet.classList.contains('open')) openSheet(); if(Math.abs(dx)>40 && sheet.classList.contains('open')){ const cur=Math.round(Math.abs(parseInt(pages.style.transform.replace(/[^0-9-]/g,''))||0)/100)||0; const next=dx>0?Math.min(cur+1,4):Math.max(cur-1,0); pages.style.transform=`translateX(-${next*100}vw)`; } }, {passive:true});
+    window.addEventListener('touchmove', e=>{ if(startY===null) return; const t=e.touches[0]; const dy=startY-t.clientY; const dx=startX-t.clientX; if(dy>40 && !sheet.classList.contains('open')) openSheet(); if(Math.abs(dx)>40 && sheet.classList.contains('open')){ curPage = dx>0 ? Math.min(curPage+1,3) : Math.max(curPage-1,0); applyPage(); } }, {passive:true});
     window.addEventListener('touchend', ()=>{ startY=null; startX=null; });
 
-    function fillAllGridsWrapper(){ fillAllGrids(''); }
-
-    // Pages 2–5 searches (prefix-only across ALL)
-    ;[search12,searchFJ,searchKO,searchPZ].forEach(inp=>{ if(!inp) return; inp.addEventListener('input', e=>{ fillAllGrids(e.target.value); }); });
-    document.querySelectorAll('.clearBtn').forEach(btn=>{ btn.addEventListener('click', ()=>{ const id=btn.dataset.clear; const el=document.getElementById(id); if(!el) return; el.value=''; fillAllGrids(''); el.focus(); }); });
-
-    // Random-from-results buttons
-    function hookRandomFrom(el){ if(!el) return; el.addEventListener('click', ()=>{ const list=fillAllGrids(el.id.includes('12')?search12.value:el.id.includes('FJ')?searchFJ.value:el.id.includes('KO')?searchKO.value:searchPZ.value); if(!list.length) return; render(rand(list)); }); }
-    hookRandomFrom(randomFromSearch12); hookRandomFrom(randomFromSearchFJ); hookRandomFrom(randomFromSearchKO); hookRandomFrom(randomFromSearchPZ);
-
     // ==== Auto-play ========================================================
-    function updatePlayButtons(){ const label=playing?'Stop':'Play'; const iconPlay='<svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M8 5v14l11-7z"/></svg>'; const iconStop='<svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M6 6h12v12H6z"/></svg>'; playBtn.innerHTML=(playing?iconStop:iconPlay)+`<span>${label}</span>`; p1Play.innerHTML=(playing?iconStop:iconPlay)+`<span>${label}</span>`; playBtn.classList.toggle('active',playing); p1Play.classList.toggle('active',playing); }
+    function updatePlayButtons(){ const label=playing?'Stop':'Play'; const iconPlay='<svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M8 5v14l11-7z"/></svg>'; const iconStop='<svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M6 6h12v12H6z"/></svg>'; playBtn.innerHTML=(playing?iconStop:iconPlay)+`<span>${label}</span>`; playBtn.classList.toggle('active',playing); }
     function scheduleNext(){ if(!playing) return; const [min,max]=range; const ms=Math.round((min+Math.random()*(max-min))*1000); clearTimeout(timer); timer=setTimeout(()=>{ newPhrase(); scheduleNext(); }, ms); }
     function togglePlay(){ playing=!playing; updatePlayButtons(); if(playing) scheduleNext(); else clearTimeout(timer); }
-    playBtn.addEventListener('click', togglePlay); p1Play.addEventListener('click', togglePlay);
+    playBtn.addEventListener('click', togglePlay);
 
-    const settingsSheet=document.getElementById('settings');
+    // Settings sheet
+    const settingsSheet = document.getElementById('settings');
     document.getElementById('settingsBtn').addEventListener('click', ()=> settingsSheet.classList.add('open'));
     settingsSheet.addEventListener('click', e=>{ if(e.target.id==='settings') settingsSheet.classList.remove('open'); });
     document.querySelectorAll('.setIv').forEach(b=> b.addEventListener('click', ()=>{ const v=b.dataset.iv; if(v==='manual'){ playing=false; updatePlayButtons(); settingsSheet.classList.remove('open'); return; } const [a,bn]=v.split('-').map(Number); if(!isNaN(a)&&!isNaN(bn)) range=[a,bn]; settingsSheet.classList.remove('open'); if(playing) scheduleNext(); }));
 
     // Boot ------------------------------------------------------------------
+    // seed current animal/name for 'breathing' (b)
     current.animal = rand(animalsByLetter['b']);
     current.name = cap(rand(namesByLetter['b']));
     updatePlayButtons();
     render('breathing', { keepAnimal:true, keepName:true });
-    fillAllGridsWrapper();
+    fillGrids();
+    applyPage();
   </script>
 </body>
 </html>
