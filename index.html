@@ -7,7 +7,7 @@
   <meta name="mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
-  <title>Alliteration Animal Namer — v11</title>
+  <title>Alliteration Animal Namer — v12</title>
   <style>
     :root{
       --bg:#0b0b0c; --card:#151518; --text:#f6f7fb; --muted:#a9adc1; --ring:#3b82f6;
@@ -20,29 +20,28 @@
     .wrap{max-width:980px;margin:0 auto;padding:8px 16px 120px}
 
     /* Sticky banner prompt at absolute top */
-    .banner{position:sticky;top:0;z-index:100;background:#0b0b0c;box-shadow:0 6px 16px rgba(0,0,0,.35);border-bottom:1px solid #23242d}
-    .banner .output{margin:8px 0 0;padding:18px 12px;border-radius:12px;background:#0f1117;border:1px solid #2a2e3d;font-size:clamp(28px,6vw,56px);line-height:1.2;cursor:pointer;user-select:none}
+    .banner{position:sticky;top:0;z-index:120;background:#0b0b0c;box-shadow:0 6px 16px rgba(0,0,0,.35);border-bottom:1px solid #23242d}
+    .banner .output{margin:8px 0 0;padding:18px 12px;border-radius:12px;background:#0f1117;border:1px solid #2a2e3d;font-size:clamp(32px,7vw,68px);line-height:1.15;cursor:pointer;user-select:none}
     .emo{color:var(--red);font-weight:900;text-transform:none}
     .animal{color:var(--green);font-weight:900}
     .name{color:var(--blue);font-weight:900}
 
-    header{display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin:10px 0 12px}
-    h1{font-size:clamp(20px,3.5vw,30px);margin:0;font-weight:800;letter-spacing:.2px;display:flex;align-items:center;gap:10px}
+    header{display:flex;flex-direction:column;gap:8px;margin:10px 0 12px}
+    .topbar{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+    h1{font-size:clamp(18px,3vw,24px);margin:0;font-weight:800;letter-spacing:.2px}
     .logo{display:inline-flex;align-items:center;justify-content:center;width:36px;height:36px;border-radius:10px;background:linear-gradient(135deg,var(--blue),var(--red));font-weight:900;color:#fff;box-shadow:0 6px 18px rgba(0,0,0,.35)}
-    .sig{margin-left:auto;text-align:right;color:var(--muted);font-size:12px;line-height:1.2;white-space:nowrap}
 
     .card{background:var(--card);border:1px solid #23242d;border-radius:20px;padding:16px;box-shadow:0 10px 30px rgba(0,0,0,.35)}
 
-    .btn{appearance:none;border:1px solid #2a2f3d;background:#121420;color:#fff;padding:12px 16px;border-radius:12px;font-weight:800;cursor:pointer}
+    .btn{appearance:none;border:1px solid #2a2f3d;background:#121420;color:#fff;padding:12px 16px;border-radius:12px;font-weight:800;cursor:pointer;transition:background .2s,border-color .2s,box-shadow .2s}
     .btn.small{padding:8px 10px;font-size:12px}
-    .btn.ghost{background:transparent}
+    .btn.icon{padding:10px 12px;display:inline-flex;align-items:center;justify-content:center;gap:6px}
+    .btn.icon svg{width:18px;height:18px;display:block}
     .btn:active{transform:translateY(1px)}
-    .btn.active{border-color:var(--ring);box-shadow:0 0 0 3px rgba(59,130,246,.25)}
+    .btn.active{background:linear-gradient(135deg,var(--play),var(--playGlow));border-color:transparent;box-shadow:0 0 0 3px rgba(34,197,94,.25)}
 
     /* Play button */
     .btn.play{display:inline-flex;align-items:center;gap:8px}
-    .btn.play svg{width:16px;height:16px;display:block}
-    .btn.play.active{background:linear-gradient(135deg,var(--play),var(--playGlow));border-color:transparent;box-shadow:0 0 0 3px rgba(34,197,94,.25)}
 
     .row{display:flex;gap:12px;align-items:center;flex-wrap:wrap}
 
@@ -60,7 +59,7 @@
     .suggestions li[aria-selected="true"], .suggestions li:hover{background:#1a1f2b}
 
     /* Bottom sheet */
-    .sheet{position:fixed;left:0;right:0;bottom:-100%;background:#0f1117;border-top-left-radius:16px;border-top-right-radius:16px;border:1px solid #262a36;box-shadow:0 -20px 30px rgba(0,0,0,.45);transition:bottom .25s ease;z-index:60}
+    .sheet{position:fixed;left:0;right:0;bottom:-100%;background:#0f1117;border-top-left-radius:16px;border-top-right-radius:16px;border:1px solid #262a36;box-shadow:0 -20px 30px rgba(0,0,0,.45);transition:bottom .25s ease;z-index:110}
     .sheet.open{bottom:0}
     .sheet .handle{width:54px;height:6px;background:#2a2f3d;border-radius:10px;margin:10px auto}
     .sheet .tabs{display:flex;gap:8px;justify-content:center;margin:8px 0;flex-wrap:wrap}
@@ -69,6 +68,18 @@
     .pages{display:flex;transition:transform .25s ease}
     .page{min-width:100vw;max-width:100vw;padding:12px}
     .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(120px,1fr));gap:10px;max-height:46vh;overflow:auto;padding-right:4px}
+
+    /* Startup signature splash */
+    .splash{position:fixed;left:0;right:0;bottom:12px;display:flex;justify-content:center;z-index:200;transition:opacity .6s ease, transform .6s ease}
+    .splash .pill{background:#151518;border:1px solid #2a2e3d;color:#a9adc1;padding:10px 14px;border-radius:999px;box-shadow:0 8px 20px rgba(0,0,0,.45)}
+    .splash.hide{opacity:0;pointer-events:none;transform:translateY(10px)}
+
+    /* Focus (swipe-right) mode: huge prompt, everything else hidden */
+    body.focus header, body.focus .card, body.focus .sheet, body.focus .footer, body.focus .topbar{ display:none !important; }
+    body.focus .banner{ box-shadow:none; border-bottom:none; }
+    body.focus .banner .output{ font-size:clamp(40px,12vw,120px); padding:28px 16px; text-align:center; }
+    body.focus .emo, body.focus .animal, body.focus .name{ display:block; }
+    @media (orientation:landscape){ body.focus .emo, body.focus .animal, body.focus .name{ display:inline; } }
 
     .footer{margin:28px 2px 12px;color:var(--muted);font-size:12px}
   </style>
@@ -81,17 +92,19 @@
     </div>
 
     <header>
-      <button class="btn play" id="playBtn" title="Auto play">
-        <svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M8 5v14l11-7z"/></svg>
-        <span>Play</span>
-      </button>
-      <span class="logo" aria-label="Jimmy James Logo">JJ</span>
-      <h1>Alliteration Animal Namer</h1>
-      <div class="sig"><strong>Jimmy James 24.09.2025 - v11</strong></div>
-      <div class="toolbar" style="margin-left:auto;display:flex;gap:8px;align-items:center">
-        <button class="btn" id="audioBtn" title="Audio on/off">🔊 Audio</button>
-        <button class="btn" id="settingsBtn" title="Settings">⚙ Settings</button>
+      <div class="topbar">
+        <button class="btn icon play" id="playBtn" title="Play / Stop" aria-label="Play">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M8 5v14l11-7z"/></svg>
+        </button>
+        <span class="logo" aria-label="Jimmy James Logo">JJ</span>
+        <button class="btn icon" id="audioBtn" title="Audio on/off" aria-label="Audio">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M3 10v4h4l5 5V5L7 10H3zm13 2a4 4 0 00-4-4v8a4 4 0 004-4zm0-6a10 10 0 010 12V6z"/></svg>
+        </button>
+        <button class="btn icon" id="settingsBtn" title="Settings" aria-label="Settings">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M19.14,12.94a7.43,7.43,0,0,0,.05-.94,7.43,7.43,0,0,0-.05-.94l2.11-1.65a.48.48,0,0,0,.11-.61l-2-3.46a.5.5,0,0,0-.6-.22L16.9,5.5a7.5,7.5,0,0,0-1.63-.94l-.25-2.65A.49.49,0,0,0,14.54,1H9.46a.49.49,0,0,0-.48.41L8.73,4.06A7.5,7.5,0,0,0,7.1,5L4.24,4.12a.5.5,0,0,0-.6.22l-2,3.46a.48.48,0,0,0,.11.61L3.86,10a7.43,7.43,0,0,0-.05.94,7.43,7.43,0,0,0,.05.94L1.75,13.53a.48.48,0,0,0-.11.61l2,3.46a.5.5,0,0,0,.6.22L7.1,18.5a7.5,7.5,0,0,0,1.63.94l.25,2.65a.49.49,0,0,0,.48.41h5.08a.49.49,0,0,0,.48-.41l.25-2.65a7.5,7.5,0,0,0,1.63-.94l2.86.88a.5.5,0,0,0,.6-.22l2-3.46a.48.48,0,0,0-.11-.61ZM12,15.5A3.5,3.5,0,1,1,15.5,12,3.5,3.5,0,0,1,12,15.5Z"/></svg>
+        </button>
       </div>
+      <h1>Alliteration Animal Namer</h1>
     </header>
 
     <div class="card">
@@ -111,7 +124,7 @@
       </div>
     </div>
 
-    <p class="footer">Output format: <span class="emo">emotion/movement</span> <span class="animal">animal</span> <span class="name">name</span>. Emotion/movement stays <em>lowercase</em>. Click the prompt or any empty area for a new phrase. Audio (if on) reads the prompt at 0.7× speed.</p>
+    <p class="footer">Output: <span class="emo">emotion/movement</span> <span class="animal">animal</span> <span class="name">name</span>. Emotion/movement stays lowercase. Click the prompt or empty area for a new phrase. Audio (if on) reads at 0.7× speed. Swipe ▶ to focus; ◀ to exit.</p>
   </div>
 
   <!-- Bottom sheet: list-only pages with fast flip -->
@@ -153,6 +166,9 @@
       </div>
     </div>
   </div>
+
+  <!-- Startup splash (shows for 30s then fades) -->
+  <div class="splash" id="splash"><div class="pill">Jimmy James 24.09.2025 - v11</div></div>
 
   <script>
     // ==== DATA ==============================================================
@@ -251,6 +267,8 @@
     const gridKO = document.getElementById('gridKO');
     const gridPZ = document.getElementById('gridPZ');
 
+    const splash = document.getElementById('splash');
+
     let playing=false; let timer=null; let gapSec=5; // default 5 sec
     let audioOn=false;
 
@@ -275,9 +293,9 @@
         const txt = `${current.word} ${current.animal} ${current.name}`;
         window.speechSynthesis.cancel();
         const u = new SpeechSynthesisUtterance(txt);
-        u.rate = 0.7; // 70% of normal speed
+        u.rate = 0.7; // 70% speed
         window.speechSynthesis.speak(u);
-      }catch(e){ /* no-op */ }
+      }catch(e){ /* ignore */ }
     }
 
     function buildPhrase(word, opts={}){
@@ -288,7 +306,6 @@
       const names = namesByLetter[first] || ['Alex'];
       const animal = opts.forceAnimal ?? (opts.keepAnimal ? current.animal : rand(animals));
       const name = opts.forceName ? cap(opts.forceName) : (opts.keepName ? current.name : cap(rand(names)));
-      // NOTE: emotion/movement stays lowercase (no capitalization)
       return `<span class="emo">${w}</span> <span class="animal">${animal}</span> <span class="name">${name}</span>`;
     }
 
@@ -318,7 +335,7 @@
 
     function fillGrids(){ [grid12,gridFJ,gridKO,gridPZ].forEach(g=>g.innerHTML=''); words.forEach(w=>{ const ix=groupIdxForWord(w); const btn=makeWordBtn(w); ([grid12,gridFJ,gridKO,gridPZ][ix]).appendChild(btn); }); }
 
-    // Clicking grid buttons: show prompt; clicking same button re-rolls animal/name
+    // Clicking grid buttons: show prompt (repeat click reshuffles animal/name)
     function onGridClick(e){ const b = e.target.closest('button.btn'); if(!b) return; const w=b.dataset.word; if(!w) return; render(w, { keepAnimal:false, keepName:false }); }
     grid12.addEventListener('click', onGridClick);
     gridFJ.addEventListener('click', onGridClick);
@@ -331,7 +348,6 @@
       if(!list.length) { p1Index=-1; return; }
       const ul=document.createElement('ul');
       list.slice(0,50).forEach((w,i)=>{ const li=document.createElement('li');
-        // bold prefix
         const first=query.length; const label=w[0].toUpperCase()+w.slice(1);
         li.innerHTML = `<strong>${label.slice(0,first)}</strong>${label.slice(first)}`;
         li.setAttribute('role','option'); li.setAttribute('aria-selected', String(i===p1Index));
@@ -404,14 +420,14 @@
     flipNext.addEventListener('click', ()=>{ curPage = (curPage+1)%4; applyPage(); });
     document.addEventListener('keydown', e=>{ if(!sheet.classList.contains('open')) return; if(e.key==='ArrowRight'){ e.preventDefault(); flipNext.click(); } if(e.key==='ArrowLeft'){ e.preventDefault(); flipPrev.click(); } });
 
-    // Touch swipe for pages
-    let startY=null,startX=null;
-    window.addEventListener('touchstart', e=>{ const t=e.touches[0]; startY=t.clientY; startX=t.clientX; }, {passive:true});
-    window.addEventListener('touchmove', e=>{ if(startY===null) return; const t=e.touches[0]; const dy=startY-t.clientY; const dx=startX-t.clientX; if(dy>40 && !sheet.classList.contains('open')) openSheet(); if(Math.abs(dx)>40 && sheet.classList.contains('open')){ curPage = dx>0 ? Math.min(curPage+1,3) : Math.max(curPage-1,0); applyPage(); } }, {passive:true});
-    window.addEventListener('touchend', ()=>{ startY=null; startX=null; });
+    // Touch swipe for pages & focus mode
+    let startY=null,startX=null; let swiping=false;
+    window.addEventListener('pointerdown', e=>{ startY=e.clientY; startX=e.clientX; swiping=true; }, {passive:true});
+    window.addEventListener('pointermove', e=>{ if(!swiping) return; const dy=startY-e.clientY; const dx=e.clientX-startX; if(Math.abs(dx)>60 && Math.abs(dy)<60){ if(dx>0){ document.body.classList.add('focus'); } else { document.body.classList.remove('focus'); } swiping=false; } }, {passive:true});
+    window.addEventListener('pointerup', ()=>{ swiping=false; });
 
     // ==== Auto-play & Settings ============================================
-    function updatePlayButtons(){ const label=playing?'Stop':'Play'; const iconPlay='<svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M8 5v14l11-7z"/></svg>'; const iconStop='<svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M6 6h12v12H6z"/></svg>'; playBtn.innerHTML=(playing?iconStop:iconPlay)+`<span>${label}</span>`; playBtn.classList.toggle('active',playing); }
+    function updatePlayButtons(){ playBtn.classList.toggle('active',playing); }
     function scheduleNext(){ if(!playing) return; const ms=gapSec*1000; clearTimeout(timer); timer=setTimeout(()=>{ newPhrase(); scheduleNext(); }, ms); }
     function togglePlay(){ playing=!playing; updatePlayButtons(); if(playing) scheduleNext(); else clearTimeout(timer); }
     playBtn.addEventListener('click', togglePlay);
@@ -423,8 +439,8 @@
     settingsSheet.addEventListener('click', e=>{ if(e.target.id==='settings'){ settingsSheet.classList.remove('open'); settingsBtn.classList.remove('active'); }});
     document.querySelectorAll('.setGap').forEach(b=> b.addEventListener('click', ()=>{ const v=Number(b.dataset.gap)||5; gapSec=v; settingsSheet.classList.remove('open'); settingsBtn.classList.remove('active'); if(playing) scheduleNext(); }));
 
-    // Audio toggle
-    function updateAudioBtn(){ audioBtn.classList.toggle('active', audioOn); audioBtn.textContent = (audioOn? '🔊 Audio ON' : '🔈 Audio OFF'); }
+    // Audio toggle (highlight button when ON)
+    function updateAudioBtn(){ audioBtn.classList.toggle('active', audioOn); }
     audioBtn.addEventListener('click', ()=>{ audioOn=!audioOn; updateAudioBtn(); if(audioOn) speakCurrent(); else if('speechSynthesis' in window) window.speechSynthesis.cancel(); });
 
     // Global PC shortcuts: Enter=new phrase, ←/→ prev/next when not in input
@@ -439,14 +455,17 @@
     let triedFS=false; function tryFS(){ if(triedFS) return; triedFS=true; const el=document.documentElement; const fn=el.requestFullscreen||el.webkitRequestFullscreen||el.msRequestFullscreen; if(fn) { try{ fn.call(el); }catch(e){} } }
     window.addEventListener('pointerdown', tryFS, { once:true });
 
+    // Splash hide after 30s
+    setTimeout(()=>{ splash.classList.add('hide'); }, 30000);
+
     // Boot ------------------------------------------------------------------
+    // seed current animal/name for 'breathing' (b)
     current.animal = animalsByLetter['b'][0];
     current.name = cap(namesByLetter['b'][0]);
     updatePlayButtons();
     updateAudioBtn();
     render('breathing', { keepAnimal:true, keepName:true });
     fillGrids();
-    // default gap 5s already set
   </script>
 </body>
 </html>
