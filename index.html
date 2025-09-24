@@ -7,7 +7,7 @@
   <meta name="mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
-  <title>Alliteration Animal Namer — v12</title>
+  <title>Alliteration Animal Namer — v13</title>
   <style>
     :root{
       --bg:#0b0b0c; --card:#151518; --text:#f6f7fb; --muted:#a9adc1; --ring:#3b82f6;
@@ -168,7 +168,7 @@
   </div>
 
   <!-- Startup splash (shows for 30s then fades) -->
-  <div class="splash" id="splash"><div class="pill">Jimmy James 24.09.2025 - v11</div></div>
+  <div class="splash" id="splash"><div class="pill">Jimmy James 24.09.2025 - v13</div></div>
 
   <script>
     // ==== DATA ==============================================================
@@ -422,8 +422,23 @@
 
     // Touch swipe for pages & focus mode
     let startY=null,startX=null; let swiping=false;
+    const SWIPE_H=60, SWIPE_V=70;
     window.addEventListener('pointerdown', e=>{ startY=e.clientY; startX=e.clientX; swiping=true; }, {passive:true});
-    window.addEventListener('pointermove', e=>{ if(!swiping) return; const dy=startY-e.clientY; const dx=e.clientX-startX; if(Math.abs(dx)>60 && Math.abs(dy)<60){ if(dx>0){ document.body.classList.add('focus'); } else { document.body.classList.remove('focus'); } swiping=false; } }, {passive:true});
+    window.addEventListener('pointermove', e=>{
+      if(!swiping) return;
+      const dx=e.clientX-startX; const dy=e.clientY-startY;
+      // Horizontal swipe (focus mode toggle)
+      if(Math.abs(dx)>SWIPE_H && Math.abs(dy)<40){
+        if(dx>0){ document.body.classList.add('focus'); } // swipe right => focus ON
+        else { document.body.classList.remove('focus'); }  // swipe left => focus OFF
+        swiping=false; return;
+      }
+      // Vertical swipe (open/close bottom sheet)
+      if(Math.abs(dy)>SWIPE_V && Math.abs(dx)<60){
+        if(dy<0 && !sheet.classList.contains('open') && startY>window.innerHeight*0.7){ openSheet(); swiping=false; return; }
+        if(dy>0 && sheet.classList.contains('open') && startY<window.innerHeight*0.5){ closeSheet(); swiping=false; return; }
+      }
+    }, {passive:true});
     window.addEventListener('pointerup', ()=>{ swiping=false; });
 
     // ==== Auto-play & Settings ============================================
