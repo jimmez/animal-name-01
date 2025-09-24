@@ -7,7 +7,7 @@
   <meta name="mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
-  <title>Alliteration Animal Namer — v16</title>
+  <title>Alliteration Animal Namer — v17</title>
   <style>
     :root{
       --bg:#0b0b0c; --card:#151518; --text:#f6f7fb; --muted:#a9adc1; --ring:#3b82f6;
@@ -29,12 +29,12 @@
     header{display:flex;flex-direction:column;gap:8px;margin:10px 0 12px}
     .topbar{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
     h1{font-size:clamp(18px,3vw,24px);margin:0;font-weight:800;letter-spacing:.2px}
-    .logo{display:inline-flex;align-items:center;justify-content:center;width:36px;height:36px;border-radius:10px;background:linear-gradient(135deg,var(--blue),var(--red));font-weight:900;color:#fff;box-shadow:0 6px 18px rgba(0,0,0,.35)}
 
     .card{background:var(--card);border:1px solid #23242d;border-radius:20px;padding:16px;box-shadow:0 10px 30px rgba(0,0,0,.35)}
 
     .btn{appearance:none;border:1px solid #2a2f3d;background:#121420;color:#fff;padding:12px 16px;border-radius:12px;font-weight:800;cursor:pointer;transition:background .2s,border-color .2s,box-shadow .2s}
     .btn.small{padding:8px 10px;font-size:12px}
+    .btn.big{padding:16px 20px;font-size:16px;border-radius:16px}
     .btn.icon{padding:10px 12px;display:inline-flex;align-items:center;justify-content:center;gap:6px}
     .btn.icon svg{width:18px;height:18px;display:block}
     .btn:active{transform:translateY(1px)}
@@ -78,8 +78,8 @@
     body.focus .emo, body.focus .animal, body.focus .name{ display:block; text-align:left; }
     @media (orientation:landscape){ body.focus .emo, body.focus .animal, body.focus .name{ display:inline; text-align:left; } body.focus .banner .output{ text-align:left; } }
 
-    /* Focus controls overlay */
-    .focusControls{position:fixed;top:10px;right:12px;z-index:130;display:none;gap:8px}
+    /* Focus controls overlay: bottom-left, big buttons */
+    .focusControls{position:fixed;bottom:14px;left:14px;z-index:130;display:none;gap:10px}
     body.focus .focusControls{display:flex}
 
     .footer{margin:28px 2px 12px;color:var(--muted);font-size:12px}
@@ -92,10 +92,10 @@
       <div class="output" id="result" title="Click for New phrase (also click empty space)">Your phrase will appear here…</div>
     </div>
 
-    <!-- Focus-mode overlay controls -->
+    <!-- Focus-mode overlay controls (Play first, then Minimize) -->
     <div class="focusControls" id="focusControls">
-      <button class="btn small" id="minimizeBtn" title="Exit enlarged view">Minimize</button>
-      <button class="btn small" id="focusPlayBtn" title="Play / Stop">Play</button>
+      <button class="btn big" id="focusPlayBtn" title="Play / Stop">Play</button>
+      <button class="btn big" id="minimizeBtn" title="Exit enlarged view">Minimize</button>
     </div>
 
     <header>
@@ -103,7 +103,6 @@
         <button class="btn icon play" id="playBtn" title="Play / Stop" aria-label="Play">
           <svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M8 5v14l11-7z"/></svg>
         </button>
-        <span class="logo" aria-label="Jimmy James Logo">JJ</span>
         <button class="btn icon" id="audioBtn" title="Audio on/off" aria-label="Audio">
           <svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M3 10v4h4l5 5V5L7 10H3zm13 2a4 4 0 00-4-4v8a4 4 0 004-4zm0-6a10 10 0 010 12V6z"/></svg>
         </button>
@@ -132,7 +131,7 @@
       </div>
     </div>
 
-    <p class="footer">Output: <span class="emo">first word</span> <span class="animal">animal</span> <span class="name">name</span>. First word can be emotion, chemistry, or movement. Delay staging shows words over time when enabled.</p>
+    <p class="footer">Output: <span class="emo">first word</span> <span class="animal">animal</span> <span class="name">name</span>. First word can be emotion, chemistry, or movement. Delay staging shows words over time; with phonetic mode on, words share the same starting sound (e.g., <em>phony</em> / <em>fish</em>).</p>
   </div>
 
   <!-- Bottom sheet: list-only pages with fast flip -->
@@ -157,7 +156,7 @@
     </div>
   </div>
 
-  <!-- Settings (groups, delay function, and time between prompts) -->
+  <!-- Settings (groups, phonetic, delay function, and time between prompts) -->
   <div class="sheet" id="settings" style="padding-bottom:20px">
     <div class="handle"></div>
     <div style="padding:12px 16px;display:grid;gap:16px">
@@ -170,13 +169,16 @@
           <label class="toggle"><input type="checkbox" id="chkAnimal" checked /> Animal</label>
           <label class="toggle"><input type="checkbox" id="chkName" checked /> Name</label>
         </div>
+        <div class="row" style="gap:12px;margin-top:8px">
+          <label class="toggle"><input type="checkbox" id="phoneticToggle" checked /> Phonetic alliteration (same starting sound)</label>
+        </div>
       </section>
 
       <section>
         <h3 style="margin:0 0 8px">Delay function (staged reveal)</h3>
         <div class="row" style="gap:12px;align-items:center">
           <label class="toggle"><input type="checkbox" id="delayToggle" checked /> Enable</label>
-          <span style="color:var(--muted);font-size:12px">Default: 1st word → +2s 2nd, → +4s 3rd; next phrase every 6s.</span>
+          <span style="color:var(--muted);font-size:12px">Default: 1st → +2s 2nd, 1st → +4s 3rd; new phrase every 6s while playing.</span>
         </div>
         <div class="row" style="gap:24px;flex-wrap:wrap;margin-top:8px">
           <div>
@@ -207,7 +209,7 @@
   </div>
 
   <!-- Startup splash (shows for 30s then fades) -->
-  <div class="splash" id="splash"><div class="pill">Jimmy James 24.09.2025 - v16</div></div>
+  <div class="splash" id="splash"><div class="pill">Jimmy James 24.09.2025 - v17</div></div>
 
   <script>
     // ==== DATA ==============================================================
@@ -269,7 +271,7 @@
       z:['Zoe','Zach','Zara','Zeke','Zelda','Zane'],
     };
 
-    // Emotion/Movement/Extra as before
+    // Emotion/Movement/Extra
     const emotionList = [
       'afraid','agitated','aloof','amused','angry','annoyed','anxious','ashamed','astonished','awkward','baffled','bitter','blissful','bold','brave','calm','cheerful','confident','confused','content','cranky','curious','defiant','delighted','depressed','determined','disgusted','dismayed','eager','ecstatic','embarrassed','envious','excited','fearful','frustrated','giddy','gloomy','grateful','grumpy','guilty','happy','hopeful','hostile','impatient','insecure','irritated','joyful','lonely','melancholy','nervous','optimistic','overwhelmed','peaceful','proud','relieved','resentful','restless','satisfied','scared','serene','shocked','shy','silly','sorrowful','startled','stressed','tense','tired','tranquil','upbeat','wistful','zealous'
     ];
@@ -278,7 +280,7 @@
     ];
     const extraList = ['bad','brisk','bright','bouncy','bold','soft','strong','swift','sturdy','spry','sleepy','soggy','silky','harmful','haphazardful'];
 
-    // New: Chemistry/Science words (first-word group)
+    // Chemistry/Science
     const chemistryList = [
       'acidic','activated','aerobic','alkaline','allotropic','amphoteric','aqueous','atomic',
       'basic','binding','biochemical','boiling','bonded','buffered','buoyant',
@@ -344,11 +346,12 @@
     const chkMove = document.getElementById('chkMove');
     const chkAnimal = document.getElementById('chkAnimal');
     const chkName = document.getElementById('chkName');
+    const phoneticToggle = document.getElementById('phoneticToggle');
     const delayToggle = document.getElementById('delayToggle');
 
-    let playing=false; let timer=null; let gapSec=5; // default manual gap
+    let playing=true; let timer=null; let gapSec=5; // default manual gap
     let delayOn=true; const segmentSec=6; let d12=2; let d13=4; // staged timings
-    let audioOn=false;
+    let audioOn=false; let phoneticOn=true;
 
     // Track current parts so we can preserve across actions
     let current = { word: 'breathing', letter: 'b', animal: 'bear', name: 'Barry' };
@@ -365,80 +368,109 @@
     const nextLetter = l => letters[(letters.indexOf(l)+1+26)%26]||'a';
     const prevLetter = l => letters[(letters.indexOf(l)-1+26)%26]||'z';
 
+    // Flatten lists for phonetic matching
+    const animalsAll = Object.values(animalsByLetter).flat();
+    const namesAll = Object.values(namesByLetter).flat();
+
+    function initialPhoneme(w){
+      const s=(w||'').toLowerCase();
+      if(s.startsWith('ph')) return 'f';
+      if(s.startsWith('kn')||s.startsWith('gn')||s.startsWith('pn')) return 'n';
+      if(s.startsWith('wr')) return 'r';
+      if(s.startsWith('wh')) return 'w';
+      if(s.startsWith('ps')) return 's';
+      if(s.startsWith('ch')) return 'ch';
+      if(s.startsWith('sh')) return 'sh';
+      if(s.startsWith('th')) return 'th';
+      if(s.startsWith('qu')) return 'k'; // treat "qu" as hard k for matching
+      const c=s[0]||''; const n=s[1]||'';
+      if(c==='c') return 'eiy'.includes(n) ? 's' : 'k';
+      if(c==='g') return 'eiy'.includes(n) ? 'j' : 'g';
+      if(c==='x') return 'z';
+      if(c==='q') return 'k';
+      return c;
+    }
+
     function getActiveFirstWordList(){
       let arr=[];
       if(chkEmotion.checked){ arr = arr.concat(emotionList, extraList); }
       if(chkMove.checked){ arr = arr.concat(movementList); }
       if(chkChem.checked){ arr = arr.concat(chemistryList); }
       if(!arr.length) arr = emotionList.slice();
-      // unique & sort
       return Array.from(new Set(arr)).sort((a,b)=>a.localeCompare(b));
     }
 
     function speak(text){
       try{
         if(!audioOn || !('speechSynthesis' in window)) return;
-        window.speechSynthesis.cancel();
         const u = new SpeechSynthesisUtterance(text);
         u.rate = 0.7; // 70% speed
         window.speechSynthesis.speak(u);
       }catch(e){ /* ignore */ }
     }
 
-    let t2=null, t3=null, tSpeak=null; // staged timers
+    let t2=null, t3=null; // staged timers
 
     function render(word, opts={}){
-      // clear staged timers from previous render
-      [t2,t3,tSpeak].forEach(t=> clearTimeout(t));
+      // stop any pending staged timeouts and speech
+      [t2,t3].forEach(t=> clearTimeout(t));
+      if('speechSynthesis' in window) window.speechSynthesis.cancel();
 
       const activeWords = getActiveFirstWordList();
       const wRaw = (word||current.word);
       const w = wRaw.toLowerCase();
-      const first = w[0]||current.letter||'a';
+      const firstLetter = w[0]||current.letter||'a';
+      const phon = initialPhoneme(w);
 
-      // choose animal & name based on letter
+      // choose animal & name by phoneme or by letter
       if(!opts.keepAnimal){
-        const bank = animalsByLetter[first]||['creature'];
-        let choice = rand(bank);
-        if(choice===current.animal && bank.length>1){ choice = bank[(bank.indexOf(choice)+1)%bank.length]; }
+        let pool = phoneticOn ? animalsAll.filter(a=> initialPhoneme(a)===phon) : (animalsByLetter[firstLetter]||[]);
+        if(!pool.length) pool = animalsByLetter[firstLetter]||[]; // fallback
+        let choice = rand(pool);
+        if(choice===current.animal && pool.length>1){ choice = pool[(pool.indexOf(choice)+1)%pool.length]; }
         current.animal = choice;
       }
       if(!opts.keepName){
-        const bank = namesByLetter[first]||['Alex'];
-        let choice = cap(rand(bank));
-        if(choice===current.name && bank.length>1){ choice = cap(bank[(bank.indexOf(choice)+1)%bank.length]); }
+        let pool = phoneticOn ? namesAll.filter(n=> initialPhoneme(n)===phon) : (namesByLetter[firstLetter]||[]);
+        if(!pool.length) pool = namesByLetter[firstLetter]||[];
+        let choice = cap(rand(pool));
+        if(choice===current.name && pool.length>1){ choice = cap(pool[(pool.indexOf(choice)+1)%pool.length]); }
         current.name = choice;
       }
 
-      current.word = w; current.letter = first;
+      current.word = w; current.letter = firstLetter;
 
       const showAnimal = chkAnimal.checked;
       const showName = chkName.checked;
 
       if(delayOn){
-        // staged reveal: 1st immediately
+        // Stage 1: show first word and speak it
         result.innerHTML = `<span class="emo">${w}</span>`;
-        // Determine which comes next
-        const nextPieces = [];
-        if(showAnimal) nextPieces.push({cls:'animal', text:current.animal, at:d12});
-        if(showName) nextPieces.push({cls:'name', text:current.name, at: showAnimal? d13 : d12});
-        nextPieces.forEach(({cls,text,at})=>{
-          const tid = setTimeout(()=>{
-            if(cls==='animal') result.innerHTML = `<span class="emo">${w}</span> <span class="animal">${text}</span>`;
-            if(cls==='name')  result.innerHTML = `<span class="emo">${w}</span>${showAnimal?` <span class=\"animal\">${current.animal}</span>`:''} <span class="name">${text}</span>`;
+        speak(w);
+        // Determine schedule for 2nd and 3rd
+        if(showAnimal){
+          t2 = setTimeout(()=>{
+            result.innerHTML = `<span class=\"emo\">${w}</span> <span class=\"animal\">${current.animal}</span>`;
+            speak(current.animal);
+          }, d12*1000);
+        }
+        if(showName){
+          const at = showAnimal ? d13 : d12; // if no animal, the name comes at the first offset
+          t3 = setTimeout(()=>{
+            result.innerHTML = `<span class=\"emo\">${w}</span>${showAnimal?` <span class=\"animal\">${current.animal}</span>`:''} <span class=\"name\">${current.name}</span>`;
+            speak(current.name);
           }, at*1000);
-          if(cls==='animal') t2=tid; else t3=tid;
-        });
-        const lastAt = nextPieces.length? Math.max(...nextPieces.map(p=>p.at)) : 0;
-        tSpeak = setTimeout(()=>{ speak(`${w}${showAnimal? ' '+current.animal:''}${showName? ' '+current.name:''}`); }, (lastAt+0.05)*1000);
+        }
       } else {
-        // instant render
+        // instant render & single speak
         let html = `<span class="emo">${w}</span>`;
         if(showAnimal) html += ` <span class="animal">${current.animal}</span>`;
         if(showName) html += ` <span class="name">${current.name}</span>`;
         result.innerHTML = html;
         speak(`${w}${showAnimal? ' '+current.animal:''}${showName? ' '+current.name:''}`);
       }
+
+      updatePlayButtons();
     }
 
     function groupIdxForWord(w){ const f=w[0].toLowerCase(); if(f<'f') return 0; if(f<'k') return 1; if(f<'p') return 2; return 3; }
@@ -513,14 +545,14 @@
     }
 
     function newPhrase(){ if(alphaToggle.checked) newPhraseAlpha(+1); else render(rand(getActiveFirstWordList()), { keepAnimal:false, keepName:false }); }
-    function newAnimal(){ if(!chkAnimal.checked) return; const letter=current.letter; const bank=animalsByLetter[letter]||[]; if(!bank.length) return; let choices=bank.filter(a=>a!==current.animal); if(!choices.length) choices=bank; render(current.word,{ forceAnimal:rand(choices), keepName:true }); }
-    function newName(){ if(!chkName.checked) return; const letter=current.letter; const bank=namesByLetter[letter]||[]; if(!bank.length) return; let choices=bank.filter(n=>n!==current.name); if(!choices.length) choices=bank; render(current.word,{ forceName:rand(choices), keepAnimal:true }); }
+    function newAnimal(){ if(!chkAnimal.checked) return; render(current.word,{ keepName:true }); }
+    function newName(){ if(!chkName.checked) return; render(current.word,{ keepAnimal:true }); }
 
     newPhraseBtn.addEventListener('click', newPhrase);
     newAnimalBtn.addEventListener('click', newAnimal);
     newNameBtn.addEventListener('click', newName);
 
-    // New: Enlarge (enter focus) & Minimize (exit focus)
+    // Enlarge/Minimize
     enlargeBtn.addEventListener('click', ()=> document.body.classList.add('focus'));
     document.getElementById('minimizeBtn').addEventListener('click', ()=> document.body.classList.remove('focus'));
 
@@ -591,8 +623,10 @@
     settingsSheet.addEventListener('click', e=>{ if(e.target.id==='settings'){ settingsSheet.classList.remove('open'); settingsBtn.classList.remove('active'); }});
     document.querySelectorAll('.setGap').forEach(b=> b.addEventListener('click', ()=>{ const v=Number(b.dataset.gap)||5; gapSec=v; settingsSheet.classList.remove('open'); settingsBtn.classList.remove('active'); if(playing && !delayOn) scheduleNext(); }));
 
-    // Delay toggles and timing buttons
+    // Delay & phonetic toggles
     delayToggle.addEventListener('change', ()=>{ delayOn=delayToggle.checked; if(playing) scheduleNext(); render(current.word, { keepAnimal:true, keepName:true }); });
+    phoneticToggle.addEventListener('change', ()=>{ phoneticOn=phoneticToggle.checked; render(current.word,{ keepAnimal:false, keepName:false }); });
+
     document.querySelectorAll('.setD12').forEach(b=> b.addEventListener('click', ()=>{ d12=Number(b.dataset.v)||2; if(delayOn) render(current.word,{ keepAnimal:true, keepName:true }); }));
     document.querySelectorAll('.setD13').forEach(b=> b.addEventListener('click', ()=>{ d13=Number(b.dataset.v)||4; if(delayOn) render(current.word,{ keepAnimal:true, keepName:true }); }));
 
@@ -602,7 +636,7 @@
 
     // Audio toggle (highlight button when ON)
     function updateAudioBtn(){ audioBtn.classList.toggle('active', audioOn); }
-    audioBtn.addEventListener('click', ()=>{ audioOn=!audioOn; updateAudioBtn(); if(audioOn) speak(`${current.word}${chkAnimal.checked?' '+current.animal:''}${chkName.checked?' '+current.name:''}`); else if('speechSynthesis' in window) window.speechSynthesis.cancel(); });
+    audioBtn.addEventListener('click', ()=>{ audioOn=!audioOn; updateAudioBtn(); if(!audioOn && 'speechSynthesis' in window) window.speechSynthesis.cancel(); });
 
     // Global PC shortcuts: Enter=new phrase, ←/→ prev/next when not in input
     document.addEventListener('keydown', e=>{
@@ -620,13 +654,10 @@
     setTimeout(()=>{ splash.classList.add('hide'); }, 30000);
 
     // Boot ------------------------------------------------------------------
-    // seed current animal/name for 'breathing' (b)
-    current.animal = animalsByLetter['b'][0];
-    current.name = cap(namesByLetter['b'][0]);
     updatePlayButtons();
-    updateAudioBtn();
     fillGrids();
     render('breathing', { keepAnimal:true, keepName:true });
+    scheduleNext(); // default start playing
   </script>
 </body>
 </html>
