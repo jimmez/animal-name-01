@@ -7,7 +7,7 @@
   <meta name="mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
-  <title>Alliteration Animal Namer — v13</title>
+  <title>Alliteration Animal Namer — v14</title>
   <style>
     :root{
       --bg:#0b0b0c; --card:#151518; --text:#f6f7fb; --muted:#a9adc1; --ring:#3b82f6;
@@ -39,9 +39,6 @@
     .btn.icon svg{width:18px;height:18px;display:block}
     .btn:active{transform:translateY(1px)}
     .btn.active{background:linear-gradient(135deg,var(--play),var(--playGlow));border-color:transparent;box-shadow:0 0 0 3px rgba(34,197,94,.25)}
-
-    /* Play button */
-    .btn.play{display:inline-flex;align-items:center;gap:8px}
 
     .row{display:flex;gap:12px;align-items:center;flex-wrap:wrap}
 
@@ -77,9 +74,9 @@
     /* Focus (swipe-right) mode: huge prompt, everything else hidden */
     body.focus header, body.focus .card, body.focus .sheet, body.focus .footer, body.focus .topbar{ display:none !important; }
     body.focus .banner{ box-shadow:none; border-bottom:none; }
-    body.focus .banner .output{ font-size:clamp(40px,12vw,120px); padding:28px 16px; text-align:center; }
-    body.focus .emo, body.focus .animal, body.focus .name{ display:block; }
-    @media (orientation:landscape){ body.focus .emo, body.focus .animal, body.focus .name{ display:inline; } }
+    body.focus .banner .output{ font-size:clamp(40px,12vw,120px); padding:28px 16px; }
+    body.focus .emo, body.focus .animal, body.focus .name{ display:block; text-align:left; }
+    @media (orientation:landscape){ body.focus .emo, body.focus .animal, body.focus .name{ display:inline; text-align:left; } body.focus .banner .output{ text-align:left; } }
 
     .footer{margin:28px 2px 12px;color:var(--muted);font-size:12px}
   </style>
@@ -117,14 +114,14 @@
       </div>
 
       <div class="row" style="margin-top:12px">
-        <button class="btn" id="newPhraseBtn">New phrase</button>
+        <button class="btn" id="newPhraseBtn">New phrase</</button>
         <button class="btn" id="newAnimalBtn">New animal</button>
         <button class="btn" id="newNameBtn">New name</button>
         <button class="btn" id="openSheet">Open pages</button>
       </div>
     </div>
 
-    <p class="footer">Output: <span class="emo">emotion/movement</span> <span class="animal">animal</span> <span class="name">name</span>. Emotion/movement stays lowercase. Click the prompt or empty area for a new phrase. Audio (if on) reads at 0.7× speed. Swipe ▶ to focus; ◀ to exit.</p>
+    <p class="footer">Output: <span class="emo">emotion/movement</span> <span class="animal">animal</span> <span class="name">name</span>. Emotion/movement stays lowercase. Click the prompt or empty area for a new phrase. Audio (if on) reads at 0.7× speed. Swipe ▶ for Focus, ◀ to exit. Swipe ▲ to open Pages; while open: ◀/▶ switch pages, ▼ closes.</p>
   </div>
 
   <!-- Bottom sheet: list-only pages with fast flip -->
@@ -168,7 +165,7 @@
   </div>
 
   <!-- Startup splash (shows for 30s then fades) -->
-  <div class="splash" id="splash"><div class="pill">Jimmy James 24.09.2025 - v13</div></div>
+  <div class="splash" id="splash"><div class="pill">Jimmy James 24.09.2025 - v14</div></div>
 
   <script>
     // ==== DATA ==============================================================
@@ -420,26 +417,38 @@
     flipNext.addEventListener('click', ()=>{ curPage = (curPage+1)%4; applyPage(); });
     document.addEventListener('keydown', e=>{ if(!sheet.classList.contains('open')) return; if(e.key==='ArrowRight'){ e.preventDefault(); flipNext.click(); } if(e.key==='ArrowLeft'){ e.preventDefault(); flipPrev.click(); } });
 
-    // Touch swipe for pages & focus mode
-    let startY=null,startX=null; let swiping=false;
-    const SWIPE_H=60, SWIPE_V=70;
-    window.addEventListener('pointerdown', e=>{ startY=e.clientY; startX=e.clientX; swiping=true; }, {passive:true});
+    // ==== Gestures: easier, anywhere swipes ================================
+    let startX=null, startY=null, handled=false;
+    const H=35, V=60; // looser thresholds
+    window.addEventListener('pointerdown', e=>{ startX=e.clientX; startY=e.clientY; handled=false; }, {passive:false});
     window.addEventListener('pointermove', e=>{
-      if(!swiping) return;
-      const dx=e.clientX-startX; const dy=e.clientY-startY;
-      // Horizontal swipe (focus mode toggle)
-      if(Math.abs(dx)>SWIPE_H && Math.abs(dy)<40){
-        if(dx>0){ document.body.classList.add('focus'); } // swipe right => focus ON
-        else { document.body.classList.remove('focus'); }  // swipe left => focus OFF
-        swiping=false; return;
+      if(startX===null) return;
+      const dx=e.clientX-startX, dy=e.clientY-startY;
+      const ax=Math.abs(dx), ay=Math.abs(dy);
+      if(handled) { e.preventDefault(); return; }
+
+      if(ax>H && ax>ay){ // horizontal
+        if(sheet.classList.contains('open')){
+          if(dx>0){ // prev page
+            curPage=(curPage+3)%4; applyPage();
+          } else { // next page
+            curPage=(curPage+1)%4; applyPage();
+          }
+        } else {
+          if(dx>0){ document.body.classList.add('focus'); } else { document.body.classList.remove('focus'); }
+        }
+        handled=true; e.preventDefault(); return;
       }
-      // Vertical swipe (open/close bottom sheet)
-      if(Math.abs(dy)>SWIPE_V && Math.abs(dx)<60){
-        if(dy<0 && !sheet.classList.contains('open') && startY>window.innerHeight*0.7){ openSheet(); swiping=false; return; }
-        if(dy>0 && sheet.classList.contains('open') && startY<window.innerHeight*0.5){ closeSheet(); swiping=false; return; }
+      if(ay>V && ay>ax){ // vertical
+        if(dy<0){ // up
+          openSheet();
+        } else { // down
+          if(sheet.classList.contains('open')) closeSheet();
+        }
+        handled=true; e.preventDefault(); return;
       }
-    }, {passive:true});
-    window.addEventListener('pointerup', ()=>{ swiping=false; });
+    }, {passive:false});
+    window.addEventListener('pointerup', ()=>{ startX=null; startY=null; handled=false; }, {passive:false});
 
     // ==== Auto-play & Settings ============================================
     function updatePlayButtons(){ playBtn.classList.toggle('active',playing); }
