@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
-  <title>Alliteration Animal Namer — v8</title>
+  <title>Alliteration Animal Namer — v9</title>
   <style>
     :root{
       --bg:#0b0b0c; --card:#151518; --text:#f6f7fb; --muted:#a9adc1; --ring:#3b82f6;
@@ -39,16 +39,18 @@
     .animal{color:var(--green);font-weight:800}
     .name{color:var(--blue);font-weight:800}
 
-    /* Page 1 search suggestions */
-    .suggestions{position:relative;margin-top:8px}
-    .suggestions ul{position:absolute;z-index:40;list-style:none;margin:0;padding:6px;background:#0f1117;border:1px solid #262a36;border-radius:12px;width:100%;max-height:260px;overflow:auto;box-shadow:0 20px 30px rgba(0,0,0,.35)}
-    .suggestions li{padding:10px 12px;border-radius:10px;cursor:pointer}
-    .suggestions li:hover{background:#1a1f2b}
-
-    /* Inputs */
+    /* Page 1 search + suggestions */
     .field{position:relative}
     input[type="text"]{width:100%;padding:16px 48px 16px 16px;border-radius:14px;border:1px solid #272a36;background:#0f1117;color:var(--text);font-size:18px;outline:none;transition:border .18s, box-shadow .18s}
     input[type="text"]:focus{border-color:var(--ring);box-shadow:0 0 0 4px rgba(59,130,246,.25)}
+    .p1bar{display:flex;gap:10px;align-items:center;margin-bottom:6px}
+    .toggle{display:inline-flex;align-items:center;gap:8px}
+    .toggle input{width:18px;height:18px}
+
+    .suggestions{position:relative;margin-top:8px}
+    .suggestions ul{position:absolute;z-index:40;list-style:none;margin:0;padding:6px;background:#0f1117;border:1px solid #262a36;border-radius:12px;width:100%;max-height:260px;overflow:auto;box-shadow:0 20px 30px rgba(0,0,0,.35)}
+    .suggestions li{padding:10px 12px;border-radius:10px;cursor:pointer}
+    .suggestions li[aria-selected="true"], .suggestions li:hover{background:#1a1f2b}
 
     /* Bottom sheet */
     .sheet{position:fixed;left:0;right:0;bottom:-100%;background:#0f1117;border-top-left-radius:16px;border-top-right-radius:16px;border:1px solid #262a36;box-shadow:0 -20px 30px rgba(0,0,0,.45);transition:bottom .25s ease;z-index:60}
@@ -76,16 +78,18 @@
       </button>
       <span class="logo" aria-label="Jimmy James Logo">JJ</span>
       <h1>Alliteration Animal Namer</h1>
-      <div class="sig"><strong>Jimmy James 24.09.2025 - v8</strong></div>
+      <div class="sig"><strong>Jimmy James 24.09.2025 - v9</strong></div>
       <div class="toolbar" style="margin-left:auto">
         <button class="btn" id="settingsBtn" title="Settings">⚙ Settings</button>
       </div>
     </header>
 
     <div class="card">
-      <!-- Page 1: this is the typing/search box that drives both prompt & suggestions -->
+      <div class="p1bar">
+        <label class="toggle"><input type="checkbox" id="alphaToggle" /> ABC next-letter</label>
+      </div>
       <div class="field">
-        <input id="page1Search" type="text" placeholder="Type a letter or prefix (prefix-only). Try: b or ba…" autocomplete="off" />
+        <input id="page1Search" type="text" placeholder="Type a prefix. Use ↑/↓ to navigate, Enter to select. ← previous • → next • Enter = New phrase" autocomplete="off" />
         <div class="suggestions" id="p1Suggest"></div>
       </div>
 
@@ -94,14 +98,14 @@
         <button class="btn" id="newPhraseBtn">New phrase</button>
         <button class="btn" id="newEmotionBtn">New emotion</button>
         <button class="btn" id="newMovementBtn">New movement</button>
-        <button class="btn" id="newNameBtn">New name</button>
         <button class="btn" id="newAnimalBtn">New animal</button>
+        <button class="btn" id="newNameBtn">New name</button>
       </div>
 
       <div class="output" id="result">Your phrase will appear here…</div>
     </div>
 
-    <p class="footer">Colored output: <span class="emo">emotion/movement</span> <span class="animal">animal</span> <span class="name">name</span>. Buttons use white letters. Search is prefix-only.</p>
+    <p class="footer">Colored output: <span class="emo">emotion/movement</span> <span class="animal">animal</span> <span class="name">name</span>. Prefix-only search. On PC: ↑/↓ = move in suggestions, Enter = select or New phrase, ←/→ = previous/next letter phrase.</p>
   </div>
 
   <!-- Bottom sheet with 5 pages -->
@@ -121,6 +125,8 @@
           <button class="btn" id="p1NewPhrase">New phrase</button>
           <button class="btn" id="p1NewEmotion">New emotion</button>
           <button class="btn" id="p1NewMovement">New movement</button>
+          <button class="btn" id="p1NewAnimal">New animal</button>
+          <button class="btn" id="p1NewName">New name</button>
           <button class="btn play" id="p1Play">
             <svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M8 5v14l11-7z"/></svg>
             <span>Play</span>
@@ -187,7 +193,6 @@
 
   <script>
     // ==== DATA ==============================================================
-    // Animals per letter (5–6 each)
     const animalsByLetter = {
       a:['ant','aardvark','albatross','anole','auk','axolotl'],
       b:['bear','beaver','buffalo','baboon','bluebird','boar'],
@@ -217,7 +222,6 @@
       z:['zebra','zorilla','zebu','zander','zooplankter','zipper fish'],
     };
 
-    // Names per letter (5–8). Includes your custom names.
     const namesByLetter = {
       a:['Alex','Anjitha','Aree','Amelia','Arnold','Ava'],
       b:['Barry','Bella','Brian','Beatrice','Bruno','Bianca'],
@@ -247,7 +251,6 @@
       z:['Zoe','Zach','Zara','Zeke','Zelda','Zane'],
     };
 
-    // Emotions & Movements --------------------------------------------------
     const emotionList = [
       'afraid','agitated','aloof','amused','angry','annoyed','anxious','ashamed','astonished','awkward','baffled','bitter','blissful','bold','brave','calm','cheerful','confident','confused','content','cranky','curious','defiant','delighted','depressed','determined','disgusted','dismayed','eager','ecstatic','embarrassed','envious','excited','fearful','frustrated','giddy','gloomy','grateful','grumpy','guilty','happy','hopeful','hostile','impatient','insecure','irritated','joyful','lonely','melancholy','nervous','optimistic','overwhelmed','peaceful','proud','relieved','resentful','restless','satisfied','scared','serene','shocked','shy','silly','sorrowful','startled','stressed','tense','tired','tranquil','upbeat','wistful','zealous'
     ];
@@ -268,8 +271,10 @@
     const newPhraseBtn = document.getElementById('newPhraseBtn');
     const newEmotionBtn = document.getElementById('newEmotionBtn');
     const newMovementBtn = document.getElementById('newMovementBtn');
-    const newNameBtn = document.getElementById('newNameBtn');
     const newAnimalBtn = document.getElementById('newAnimalBtn');
+    const newNameBtn = document.getElementById('newNameBtn');
+
+    const alphaToggle = document.getElementById('alphaToggle');
 
     const openSheetBtn = document.getElementById('openSheet');
     const sheet = document.getElementById('sheet');
@@ -297,9 +302,17 @@
     // Track current parts so we can preserve across actions
     let current = { word: 'breathing', letter: 'b', animal: 'bear', name: 'Barry' };
 
+    // Page 1 typing/suggestions state
+    const p1Search = document.getElementById('page1Search');
+    const p1Suggest = document.getElementById('p1Suggest');
+    let p1List = []; let p1Index = -1; // -1 means none selected
+
     // ==== HELPERS ===========================================================
     const cap = s => s ? s[0].toUpperCase()+s.slice(1) : s;
     const rand = arr => arr[Math.floor(Math.random()*arr.length)];
+    const letters = 'abcdefghijklmnopqrstuvwxyz'.split('');
+    const nextLetter = l => letters[(letters.indexOf(l)+1+26)%26]||'a';
+    const prevLetter = l => letters[(letters.indexOf(l)-1+26)%26]||'z';
 
     function buildPhrase(word, opts={}){
       if(!word) return '';
@@ -315,183 +328,147 @@
     function render(word, opts={}){
       const w = (word||current.word).toLowerCase();
       const first = w[0]||current.letter;
-      // update/preserve state
       if(!opts.keepAnimal){ current.animal = opts.forceAnimal ?? rand(animalsByLetter[first]||['creature']); }
       if(!opts.keepName){ current.name = opts.forceName ? cap(opts.forceName) : cap(rand(namesByLetter[first]||['Alex'])); }
       current.word = w; current.letter = first;
-      const html = buildPhrase(w, { keepAnimal: true, keepName: true });
-      result.innerHTML = html || 'Your phrase will appear here…';
+      result.innerHTML = buildPhrase(w, { keepAnimal:true, keepName:true }) || 'Your phrase will appear here…';
     }
 
-    function groupIdxForWord(w){
-      const f = w[0].toLowerCase();
-      if(f<'f') return 1; // A–E
-      if(f<'k') return 2; // F–J
-      if(f<'p') return 3; // K–O
-      return 4;          // P–Z
-    }
+    function groupIdxForWord(w){ const f=w[0].toLowerCase(); if(f<'f') return 1; if(f<'k') return 2; if(f<'p') return 3; return 4; }
 
-    function highlightPrefix(text, prefix){
-      if(!prefix) return cap(text);
-      const t=text.toLowerCase(), s=prefix.toLowerCase();
-      if(!t.startsWith(s)) return cap(text);
-      const first = cap(text).slice(0, s.length);
-      const rest = text.slice(s.length);
-      return `<strong>${first}</strong>${rest}`;
-    }
+    function highlightPrefix(text, prefix){ if(!prefix) return cap(text); const t=text.toLowerCase(), s=prefix.toLowerCase(); if(!t.startsWith(s)) return cap(text); const first = cap(text).slice(0, s.length); const rest = text.slice(s.length); return `<strong>${first}</strong>${rest}`; }
 
-    function makeWordButton(word){
-      const b = document.createElement('button');
-      b.className = 'btn small';
-      b.dataset.word = word;
-      b.innerHTML = cap(word);
-      b.addEventListener('click', ()=>{ render(word); });
-      return b;
-    }
+    function makeWordButton(word){ const b=document.createElement('button'); b.className='btn small'; b.dataset.word=word; b.innerHTML=cap(word); b.addEventListener('click',()=>{ render(word); }); return b; }
+
+    const emotionSetOnly = new Set(emotionList);
 
     const bins = {1:grid12,2:gridFJ,3:gridKO,4:gridPZ};
     function fillAllGrids(filter=''){
       const q = filter.trim().toLowerCase();
       Object.values(bins).forEach(grid=>grid.innerHTML='');
       const list = words.filter(w=> !q || w.toLowerCase().startsWith(q));
-      list.forEach(w=>{
-        const ix = groupIdxForWord(w);
-        const btn = makeWordButton(w);
-        btn.innerHTML = highlightPrefix(w, q);
-        bins[ix].appendChild(btn);
-      });
-      [randomFromSearch12,randomFromSearchFJ,randomFromSearchKO,randomFromSearchPZ].forEach(btn=>{
-        if(!btn) return; btn.disabled = list.length===0; btn.style.opacity = list.length?1:.6;
-      });
+      list.forEach(w=>{ const ix=groupIdxForWord(w); const btn=makeWordButton(w); btn.innerHTML=highlightPrefix(w,q); bins[ix].appendChild(btn); });
+      [randomFromSearch12,randomFromSearchFJ,randomFromSearchKO,randomFromSearchPZ].forEach(btn=>{ if(!btn) return; btn.disabled=list.length===0; btn.style.opacity=list.length?1:.6; });
       return list;
     }
 
-    // Initial fill
-    let currentFiltered = fillAllGrids('');
+    // Build next/prev letter phrase ----------------------------------------
+    function pickWordForLetter(l){ const list=words.filter(w=>w.startsWith(l)); return list.length?rand(list):null; }
+    function newPhraseAlpha(step=1){
+      let l=current.letter||'a';
+      if(alphaToggle.checked){ l = step>0? nextLetter(l) : prevLetter(l); }
+      let w = pickWordForLetter(l);
+      if(!w){ // find nearest with wrap
+        for(let i=0;i<26;i++){ l = step>0? nextLetter(l) : prevLetter(l); w = pickWordForLetter(l); if(w) break; }
+      }
+      render(w||rand(words), { keepAnimal:false, keepName:false });
+    }
 
-    // Page 1 search (drives prompt + suggestions) --------------------------
-    const p1Search = document.getElementById('page1Search');
-    const p1Suggest = document.getElementById('p1Suggest');
-    function p1ShowSuggest(list){
+    // ==== PAGE 1: Typing + suggestions with keyboard control ==============
+    function p1RenderSuggest(list, query){
       p1Suggest.innerHTML='';
-      if(!list.length) return;
+      if(!list.length) { p1Index=-1; return; }
       const ul=document.createElement('ul');
-      list.slice(0,12).forEach(w=>{ const li=document.createElement('li'); li.innerHTML = highlightPrefix(w, p1Search.value.trim()); li.addEventListener('click',()=>{ p1Suggest.innerHTML=''; p1Search.value=''; render(w,{keepAnimal:false,keepName:false});}); ul.appendChild(li); });
+      list.slice(0,50).forEach((w,i)=>{ const li=document.createElement('li'); li.innerHTML=highlightPrefix(w,query); li.setAttribute('role','option'); li.setAttribute('aria-selected', String(i===p1Index)); li.addEventListener('mouseenter',()=>{ p1Index=i; updateP1Highlight(); }); li.addEventListener('click',()=>{ p1Index=i; chooseP1Index(); }); ul.appendChild(li); });
       p1Suggest.appendChild(ul);
     }
+    function updateP1Highlight(){ const items=p1Suggest.querySelectorAll('li'); items.forEach((li,i)=> li.setAttribute('aria-selected', String(i===p1Index))); }
+    function chooseP1Index(){ if(p1Index<0 || p1Index>=p1List.length) return; const word=p1List[p1Index]; p1Suggest.innerHTML=''; p1Search.value=''; render(word,{keepAnimal:false,keepName:false}); }
+
     p1Search.addEventListener('input', e=>{
-      const q=e.target.value.trim();
+      const q=e.target.value.trim().toLowerCase();
       if(!q){ p1Suggest.innerHTML=''; return; }
-      // Live prompt update: always render what you typed
-      const newLetter = q[0].toLowerCase();
-      // if first letter changed, regenerate animal & name
-      if(newLetter !== current.letter){ render(q, { keepAnimal:false, keepName:false }); }
-      else { render(q, { keepAnimal:true, keepName:true }); }
-      const list = words.filter(w=>w.startsWith(q.toLowerCase()));
-      p1ShowSuggest(list);
+      const newLetter=q[0];
+      if(newLetter!==current.letter){ render(q,{keepAnimal:false,keepName:false}); } else { render(q,{keepAnimal:true,keepName:true}); }
+      p1List = words.filter(w=>w.startsWith(q));
+      p1Index = p1List.length?0:-1; // default highlight first
+      p1RenderSuggest(p1List,q);
     });
 
-    // Search handlers for pages 1–4 (prefix-only across ALL) ---------------
-    ;[search12,searchFJ,searchKO,searchPZ].forEach(inp=>{
-      if(!inp) return;
-      inp.addEventListener('input', e=>{ currentFiltered = fillAllGrids(e.target.value); });
+    p1Search.addEventListener('keydown', e=>{
+      const key=e.key;
+      if(key==='ArrowDown'){ e.preventDefault(); if(!p1List.length) return; p1Index=(p1Index+1)%p1List.length; updateP1Highlight(); return; }
+      if(key==='ArrowUp'){ e.preventDefault(); if(!p1List.length) return; p1Index=(p1Index-1+p1List.length)%p1List.length; updateP1Highlight(); return; }
+      if(key==='Enter'){
+        e.preventDefault();
+        if(p1List.length && p1Index>=0){ chooseP1Index(); }
+        else { newPhraseAlpha(+1); }
+        return;
+      }
+      if(key==='ArrowRight'){ e.preventDefault(); newPhraseAlpha(+1); return; }
+      if(key==='ArrowLeft'){ e.preventDefault(); newPhraseAlpha(-1); return; }
     });
-    // Clear buttons for pages 1–4
-    document.querySelectorAll('.clearBtn').forEach(btn=>{
-      btn.addEventListener('click', ()=>{
-        const id = btn.dataset.clear; const el = document.getElementById(id);
-        if(!el) return; el.value=''; currentFiltered = fillAllGrids(''); el.focus();
-      });
-    });
 
-    // Random-from-results buttons
-    function hookRandomFrom(el){ if(!el) return; el.addEventListener('click', ()=>{ if(!currentFiltered.length) return; const w = rand(currentFiltered); render(w); }); }
-    hookRandomFrom(randomFromSearch12);
-    hookRandomFrom(randomFromSearchFJ);
-    hookRandomFrom(randomFromSearchKO);
-    hookRandomFrom(randomFromSearchPZ);
+    // ==== Buttons ==========================================================
+    function pickEmotionSameLetter(){ const letter=current.letter; const emos=emotionList.filter(w=>w.startsWith(letter)); return emos.length?rand(emos):rand(emotionList); }
+    function pickMovementSameLetter(){ const letter=current.letter; const moves=movementList.filter(w=>w.startsWith(letter)); return moves.length?rand(moves):rand(movementList); }
 
-    // Tabs / sheet ----------------------------------------------------------
-    function openSheet(){ sheet.classList.add('open'); }
-    function closeSheet(){ sheet.classList.remove('open'); }
-    openSheetBtn.addEventListener('click', openSheet);
-    closeSheetBtn.addEventListener('click', closeSheet);
-    tabs.forEach(t=> t.addEventListener('click', ()=>{
-      const ix = Number(t.dataset.ix)||0; pages.style.transform = `translateX(-${ix*100}vw)`; }));
-
-    // Swipe up to open + swipe pages
-    let startY=null,startX=null;
-    window.addEventListener('touchstart', e=>{ const t=e.touches[0]; startY=t.clientY; startX=t.clientX; }, {passive:true});
-    window.addEventListener('touchmove', e=>{ if(startY===null) return; const t=e.touches[0]; const dy=startY-t.clientY; const dx=startX-t.clientX; if(dy>40 && !sheet.classList.contains('open')) openSheet(); if(Math.abs(dx)>40 && sheet.classList.contains('open')){ const cur = Math.round(Math.abs(parseInt(pages.style.transform.replace(/[^0-9-]/g,''))||0)/100) || 0; const next = dx>0 ? Math.min(cur+1,4) : Math.max(cur-1,0); pages.style.transform = `translateX(-${next*100}vw)`; } }, {passive:true});
-    window.addEventListener('touchend', ()=>{ startY=null; startX=null; });
-
-    // Buttons ---------------------------------------------------------------
-    function pickEmotionSameLetter(){
-      const letter = current.letter;
-      const emos = emotionList.filter(w=> w.startsWith(letter));
-      return emos.length ? rand(emos) : rand(emotionList);
-    }
-    function pickMovementSameLetter(){
-      const letter = current.letter;
-      const moves = movementList.filter(w=> w.startsWith(letter));
-      return moves.length ? rand(moves) : rand(movementList);
-    }
-
-    function newPhrase(){ render(rand(words), { keepAnimal:false, keepName:false }); }
+    function newPhrase(){ if(alphaToggle.checked) newPhraseAlpha(+1); else render(rand(words), { keepAnimal:false, keepName:false }); }
     function newEmotion(){ render(pickEmotionSameLetter(), { keepAnimal:true, keepName:true }); }
     function newMovement(){ render(pickMovementSameLetter(), { keepAnimal:true, keepName:true }); }
-    function newName(){ const letter=current.letter; const bank=namesByLetter[letter]||[]; if(!bank.length) return; let choices=bank.filter(n=>n!==current.name); if(!choices.length) choices=bank; render(current.word,{ forceName:rand(choices), keepAnimal:true }); }
     function newAnimal(){ const letter=current.letter; const bank=animalsByLetter[letter]||[]; if(!bank.length) return; let choices=bank.filter(a=>a!==current.animal); if(!choices.length) choices=bank; render(current.word,{ forceAnimal:rand(choices), keepName:true }); }
+    function newName(){ const letter=current.letter; const bank=namesByLetter[letter]||[]; if(!bank.length) return; let choices=bank.filter(n=>n!==current.name); if(!choices.length) choices=bank; render(current.word,{ forceName:rand(choices), keepAnimal:true }); }
 
     newPhraseBtn.addEventListener('click', newPhrase);
     newEmotionBtn.addEventListener('click', newEmotion);
     newMovementBtn.addEventListener('click', newMovement);
-    newNameBtn.addEventListener('click', newName);
     newAnimalBtn.addEventListener('click', newAnimal);
+    newNameBtn.addEventListener('click', newName);
 
-    // mirror buttons on page 0 inside sheet
+    // Mirror on Page 0 in sheet
     document.getElementById('p1NewPhrase').addEventListener('click', newPhrase);
     document.getElementById('p1NewEmotion').addEventListener('click', newEmotion);
     document.getElementById('p1NewMovement').addEventListener('click', newMovement);
+    document.getElementById('p1NewAnimal').addEventListener('click', newAnimal);
+    document.getElementById('p1NewName').addEventListener('click', newName);
 
-    // Auto-play -------------------------------------------------------------
-    function updatePlayButtons(){
-      const label = playing ? 'Stop' : 'Play';
-      const iconPlay = '<svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M8 5v14l11-7z"/></svg>';
-      const iconStop = '<svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M6 6h12v12H6z"/></svg>';
-      playBtn.innerHTML = (playing?iconStop:iconPlay) + `<span>${label}</span>`;
-      p1Play.innerHTML = (playing?iconStop:iconPlay) + `<span>${label}</span>`;
-      playBtn.classList.toggle('active', playing);
-      p1Play.classList.toggle('active', playing);
-    }
-    function scheduleNext(){
-      if(!playing) return;
-      const [min,max]=range; const ms = Math.round((min + Math.random()*(max-min)) * 1000);
-      clearTimeout(timer);
-      timer = setTimeout(()=>{ newPhrase(); scheduleNext(); }, ms);
-    }
+    // Global PC shortcuts: Enter=new phrase, ←/→ prev/next when not in input
+    document.addEventListener('keydown', e=>{
+      if(document.activeElement===p1Search) return; // input handles its own
+      if(e.key==='Enter'){ e.preventDefault(); newPhraseAlpha(+1); }
+      if(e.key==='ArrowRight'){ e.preventDefault(); newPhraseAlpha(+1); }
+      if(e.key==='ArrowLeft'){ e.preventDefault(); newPhraseAlpha(-1); }
+    });
+
+    // ==== Bottom sheet & search grids =====================================
+    function openSheet(){ sheet.classList.add('open'); }
+    function closeSheet(){ sheet.classList.remove('open'); }
+    openSheetBtn.addEventListener('click', openSheet);
+    closeSheetBtn.addEventListener('click', closeSheet);
+    tabs.forEach(t=> t.addEventListener('click', ()=>{ const ix=Number(t.dataset.ix)||0; pages.style.transform=`translateX(-${ix*100}vw)`; }));
+
+    let startY=null,startX=null; // touch swipe
+    window.addEventListener('touchstart', e=>{ const t=e.touches[0]; startY=t.clientY; startX=t.clientX; }, {passive:true});
+    window.addEventListener('touchmove', e=>{ if(startY===null) return; const t=e.touches[0]; const dy=startY-t.clientY; const dx=startX-t.clientX; if(dy>40 && !sheet.classList.contains('open')) openSheet(); if(Math.abs(dx)>40 && sheet.classList.contains('open')){ const cur=Math.round(Math.abs(parseInt(pages.style.transform.replace(/[^0-9-]/g,''))||0)/100)||0; const next=dx>0?Math.min(cur+1,4):Math.max(cur-1,0); pages.style.transform=`translateX(-${next*100}vw)`; } }, {passive:true});
+    window.addEventListener('touchend', ()=>{ startY=null; startX=null; });
+
+    function fillAllGridsWrapper(){ fillAllGrids(''); }
+
+    // Pages 2–5 searches (prefix-only across ALL)
+    ;[search12,searchFJ,searchKO,searchPZ].forEach(inp=>{ if(!inp) return; inp.addEventListener('input', e=>{ fillAllGrids(e.target.value); }); });
+    document.querySelectorAll('.clearBtn').forEach(btn=>{ btn.addEventListener('click', ()=>{ const id=btn.dataset.clear; const el=document.getElementById(id); if(!el) return; el.value=''; fillAllGrids(''); el.focus(); }); });
+
+    // Random-from-results buttons
+    function hookRandomFrom(el){ if(!el) return; el.addEventListener('click', ()=>{ const list=fillAllGrids(el.id.includes('12')?search12.value:el.id.includes('FJ')?searchFJ.value:el.id.includes('KO')?searchKO.value:searchPZ.value); if(!list.length) return; render(rand(list)); }); }
+    hookRandomFrom(randomFromSearch12); hookRandomFrom(randomFromSearchFJ); hookRandomFrom(randomFromSearchKO); hookRandomFrom(randomFromSearchPZ);
+
+    // ==== Auto-play ========================================================
+    function updatePlayButtons(){ const label=playing?'Stop':'Play'; const iconPlay='<svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M8 5v14l11-7z"/></svg>'; const iconStop='<svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M6 6h12v12H6z"/></svg>'; playBtn.innerHTML=(playing?iconStop:iconPlay)+`<span>${label}</span>`; p1Play.innerHTML=(playing?iconStop:iconPlay)+`<span>${label}</span>`; playBtn.classList.toggle('active',playing); p1Play.classList.toggle('active',playing); }
+    function scheduleNext(){ if(!playing) return; const [min,max]=range; const ms=Math.round((min+Math.random()*(max-min))*1000); clearTimeout(timer); timer=setTimeout(()=>{ newPhrase(); scheduleNext(); }, ms); }
     function togglePlay(){ playing=!playing; updatePlayButtons(); if(playing) scheduleNext(); else clearTimeout(timer); }
-    playBtn.addEventListener('click', togglePlay);
-    p1Play.addEventListener('click', togglePlay);
+    playBtn.addEventListener('click', togglePlay); p1Play.addEventListener('click', togglePlay);
 
-    // Settings sheet (interval quick set)
-    const settingsSheet = document.getElementById('settings');
+    const settingsSheet=document.getElementById('settings');
     document.getElementById('settingsBtn').addEventListener('click', ()=> settingsSheet.classList.add('open'));
     settingsSheet.addEventListener('click', e=>{ if(e.target.id==='settings') settingsSheet.classList.remove('open'); });
-    document.querySelectorAll('.setIv').forEach(b=> b.addEventListener('click', ()=>{
-      const v=b.dataset.iv; if(v==='manual'){ playing=false; updatePlayButtons(); settingsSheet.classList.remove('open'); return; }
-      const [a,bn]=v.split('-').map(Number); if(!isNaN(a)&&!isNaN(bn)) range=[a,bn]; settingsSheet.classList.remove('open'); if(playing) scheduleNext();
-    }));
+    document.querySelectorAll('.setIv').forEach(b=> b.addEventListener('click', ()=>{ const v=b.dataset.iv; if(v==='manual'){ playing=false; updatePlayButtons(); settingsSheet.classList.remove('open'); return; } const [a,bn]=v.split('-').map(Number); if(!isNaN(a)&&!isNaN(bn)) range=[a,bn]; settingsSheet.classList.remove('open'); if(playing) scheduleNext(); }));
 
     // Boot ------------------------------------------------------------------
-    // Seed current animal/name for 'breathing' (b)
     current.animal = rand(animalsByLetter['b']);
     current.name = cap(rand(namesByLetter['b']));
     updatePlayButtons();
     render('breathing', { keepAnimal:true, keepName:true });
-
-    // Also pre-fill grids
-    fillAllGrids('');
+    fillAllGridsWrapper();
   </script>
 </body>
 </html>
