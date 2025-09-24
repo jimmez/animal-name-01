@@ -7,7 +7,7 @@
   <meta name="mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
-  <title>Alliteration Animal Namer — v19</title>
+  <title>Alliteration Animal Namer — v20</title>
   <style>
     :root{
       --bg:#0b0b0c; --card:#151518; --text:#f6f7fb; --muted:#a9adc1; --ring:#3b82f6;
@@ -110,7 +110,7 @@
           <svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M19.14,12.94a7.43,7.43,0,0,0,.05-.94,7.43,7.43,0,0,0-.05-.94l2.11-1.65a.48.48,0,0,0,.11-.61l-2-3.46a.5.5,0,0,0-.6-.22L16.9,5.5a7.5,7.5,0,0,0-1.63-.94l-.25-2.65A.49.49,0,0,0,14.54,1H9.46a.49.49,0,0,0-.48.41L8.73,4.06A7.5,7.5,0,0,0,7.1,5L4.24,4.12a.5.5,0,0,0-.6.22l-2,3.46a.48.48,0,0,0,.11.61L3.86,10a7.43,7.43,0,0,0-.05.94,7.43,7.43,0,0,0,.05.94L1.75,13.53a.48.48,0,0,0-.11.61l2,3.46a.5.5,0,0,0,.6.22L7.1,18.5a7.5,7.5,0,0,0,1.63.94l.25,2.65a.49.49,0,0,0,.48.41h5.08a.49.49,0,0,0,.48-.41l.25-2.65a7.5,7.5,0,0,0,1.63-.94l2.86.88a.5.5,0,0,0,.6-.22l2-3.46a.48.48,0,0,0-.11-.61ZM12,15.5A3.5,3.5,0,1,1,15.5,12,3.5,3.5,0,0,1,12,15.5Z"/></svg>
         </button>
       </div>
-      <h1>Alliteration Animal Namer</h1>
+      <h1>Alliteration Animal Namer — v20</h1>
     </header>
 
     <div class="card">
@@ -228,7 +228,7 @@
   </div>
 
   <!-- Startup splash (shows for 30s then fades) -->
-  <div class="splash" id="splash"><div class="pill">Jimmy James 24.09.2025 - v19</div></div>
+  <div class="splash" id="splash"><div class="pill">Jimmy James 24.09.2025 - v20</div></div>
 
   <script>
     // ==== DATA ==============================================================
@@ -268,7 +268,7 @@
       d:['Daisy','Daniel','Derek','Delilah','Diego','Daphne'],
       e:['Ella','Edward','Eve','Elijah','Emilia','Ethan'],
       f:['Felix','Fiona','Frank','Faith','Freya','Floyd'],
-      g:['George','Geetha','Grace','Gabriel','Gavin','Giselle','Giraffe?'],
+      g:['George','Geetha','Grace','Gabriel','Gavin','Giselle'],
       h:['Hank','Hannah','Harry','Hazel','Helen','Hugo'],
       i:['Isla','Isaac','India','Ivan','Ivy','Ines'],
       j:['Jasper','Julie','Jordan','June','Jonah','James','Jim','Jimmy'],
@@ -328,6 +328,41 @@
       'yielding','ytterbic',
       'zeta-potential','zwitterionic'
     ];
+
+    // Add Kerala (India) popular-style names (male & female), ~4 per letter where possible
+    const keralaNamesByLetter = {
+      a:['Anoop','Anil','Anitha','Anju'],
+      b:['Binu','Biju','Beena','Bindhu'],
+      c:['Chacko','Celine','Chitra','Cyril'],
+      d:['Deepa','Divya','Dileep','Deepak'],
+      e:['Ebin','Edwin','Esha','Emil'],
+      f:['Fathima','Faisal','Fida','Femi'],
+      g:['Gireesh','Geetha','Goutham','Greeshma'],
+      h:['Hari','Harish','Hema','Haritha'],
+      i:['Indu','Indira','Ijas','Irfan'],
+      j:['Jithin','Jisha','Jincy','Jobin'],
+      k:['Kiran','Kavya','Keerthi','Karthik'],
+      l:['Lijo','Liji','Laya','Lekha'],
+      m:['Manu','Manoj','Meera','Midhun'],
+      n:['Nisha','Nithin','Nithya','Neha'],
+      o:['Omana','Oommen','Ouseph','Oviya'],
+      p:['Praveen','Pranav','Priya','Poornima'],
+      q:['Qadir','Qamar','Qais','Qadira'],
+      r:['Ramesh','Rajesh','Reshma','Riya'],
+      s:['Sajith','Shaji','Sreya','Sruthi'],
+      t:['Thomas','Thomson','Thara','Tina'],
+      u:['Unni','Unnikrishnan','Usha','Uma'],
+      v:['Vijay','Vinod','Vidya','Veena'],
+      w:['Wilson','William','Warren','Winnie'],
+      x:['Xavier','Xavi','Xaviera','Xyla'],
+      y:['Yadhu','Yaseen','Yamini','Yohan'],
+      z:['Zain','Ziyad','Zareena','Zahra'],
+    };
+
+    // Merge Kerala names into master list (deduplicated)
+    for(const [ltr, arr] of Object.entries(keralaNamesByLetter)){
+      namesByLetter[ltr] = Array.from(new Set([...(namesByLetter[ltr]||[]), ...arr]));
+    }
 
     // ==== ELEMENTS & STATE ================================================
     const result = document.getElementById('result');
@@ -646,4 +681,3 @@
   </script>
 </body>
 </html>
-
