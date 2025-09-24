@@ -1,0 +1,497 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
+  <title>Alliteration Animal Namer — v8</title>
+  <style>
+    :root{
+      --bg:#0b0b0c; --card:#151518; --text:#f6f7fb; --muted:#a9adc1; --ring:#3b82f6;
+      --red:#ef4444; --green:#10b981; --blue:#3b82f6; --accent:#6ee7ff;
+      --play:#16a34a; --playGlow:#22c55e;
+    }
+    *{box-sizing:border-box}
+    html,body{height:100%}
+    body{margin:0;background:linear-gradient(180deg,#0b0b0c,#111217 40%,#0b0b0c);color:var(--text);font-family:system-ui,-apple-system,Segoe UI,Roboto,Inter,Arial,sans-serif}
+    .wrap{max-width:980px;margin:0 auto;padding:16px 16px 120px}
+
+    header{display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin:10px 0 12px}
+    h1{font-size:clamp(20px,3.5vw,30px);margin:0;font-weight:800;letter-spacing:.2px;display:flex;align-items:center;gap:10px}
+    .logo{display:inline-flex;align-items:center;justify-content:center;width:36px;height:36px;border-radius:10px;background:linear-gradient(135deg,var(--blue),var(--red));font-weight:900;color:#fff;box-shadow:0 6px 18px rgba(0,0,0,.35)}
+    .sig{margin-left:auto;text-align:right;color:var(--muted);font-size:12px;line-height:1.2;white-space:nowrap}
+
+    .card{background:var(--card);border:1px solid #23242d;border-radius:20px;padding:16px;box-shadow:0 10px 30px rgba(0,0,0,.35)}
+
+    .btn{appearance:none;border:1px solid #2a2f3d;background:#121420;color:#fff;padding:12px 16px;border-radius:12px;font-weight:800;cursor:pointer}
+    .btn.small{padding:8px 10px;font-size:12px}
+    .btn.ghost{background:transparent}
+    .btn:active{transform:translateY(1px)}
+
+    /* Play button */
+    .btn.play{display:inline-flex;align-items:center;gap:8px}
+    .btn.play svg{width:16px;height:16px;display:block}
+    .btn.play.active{background:linear-gradient(135deg,var(--play),var(--playGlow));border-color:transparent;box-shadow:0 0 0 3px rgba(34,197,94,.25)}
+
+    .row{display:flex;gap:12px;align-items:center;flex-wrap:wrap}
+
+    .output{margin-top:16px;padding:18px;border-radius:14px;background:#0f1117;border:1px solid #2a2e3d;font-size:22px;line-height:1.4}
+    .emo{color:var(--red);font-weight:800}
+    .animal{color:var(--green);font-weight:800}
+    .name{color:var(--blue);font-weight:800}
+
+    /* Page 1 search suggestions */
+    .suggestions{position:relative;margin-top:8px}
+    .suggestions ul{position:absolute;z-index:40;list-style:none;margin:0;padding:6px;background:#0f1117;border:1px solid #262a36;border-radius:12px;width:100%;max-height:260px;overflow:auto;box-shadow:0 20px 30px rgba(0,0,0,.35)}
+    .suggestions li{padding:10px 12px;border-radius:10px;cursor:pointer}
+    .suggestions li:hover{background:#1a1f2b}
+
+    /* Inputs */
+    .field{position:relative}
+    input[type="text"]{width:100%;padding:16px 48px 16px 16px;border-radius:14px;border:1px solid #272a36;background:#0f1117;color:var(--text);font-size:18px;outline:none;transition:border .18s, box-shadow .18s}
+    input[type="text"]:focus{border-color:var(--ring);box-shadow:0 0 0 4px rgba(59,130,246,.25)}
+
+    /* Bottom sheet */
+    .sheet{position:fixed;left:0;right:0;bottom:-100%;background:#0f1117;border-top-left-radius:16px;border-top-right-radius:16px;border:1px solid #262a36;box-shadow:0 -20px 30px rgba(0,0,0,.45);transition:bottom .25s ease;z-index:60}
+    .sheet.open{bottom:0}
+    .sheet .handle{width:54px;height:6px;background:#2a2f3d;border-radius:10px;margin:10px auto}
+    .sheet .tabs{display:flex;gap:8px;justify-content:center;margin:8px 0;flex-wrap:wrap}
+    .tab{padding:6px 10px;border-radius:999px;border:1px solid #2a2f3d;background:#15171f;color:#fff;font-weight:700;cursor:pointer}
+    .pages{display:flex;transition:transform .25s ease}
+    .page{min-width:100vw;max-width:100vw;padding:12px}
+    .pageHeader{display:flex;gap:8px;align-items:center;margin:0 0 8px}
+    .pageHeader input{flex:1;padding:10px 34px 10px 12px;border-radius:10px;border:1px solid #2a2f3d;background:#0c0f17;color:#fff}
+    .pageHeader .clear{position:relative}
+    .pageHeader .clearBtn{position:absolute;right:8px;top:50%;transform:translateY(-50%);border:none;background:#22283a;color:#fff;border-radius:8px;padding:2px 8px;cursor:pointer}
+    .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(120px,1fr));gap:10px;max-height:40vh;overflow:auto;padding-right:4px}
+
+    .footer{margin:28px 2px 12px;color:var(--muted);font-size:12px}
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <header>
+      <button class="btn play" id="playBtn" title="Auto play">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M8 5v14l11-7z"/></svg>
+        <span>Play</span>
+      </button>
+      <span class="logo" aria-label="Jimmy James Logo">JJ</span>
+      <h1>Alliteration Animal Namer</h1>
+      <div class="sig"><strong>Jimmy James 24.09.2025 - v8</strong></div>
+      <div class="toolbar" style="margin-left:auto">
+        <button class="btn" id="settingsBtn" title="Settings">⚙ Settings</button>
+      </div>
+    </header>
+
+    <div class="card">
+      <!-- Page 1: this is the typing/search box that drives both prompt & suggestions -->
+      <div class="field">
+        <input id="page1Search" type="text" placeholder="Type a letter or prefix (prefix-only). Try: b or ba…" autocomplete="off" />
+        <div class="suggestions" id="p1Suggest"></div>
+      </div>
+
+      <div class="row" style="margin-top:12px">
+        <button class="btn" id="openSheet">Open pages</button>
+        <button class="btn" id="newPhraseBtn">New phrase</button>
+        <button class="btn" id="newEmotionBtn">New emotion</button>
+        <button class="btn" id="newMovementBtn">New movement</button>
+        <button class="btn" id="newNameBtn">New name</button>
+        <button class="btn" id="newAnimalBtn">New animal</button>
+      </div>
+
+      <div class="output" id="result">Your phrase will appear here…</div>
+    </div>
+
+    <p class="footer">Colored output: <span class="emo">emotion/movement</span> <span class="animal">animal</span> <span class="name">name</span>. Buttons use white letters. Search is prefix-only.</p>
+  </div>
+
+  <!-- Bottom sheet with 5 pages -->
+  <div class="sheet" id="sheet">
+    <div class="handle"></div>
+    <div class="tabs">
+      <button class="tab" data-ix="0">Page 1</button>
+      <button class="tab" data-ix="1">A–E</button>
+      <button class="tab" data-ix="2">F–J</button>
+      <button class="tab" data-ix="3">K–O</button>
+      <button class="tab" data-ix="4">P–Z</button>
+      <button class="tab" id="closeSheet">Close</button>
+    </div>
+    <div class="pages" id="pages">
+      <div class="page" id="page0">
+        <div class="row" style="flex-wrap:wrap;gap:10px">
+          <button class="btn" id="p1NewPhrase">New phrase</button>
+          <button class="btn" id="p1NewEmotion">New emotion</button>
+          <button class="btn" id="p1NewMovement">New movement</button>
+          <button class="btn play" id="p1Play">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M8 5v14l11-7z"/></svg>
+            <span>Play</span>
+          </button>
+        </div>
+      </div>
+      <div class="page" id="page1">
+        <div class="pageHeader">
+          <div class="clear" style="flex:1;position:relative">
+            <input id="search12" type="text" placeholder="Search A–E (prefix; filters ALL)" />
+            <button class="clearBtn" data-clear="search12">×</button>
+          </div>
+          <button class="btn" id="randomFromSearch12">Random from results</button>
+        </div>
+        <div class="grid" id="grid12"></div>
+      </div>
+      <div class="page" id="page2">
+        <div class="pageHeader">
+          <div class="clear" style="flex:1;position:relative">
+            <input id="searchFJ" type="text" placeholder="Search F–J (prefix; filters ALL)" />
+            <button class="clearBtn" data-clear="searchFJ">×</button>
+          </div>
+          <button class="btn" id="randomFromSearchFJ">Random from results</button>
+        </div>
+        <div class="grid" id="gridFJ"></div>
+      </div>
+      <div class="page" id="page3">
+        <div class="pageHeader">
+          <div class="clear" style="flex:1;position:relative">
+            <input id="searchKO" type="text" placeholder="Search K–O (prefix; filters ALL)" />
+            <button class="clearBtn" data-clear="searchKO">×</button>
+          </div>
+          <button class="btn" id="randomFromSearchKO">Random from results</button>
+        </div>
+        <div class="grid" id="gridKO"></div>
+      </div>
+      <div class="page" id="page4">
+        <div class="pageHeader">
+          <div class="clear" style="flex:1;position:relative">
+            <input id="searchPZ" type="text" placeholder="Search P–Z (prefix; filters ALL)" />
+            <button class="clearBtn" data-clear="searchPZ">×</button>
+          </div>
+          <button class="btn" id="randomFromSearchPZ">Random from results</button>
+        </div>
+        <div class="grid" id="gridPZ"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Settings (interval only) -->
+  <div class="sheet" id="settings" style="padding-bottom:20px">
+    <div class="handle"></div>
+    <div style="padding:12px 16px">
+      <h3 style="margin:0 0 8px">Auto Play Interval</h3>
+      <div class="row" style="gap:8px;flex-wrap:wrap">
+        <button class="btn small setIv" data-iv="5-10">5–10s</button>
+        <button class="btn small setIv" data-iv="10-20">10–20s</button>
+        <button class="btn small setIv" data-iv="20-30">20–30s</button>
+        <button class="btn small setIv" data-iv="30-50">30–50s</button>
+        <button class="btn small setIv" data-iv="manual">Manual</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // ==== DATA ==============================================================
+    // Animals per letter (5–6 each)
+    const animalsByLetter = {
+      a:['ant','aardvark','albatross','anole','auk','axolotl'],
+      b:['bear','beaver','buffalo','baboon','bluebird','boar'],
+      c:['cheetah','cougar','capybara','cobra','crab','crow'],
+      d:['dog','deer','dolphin','duck','donkey','dragonfly'],
+      e:['eagle','emu','eel','elephant','egret','echidna'],
+      f:['fox','frog','falcon','ferret','flamingo','firefly'],
+      g:['giraffe','goat','goose','gecko','gorilla','goldfish'],
+      h:['horse','hamster','heron','hyena','hedgehog','hawk'],
+      i:['iguana','impala','ibis','inchworm','isopod','irish setter'],
+      j:['jaguar','jellyfish','jackal','jay','jerboa','joey'],
+      k:['koala','kangaroo','kingfisher','kestrel','kiwi','komodo'],
+      l:['lion','lemur','lobster','llama','lynx','lark'],
+      m:['monkey','moose','magpie','macaw','marmot','mantis'],
+      n:['narwhal','newt','nightingale','nighthawk','nudibranch','nene'],
+      o:['owl','otter','ocelot','oriole','orangutan','ox'],
+      p:['penguin','panda','panther','parrot','puffin','porpoise'],
+      q:['quail','quetzal','quokka','queen bee','quoll','quagga'],
+      r:['rabbit','raccoon','ram','raven','robin','reindeer'],
+      s:['seal','sparrow','shark','swan','serval','skunk'],
+      t:['tiger','turkey','toucan','tortoise','tapir','tarantula'],
+      u:['urchin','uakari','urial','uguisu','umbrella bird','unicornfish'],
+      v:['viper','vulture','vicuna','vole','vaquita','veery'],
+      w:['wolf','walrus','wren','weasel','whale','wombat'],
+      x:['x-ray tetra','xerus','xenops','xoloitzcuintli','xenopus','xantus hummingbird'],
+      y:['yak','yellowtail','yabby','yapok','yellowhammer','yakutian laika'],
+      z:['zebra','zorilla','zebu','zander','zooplankter','zipper fish'],
+    };
+
+    // Names per letter (5–8). Includes your custom names.
+    const namesByLetter = {
+      a:['Alex','Anjitha','Aree','Amelia','Arnold','Ava'],
+      b:['Barry','Bella','Brian','Beatrice','Bruno','Bianca'],
+      c:['Charlie','Claire','Carlos','Caroline','Cynthia','Cedric'],
+      d:['Daisy','Daniel','Derek','Delilah','Diego','Daphne'],
+      e:['Ella','Edward','Eve','Elijah','Emilia','Ethan'],
+      f:['Felix','Fiona','Frank','Faith','Freya','Floyd'],
+      g:['George','Geetha','Grace','Gabriel','Gavin','Giselle'],
+      h:['Hank','Hannah','Harry','Hazel','Helen','Hugo'],
+      i:['Isla','Isaac','India','Ivan','Ivy','Ines'],
+      j:['Jasper','Julie','Jordan','June','Jonah','James','Jim','Jimmy'],
+      k:['Katie','Kevin','Kira','Khalid','Kyle','Kara'],
+      l:['Leo','Luna','Liam','Layla','Logan','Lorenzo'],
+      m:['Max','Mia','Mason','Maya','Miles','Maggie'],
+      n:['Nora','Noah','Naomi','Nelson','Natalie','Nate'],
+      o:['Oliver','Olivia','Oscar','Opal','Owen','Orla'],
+      p:['Piper','Paul','Penelope','Phoebe','Peter','Pravin'],
+      q:['Quinn','Quentin','Queen','Quincy','Quiana','Quade'],
+      r:['Ruby','Ryan','Rachel','Rafael','Riley','Remi'],
+      s:['Sally','Sam','Santiago','Sophia','Sarachandra','Simon'],
+      t:['Tony','Tina','Thomas','Talia','Trevor','Tracy'],
+      u:['Uma','Ulysses','Ursula','Ugne','Ulric','Umi'],
+      v:['Violet','Victor','Vanessa','Valentina','Vikram','Vince'],
+      w:['Wendy','Will','Willow','Wesley','Wanda','Winston'],
+      x:['Xavier','Xena','Ximena','Xander','Xia','Xaviera'],
+      y:['Yara','Yosef','Yasmin','Yuki','Yolanda','Yuri'],
+      z:['Zoe','Zach','Zara','Zeke','Zelda','Zane'],
+    };
+
+    // Emotions & Movements --------------------------------------------------
+    const emotionList = [
+      'afraid','agitated','aloof','amused','angry','annoyed','anxious','ashamed','astonished','awkward','baffled','bitter','blissful','bold','brave','calm','cheerful','confident','confused','content','cranky','curious','defiant','delighted','depressed','determined','disgusted','dismayed','eager','ecstatic','embarrassed','envious','excited','fearful','frustrated','giddy','gloomy','grateful','grumpy','guilty','happy','hopeful','hostile','impatient','insecure','irritated','joyful','lonely','melancholy','nervous','optimistic','overwhelmed','peaceful','proud','relieved','resentful','restless','satisfied','scared','serene','shocked','shy','silly','sorrowful','startled','stressed','tense','tired','tranquil','upbeat','wistful','zealous'
+    ];
+    const movementList = [
+      'arching','basking','bending','bouncy','bounding','breathing','bursting','crawling','choppy','contracting','circling','coiling','creeping','darting','dragging','drooping','expanding','fast','floating','flowing','fluttering','galloping','gliding','hopping','heavy','jerky','leaping','light','lunging','marching','pirouetting','pulsing','quivering','rigid','rolling','rocking','sprinting','sauntering','shuffling','skipping','slithering','spiraling','staggering','stomping','striding','swaying','swinging','tilting','tiptoeing','trembling','twisting','undulating','vibrating','wobbling','zigzagging'
+    ];
+    const extraAttributes = ['bad','brisk','bright','bouncy','bold','soft','strong','swift','sturdy','spry','sleepy','soggy','silky','harmful','haphazardful'];
+
+    const emotionSet = new Set(emotionList);
+    const movementSet = new Set(movementList);
+    const words = Array.from(new Set([...emotionList, ...movementList, ...extraAttributes])).sort((a,b)=>a.localeCompare(b));
+
+    // ==== ELEMENTS & STATE ================================================
+    const result = document.getElementById('result');
+    const playBtn = document.getElementById('playBtn');
+    const p1Play = document.getElementById('p1Play');
+
+    const newPhraseBtn = document.getElementById('newPhraseBtn');
+    const newEmotionBtn = document.getElementById('newEmotionBtn');
+    const newMovementBtn = document.getElementById('newMovementBtn');
+    const newNameBtn = document.getElementById('newNameBtn');
+    const newAnimalBtn = document.getElementById('newAnimalBtn');
+
+    const openSheetBtn = document.getElementById('openSheet');
+    const sheet = document.getElementById('sheet');
+    const pages = document.getElementById('pages');
+    const tabs = document.querySelectorAll('.tab[data-ix]');
+    const closeSheetBtn = document.getElementById('closeSheet');
+
+    const grid12 = document.getElementById('grid12');
+    const gridFJ = document.getElementById('gridFJ');
+    const gridKO = document.getElementById('gridKO');
+    const gridPZ = document.getElementById('gridPZ');
+
+    const search12 = document.getElementById('search12');
+    const searchFJ = document.getElementById('searchFJ');
+    const searchKO = document.getElementById('searchKO');
+    const searchPZ = document.getElementById('searchPZ');
+
+    const randomFromSearch12 = document.getElementById('randomFromSearch12');
+    const randomFromSearchFJ = document.getElementById('randomFromSearchFJ');
+    const randomFromSearchKO = document.getElementById('randomFromSearchKO');
+    const randomFromSearchPZ = document.getElementById('randomFromSearchPZ');
+
+    let playing=false; let timer=null; let range=[10,15];
+
+    // Track current parts so we can preserve across actions
+    let current = { word: 'breathing', letter: 'b', animal: 'bear', name: 'Barry' };
+
+    // ==== HELPERS ===========================================================
+    const cap = s => s ? s[0].toUpperCase()+s.slice(1) : s;
+    const rand = arr => arr[Math.floor(Math.random()*arr.length)];
+
+    function buildPhrase(word, opts={}){
+      if(!word) return '';
+      const w = word.trim().toLowerCase();
+      const first = (w[0]||'');
+      const animals = animalsByLetter[first] || ['creature'];
+      const names = namesByLetter[first] || ['Alex'];
+      const animal = opts.forceAnimal ?? (opts.keepAnimal ? current.animal : rand(animals));
+      const name = opts.forceName ? cap(opts.forceName) : (opts.keepName ? current.name : cap(rand(names)));
+      return `<span class="emo">${cap(w)}</span> <span class="animal">${animal}</span> <span class="name">${name}</span>`;
+    }
+
+    function render(word, opts={}){
+      const w = (word||current.word).toLowerCase();
+      const first = w[0]||current.letter;
+      // update/preserve state
+      if(!opts.keepAnimal){ current.animal = opts.forceAnimal ?? rand(animalsByLetter[first]||['creature']); }
+      if(!opts.keepName){ current.name = opts.forceName ? cap(opts.forceName) : cap(rand(namesByLetter[first]||['Alex'])); }
+      current.word = w; current.letter = first;
+      const html = buildPhrase(w, { keepAnimal: true, keepName: true });
+      result.innerHTML = html || 'Your phrase will appear here…';
+    }
+
+    function groupIdxForWord(w){
+      const f = w[0].toLowerCase();
+      if(f<'f') return 1; // A–E
+      if(f<'k') return 2; // F–J
+      if(f<'p') return 3; // K–O
+      return 4;          // P–Z
+    }
+
+    function highlightPrefix(text, prefix){
+      if(!prefix) return cap(text);
+      const t=text.toLowerCase(), s=prefix.toLowerCase();
+      if(!t.startsWith(s)) return cap(text);
+      const first = cap(text).slice(0, s.length);
+      const rest = text.slice(s.length);
+      return `<strong>${first}</strong>${rest}`;
+    }
+
+    function makeWordButton(word){
+      const b = document.createElement('button');
+      b.className = 'btn small';
+      b.dataset.word = word;
+      b.innerHTML = cap(word);
+      b.addEventListener('click', ()=>{ render(word); });
+      return b;
+    }
+
+    const bins = {1:grid12,2:gridFJ,3:gridKO,4:gridPZ};
+    function fillAllGrids(filter=''){
+      const q = filter.trim().toLowerCase();
+      Object.values(bins).forEach(grid=>grid.innerHTML='');
+      const list = words.filter(w=> !q || w.toLowerCase().startsWith(q));
+      list.forEach(w=>{
+        const ix = groupIdxForWord(w);
+        const btn = makeWordButton(w);
+        btn.innerHTML = highlightPrefix(w, q);
+        bins[ix].appendChild(btn);
+      });
+      [randomFromSearch12,randomFromSearchFJ,randomFromSearchKO,randomFromSearchPZ].forEach(btn=>{
+        if(!btn) return; btn.disabled = list.length===0; btn.style.opacity = list.length?1:.6;
+      });
+      return list;
+    }
+
+    // Initial fill
+    let currentFiltered = fillAllGrids('');
+
+    // Page 1 search (drives prompt + suggestions) --------------------------
+    const p1Search = document.getElementById('page1Search');
+    const p1Suggest = document.getElementById('p1Suggest');
+    function p1ShowSuggest(list){
+      p1Suggest.innerHTML='';
+      if(!list.length) return;
+      const ul=document.createElement('ul');
+      list.slice(0,12).forEach(w=>{ const li=document.createElement('li'); li.innerHTML = highlightPrefix(w, p1Search.value.trim()); li.addEventListener('click',()=>{ p1Suggest.innerHTML=''; p1Search.value=''; render(w,{keepAnimal:false,keepName:false});}); ul.appendChild(li); });
+      p1Suggest.appendChild(ul);
+    }
+    p1Search.addEventListener('input', e=>{
+      const q=e.target.value.trim();
+      if(!q){ p1Suggest.innerHTML=''; return; }
+      // Live prompt update: always render what you typed
+      const newLetter = q[0].toLowerCase();
+      // if first letter changed, regenerate animal & name
+      if(newLetter !== current.letter){ render(q, { keepAnimal:false, keepName:false }); }
+      else { render(q, { keepAnimal:true, keepName:true }); }
+      const list = words.filter(w=>w.startsWith(q.toLowerCase()));
+      p1ShowSuggest(list);
+    });
+
+    // Search handlers for pages 1–4 (prefix-only across ALL) ---------------
+    ;[search12,searchFJ,searchKO,searchPZ].forEach(inp=>{
+      if(!inp) return;
+      inp.addEventListener('input', e=>{ currentFiltered = fillAllGrids(e.target.value); });
+    });
+    // Clear buttons for pages 1–4
+    document.querySelectorAll('.clearBtn').forEach(btn=>{
+      btn.addEventListener('click', ()=>{
+        const id = btn.dataset.clear; const el = document.getElementById(id);
+        if(!el) return; el.value=''; currentFiltered = fillAllGrids(''); el.focus();
+      });
+    });
+
+    // Random-from-results buttons
+    function hookRandomFrom(el){ if(!el) return; el.addEventListener('click', ()=>{ if(!currentFiltered.length) return; const w = rand(currentFiltered); render(w); }); }
+    hookRandomFrom(randomFromSearch12);
+    hookRandomFrom(randomFromSearchFJ);
+    hookRandomFrom(randomFromSearchKO);
+    hookRandomFrom(randomFromSearchPZ);
+
+    // Tabs / sheet ----------------------------------------------------------
+    function openSheet(){ sheet.classList.add('open'); }
+    function closeSheet(){ sheet.classList.remove('open'); }
+    openSheetBtn.addEventListener('click', openSheet);
+    closeSheetBtn.addEventListener('click', closeSheet);
+    tabs.forEach(t=> t.addEventListener('click', ()=>{
+      const ix = Number(t.dataset.ix)||0; pages.style.transform = `translateX(-${ix*100}vw)`; }));
+
+    // Swipe up to open + swipe pages
+    let startY=null,startX=null;
+    window.addEventListener('touchstart', e=>{ const t=e.touches[0]; startY=t.clientY; startX=t.clientX; }, {passive:true});
+    window.addEventListener('touchmove', e=>{ if(startY===null) return; const t=e.touches[0]; const dy=startY-t.clientY; const dx=startX-t.clientX; if(dy>40 && !sheet.classList.contains('open')) openSheet(); if(Math.abs(dx)>40 && sheet.classList.contains('open')){ const cur = Math.round(Math.abs(parseInt(pages.style.transform.replace(/[^0-9-]/g,''))||0)/100) || 0; const next = dx>0 ? Math.min(cur+1,4) : Math.max(cur-1,0); pages.style.transform = `translateX(-${next*100}vw)`; } }, {passive:true});
+    window.addEventListener('touchend', ()=>{ startY=null; startX=null; });
+
+    // Buttons ---------------------------------------------------------------
+    function pickEmotionSameLetter(){
+      const letter = current.letter;
+      const emos = emotionList.filter(w=> w.startsWith(letter));
+      return emos.length ? rand(emos) : rand(emotionList);
+    }
+    function pickMovementSameLetter(){
+      const letter = current.letter;
+      const moves = movementList.filter(w=> w.startsWith(letter));
+      return moves.length ? rand(moves) : rand(movementList);
+    }
+
+    function newPhrase(){ render(rand(words), { keepAnimal:false, keepName:false }); }
+    function newEmotion(){ render(pickEmotionSameLetter(), { keepAnimal:true, keepName:true }); }
+    function newMovement(){ render(pickMovementSameLetter(), { keepAnimal:true, keepName:true }); }
+    function newName(){ const letter=current.letter; const bank=namesByLetter[letter]||[]; if(!bank.length) return; let choices=bank.filter(n=>n!==current.name); if(!choices.length) choices=bank; render(current.word,{ forceName:rand(choices), keepAnimal:true }); }
+    function newAnimal(){ const letter=current.letter; const bank=animalsByLetter[letter]||[]; if(!bank.length) return; let choices=bank.filter(a=>a!==current.animal); if(!choices.length) choices=bank; render(current.word,{ forceAnimal:rand(choices), keepName:true }); }
+
+    newPhraseBtn.addEventListener('click', newPhrase);
+    newEmotionBtn.addEventListener('click', newEmotion);
+    newMovementBtn.addEventListener('click', newMovement);
+    newNameBtn.addEventListener('click', newName);
+    newAnimalBtn.addEventListener('click', newAnimal);
+
+    // mirror buttons on page 0 inside sheet
+    document.getElementById('p1NewPhrase').addEventListener('click', newPhrase);
+    document.getElementById('p1NewEmotion').addEventListener('click', newEmotion);
+    document.getElementById('p1NewMovement').addEventListener('click', newMovement);
+
+    // Auto-play -------------------------------------------------------------
+    function updatePlayButtons(){
+      const label = playing ? 'Stop' : 'Play';
+      const iconPlay = '<svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M8 5v14l11-7z"/></svg>';
+      const iconStop = '<svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M6 6h12v12H6z"/></svg>';
+      playBtn.innerHTML = (playing?iconStop:iconPlay) + `<span>${label}</span>`;
+      p1Play.innerHTML = (playing?iconStop:iconPlay) + `<span>${label}</span>`;
+      playBtn.classList.toggle('active', playing);
+      p1Play.classList.toggle('active', playing);
+    }
+    function scheduleNext(){
+      if(!playing) return;
+      const [min,max]=range; const ms = Math.round((min + Math.random()*(max-min)) * 1000);
+      clearTimeout(timer);
+      timer = setTimeout(()=>{ newPhrase(); scheduleNext(); }, ms);
+    }
+    function togglePlay(){ playing=!playing; updatePlayButtons(); if(playing) scheduleNext(); else clearTimeout(timer); }
+    playBtn.addEventListener('click', togglePlay);
+    p1Play.addEventListener('click', togglePlay);
+
+    // Settings sheet (interval quick set)
+    const settingsSheet = document.getElementById('settings');
+    document.getElementById('settingsBtn').addEventListener('click', ()=> settingsSheet.classList.add('open'));
+    settingsSheet.addEventListener('click', e=>{ if(e.target.id==='settings') settingsSheet.classList.remove('open'); });
+    document.querySelectorAll('.setIv').forEach(b=> b.addEventListener('click', ()=>{
+      const v=b.dataset.iv; if(v==='manual'){ playing=false; updatePlayButtons(); settingsSheet.classList.remove('open'); return; }
+      const [a,bn]=v.split('-').map(Number); if(!isNaN(a)&&!isNaN(bn)) range=[a,bn]; settingsSheet.classList.remove('open'); if(playing) scheduleNext();
+    }));
+
+    // Boot ------------------------------------------------------------------
+    // Seed current animal/name for 'breathing' (b)
+    current.animal = rand(animalsByLetter['b']);
+    current.name = cap(rand(namesByLetter['b']));
+    updatePlayButtons();
+    render('breathing', { keepAnimal:true, keepName:true });
+
+    // Also pre-fill grids
+    fillAllGrids('');
+  </script>
+</body>
+</html>
