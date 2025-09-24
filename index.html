@@ -7,7 +7,7 @@
   <meta name="mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
-  <title>Alliteration Animal Namer — v22</title>
+  <title>Alliteration Animal Namer — v23</title>
   <style>
     :root{
       --bg:#0b0b0c; --card:#151518; --text:#f6f7fb; --muted:#a9adc1; --ring:#3b82f6;
@@ -21,7 +21,7 @@
 
     /* Sticky banner prompt at absolute top */
     .banner{position:sticky;top:0;z-index:120;background:#0b0b0c;box-shadow:0 6px 16px rgba(0,0,0,.35);border-bottom:1px solid #23242d}
-    .banner .output{margin:8px 0 0;padding:18px 12px;border-radius:12px;background:#0f1117;border:1px solid #2a2e3d;font-size:clamp(36px,8vw,78px);line-height:1.15;cursor:pointer;user-select:none}
+    .banner .output{margin:8px 0 0;padding:18px 12px;border-radius:12px;background:#0f1117;border:1px solid #2a2e3d;font-size:clamp(38px,8vw,86px);line-height:1.15;cursor:pointer;user-select:none}
     .emo{color:var(--red);font-weight:900;text-transform:none}
     .animal{color:var(--green);font-weight:900}
     .name{color:var(--blue);font-weight:900}
@@ -74,7 +74,7 @@
     /* Focus (enlarged) mode */
     body.focus header, body.focus .card, body.focus .sheet, body.focus .footer, body.focus .topbar{ display:none !important; }
     body.focus .banner{ box-shadow:none; border-bottom:none; }
-    body.focus .banner .output{ font-size:clamp(44px,12vw,128px); padding:28px 16px; }
+    body.focus .banner .output{ font-size:clamp(48px,12vw,132px); padding:28px 16px; }
     body.focus .emo, body.focus .animal, body.focus .name{ display:block; text-align:left; }
     @media (orientation:landscape){ body.focus .emo, body.focus .animal, body.focus .name{ display:inline; text-align:left; } body.focus .banner .output{ text-align:left; } }
 
@@ -86,10 +86,11 @@
     .defs{position:fixed;inset:0;background:#0c0e14;z-index:140;display:none}
     .defs.open{display:block}
     .defsTop{display:flex;align-items:center;gap:10px;padding:10px}
-    .defsContent{padding:12px 16px 80px;display:grid;gap:16px}
+    .defsContent{padding:12px 16px 96px;display:grid;gap:16px}
     .defCard{background:#10131b;border:1px solid #262a36;border-radius:16px;padding:14px}
     .defCard .label{font-weight:900;margin-bottom:6px}
     .defCard .def{color:#c9cedd;font-size:15px;text-transform:lowercase}
+    .defsBottom{position:fixed;left:0;right:0;bottom:0;background:#0f1117;border-top:1px solid #262a36;padding:10px 12px;display:flex;gap:10px;justify-content:center}
 
     .footer{margin:28px 2px 12px;color:var(--muted);font-size:12px}
   </style>
@@ -98,7 +99,7 @@
   <div class="wrap" id="appArea">
     <!-- Sticky Prompt Banner at the very top -->
     <div class="banner">
-      <div class="output" id="result" title="Click for New phrase (also click empty space)">Your phrase will appear here…</div>
+      <div class="output" id="result" title="Tap/click for NEW letter phrase (Enter on PC)">Your phrase will appear here…</div>
     </div>
 
     <!-- Focus-mode overlay controls (Play first, then Minimize) -->
@@ -119,7 +120,7 @@
           <svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M19.14,12.94a7.43,7.43,0,0,0,.05-.94,7.43,7.43,0,0,0-.05-.94l2.11-1.65a.48.48,0,0,0,.11-.61l-2-3.46a.5.5,0,0,0-.6-.22L16.9,5.5a7.5,7.5,0,0,0-1.63-.94l-.25-2.65A.49.49,0,0,0,14.54,1H9.46a.49.49,0,0,0-.48.41L8.73,4.06A7.5,7.5,0,0,0,7.1,5L4.24,4.12a.5.5,0,0,0-.6.22l-2,3.46a.48.48,0,0,0,.11.61L3.86,10a7.43,7.43,0,0,0-.05.94,7.43,7.43,0,0,0,.05.94L1.75,13.53a.48.48,0,0,0-.11.61l2,3.46a.5.5,0,0,0,.6.22L7.1,18.5a7.5,7.5,0,0,0,1.63.94l.25,2.65a.49.49,0,0,0,.48.41h5.08a.49.49,0,0,0,.48-.41l.25-2.65a7.5,7.5,0,0,0,1.63-.94l2.86.88a.5.5,0,0,0,.6-.22l2-3.46a.48.48,0,0,0-.11-.61ZM12,15.5A3.5,3.5,0,1,1,15.5,12,3.5,3.5,0,0,1,12,15.5Z"/></svg>
         </button>
       </div>
-      <h1>Alliteration Animal Namer — v22</h1>
+      <h1>Alliteration Animal Namer — v23</h1>
     </header>
 
     <div class="card">
@@ -127,7 +128,7 @@
         <label class="toggle"><input type="checkbox" id="alphaToggle" /> ABC next-letter</label>
       </div>
       <div class="field">
-        <input id="page1Search" type="text" placeholder="Type a prefix. ↑/↓ navigate, Enter select. ← prev • → next • Enter = New phrase" autocomplete="off" />
+        <input id="page1Search" type="text" placeholder="Type a prefix. ↑/↓ navigate, Enter select. ← prev • → next • Enter = NEW letter" autocomplete="off" />
         <div class="suggestions" id="p1Suggest"></div>
       </div>
 
@@ -141,7 +142,7 @@
       </div>
     </div>
 
-    <p class="footer">Output: <span class="emo">first word</span> <span class="animal">animal</span> <span class="name">name</span>. Phonetic mode honors “ee” vs “eye” groupings for tricky vowels.</p>
+    <p class="footer">Output: <span class="emo">first word</span> <span class="animal">animal</span> <span class="name">name</span>. Tap or press Enter to jump to a phrase with a <em>different</em> starting letter. Phonetics honors “ee” vs “eye”.</p>
   </div>
 
   <!-- Bottom sheet: list-only pages with fast flip -->
@@ -238,14 +239,14 @@
   </div>
 
   <!-- Startup splash (shows for 30s then fades) -->
-  <div class="splash" id="splash"><div class="pill">Jimmy James 24.09.2025 - v22</div></div>
+  <div class="splash" id="splash"><div class="pill">Jimmy James 24.09.2025 - v23</div></div>
 
   <!-- Definitions overlay -->
   <div class="defs" id="defs">
     <div class="defsTop">
       <button class="btn" id="defsBack">← Back</button>
     </div>
-    <div class="defsContent">
+    <div class="defsContent" id="defsContent">
       <div class="defCard">
         <div class="label emo" id="defWordLbl">word</div>
         <div class="def" id="defWordTxt">definition here…</div>
@@ -259,10 +260,15 @@
         <div class="def" id="defNameTxt">a personal name.</div>
       </div>
     </div>
+    <div class="defsBottom">
+      <button class="btn" id="defsPlayBtn">Play</button>
+      <button class="btn" id="defsEnlargeBtn">Enlarge</button>
+      <button class="btn" id="defsAlphaBtn">ABC next</button>
+    </div>
   </div>
 
   <script>
-    // ==== DATA ==============================================================
+    // ==== DATA (same as v22) ===============================================
     const animalsByLetter = {
       a:['ant','aardvark','albatross','anole','auk','axolotl'],
       b:['bear','beaver','buffalo','baboon','bluebird','boar'],
@@ -363,7 +369,7 @@
     ];
     const extraList = ['bad','brisk','bright','bouncy','bold','soft','strong','swift','sturdy','spry','sleepy','soggy','silky','harmful','haphazardful'];
 
-    // Chemistry list + definitions (subset from v19 full list)
+    // Chemistry list + definitions (concise, lowercase for defs page)
     const chemistryList = [
       'acidic','activated','aerobic','alkaline','allotropic','amphoteric','aqueous','atomic','basic','binding','biochemical','boiling','bonded','buffered','buoyant','catalytic','charged','chemical','colloidal','conductive','crystalline','covalent','diffusive','dilute','dimeric','dynamic','electrolytic','endothermic','enzymatic','equilibrated','exothermic','ferrous','ferric','fluorescent','fluid','fusion','gaseous','galvanic','geometric','glycolytic','hydrophilic','hydrophobic','hypertonic','hypotonic','ionic','isomeric','isotopic','isotonic','joule-rich','junctional','kinetic','lattice','luminescent','liquid','malleable','metallic','molar','molecular','magnetic','neutral','nucleophilic','nonpolar','oxidative','osmotic','organic','paramagnetic','photonic','polar','polymeric','precipitated','quantized','quaternary','radioactive','reactive','reductive','resonant','saturated','stoichiometric','supersaturated','synthetic','soluble','solvent','titrated','thermal','turbulent','tensile','unsaturated','uniform','valent','volatile','viscous','weakly-bound','wavelike','wettable','xenon-like','xeric','yielding','ytterbic','zeta-potential','zwitterionic'
     ];
@@ -377,7 +383,7 @@
       'amphoteric':'can act as either an acid or a base.',
       'aqueous':'dissolved in water; water is the solvent.',
       'atomic':'relating to atoms or atomic scale.',
-      'basic':'opposite of acidic; accepts protons; pH > 7.',
+      'basic':'opposite of acidic; accepts protons; ph > 7.',
       'binding':'forming attachments/bonds between species.',
       'biochemical':'chemistry of living systems.',
       'boiling':'phase change from liquid to gas at boiling point.',
@@ -674,15 +680,19 @@
     // Definitions overlay elements
     const defs = document.getElementById('defs');
     const defsBack = document.getElementById('defsBack');
+    const defsContent = document.getElementById('defsContent');
     const defWordLbl = document.getElementById('defWordLbl');
     const defWordTxt = document.getElementById('defWordTxt');
     const defAnimalLbl = document.getElementById('defAnimalLbl');
     const defAnimalTxt = document.getElementById('defAnimalTxt');
     const defNameLbl = document.getElementById('defNameLbl');
     const defNameTxt = document.getElementById('defNameTxt');
+    const defsPlayBtn = document.getElementById('defsPlayBtn');
+    const defsEnlargeBtn = document.getElementById('defsEnlargeBtn');
+    const defsAlphaBtn = document.getElementById('defsAlphaBtn');
 
     let playing=true; let timer=null; let gapSec=5; // used when delay OFF
-    let segSec=9; let wordDelay=3; // defaults per v19/20/21
+    let segSec=9; let wordDelay=3; // defaults
     let audioOn=false; let phoneticOn=true;
 
     // Track current parts
@@ -753,6 +763,7 @@
 
     let t2=null, t3=null; // staged timers
 
+    // ======= RENDER =========================================================
     function render(word, opts={}){
       // stop any pending staged timeouts and speech
       [t2,t3].forEach(t=> clearTimeout(t));
@@ -784,7 +795,7 @@
       const showAnimal = chkAnimal.checked;
       const showName = chkName.checked;
 
-      // Delay mode always on for staged reveal visual (definitions update too)
+      // Delay mode staged reveal + speech
       result.innerHTML = `<span class="emo">${w}</span>`;
       speak(w);
       if(showAnimal){
@@ -805,6 +816,43 @@
       updateDefs();
     }
 
+    // ======= LETTER / PHRASE UTILITIES ====================================
+    function pickWordForLetter(l){ const activeWords=getActiveFirstWordList(); const list=activeWords.filter(w=>w.startsWith(l)); return list.length?rand(list):null; }
+
+    function newPhraseAlpha(step=1){
+      let l=current.letter||'a';
+      if(alphaToggle.checked){ l = step>0? nextLetter(l) : prevLetter(l); }
+      let w = pickWordForLetter(l);
+      if(!w){ for(let i=0;i<26;i++){ l = step>0? nextLetter(l) : prevLetter(l); w = pickWordForLetter(l); if(w) break; } }
+      render(w||rand(getActiveFirstWordList()), { keepAnimal:false, keepName:false });
+    }
+
+    function newDifferentLetterPhrase(){
+      const active = getActiveFirstWordList();
+      const cur = current.letter || 'a';
+      let w = null;
+      if(alphaToggle.checked){
+        // deterministic next available letter
+        let l = nextLetter(cur);
+        for(let i=0;i<26;i++){
+          w = pickWordForLetter(l);
+          if(w) break;
+          l = nextLetter(l);
+        }
+      } else {
+        // random from letters != current
+        const pool = active.filter(x=> (x[0]||'') !== cur);
+        w = pool.length ? rand(pool) : rand(active);
+      }
+      if(!w) w = rand(active);
+      render(w, { keepAnimal:false, keepName:false });
+    }
+
+    function newPhrase(){ newDifferentLetterPhrase(); }
+    function newAnimal(){ if(!chkAnimal.checked) return; render(current.word,{ keepName:true }); }
+    function newName(){ if(!chkName.checked) return; render(current.word,{ keepAnimal:true }); }
+
+    // ======= LIST PAGES ====================================================
     function groupIdxForWord(w){ const f=w[0].toLowerCase(); if(f<'f') return 0; if(f<'k') return 1; if(f<'p') return 2; return 3; }
     function makeWordBtn(word){ const b=document.createElement('button'); b.className='btn small'; b.dataset.word=word; b.textContent=word[0].toUpperCase()+word.slice(1); return b; }
 
@@ -814,14 +862,13 @@
       activeWords.forEach(w=>{ const ix=groupIdxForWord(w); const btn=makeWordBtn(w); ([grid12,gridFJ,gridKO,gridPZ][ix]).appendChild(btn); });
     }
 
-    // Clicking grid buttons: choose that first word
     function onGridClick(e){ const b = e.target.closest('button.btn'); if(!b) return; const w=b.dataset.word; if(!w) return; render(w, { keepAnimal:false, keepName:false }); }
     grid12.addEventListener('click', onGridClick);
     gridFJ.addEventListener('click', onGridClick);
     gridKO.addEventListener('click', onGridClick);
     gridPZ.addEventListener('click', onGridClick);
 
-    // ==== PAGE 1: Typing + suggestions with keyboard control ==============
+    // ======= PAGE 1: typing + suggestions ==================================
     function p1RenderSuggest(list, query){
       p1Suggest.innerHTML='';
       if(!list.length) { p1Index=-1; return; }
@@ -856,49 +903,41 @@
       if(key==='Enter'){
         e.preventDefault();
         if(p1List.length && p1Index>=0){ chooseP1Index(); }
-        else { newPhraseAlpha(+1); }
+        else { newDifferentLetterPhrase(); }
         return;
       }
       if(key==='ArrowRight'){ e.preventDefault(); newPhraseAlpha(+1); return; }
       if(key==='ArrowLeft'){ e.preventDefault(); newPhraseAlpha(-1); return; }
     });
 
-    // ==== Buttons & phrase generation =====================================
-    function pickWordForLetter(l){ const activeWords=getActiveFirstWordList(); const list=activeWords.filter(w=>w.startsWith(l)); return list.length?rand(list):null; }
-    function newPhraseAlpha(step=1){
-      let l=current.letter||'a';
-      if(alphaToggle.checked){ l = step>0? nextLetter(l) : prevLetter(l); }
-      let w = pickWordForLetter(l);
-      if(!w){ for(let i=0;i<26;i++){ l = step>0? nextLetter(l) : prevLetter(l); w = pickWordForLetter(l); if(w) break; } }
-      render(w||rand(getActiveFirstWordList()), { keepAnimal:false, keepName:false });
-    }
-
-    function newPhrase(){ if(alphaToggle.checked) newPhraseAlpha(+1); else render(rand(getActiveFirstWordList()), { keepAnimal:false, keepName:false }); }
-    function newAnimal(){ if(!chkAnimal.checked) return; render(current.word,{ keepName:true }); }
-    function newName(){ if(!chkName.checked) return; render(current.word,{ keepAnimal:true }); }
-
+    // ======= Buttons & clicks ==============================================
     newPhraseBtn.addEventListener('click', newPhrase);
     newAnimalBtn.addEventListener('click', newAnimal);
     newNameBtn.addEventListener('click', newName);
 
-    // Enlarge/Minimize
     enlargeBtn.addEventListener('click', ()=> document.body.classList.add('focus'));
     document.getElementById('minimizeBtn').addEventListener('click', ()=> document.body.classList.remove('focus'));
 
-    // Definitions overlay
-    function openDefs(){ defs.classList.add('open'); updateDefs(); }
+    // Definitions overlay open/close
+    function openDefs(){ defs.classList.add('open'); updateDefs(); updateDefsBottom(); }
     function closeDefs(){ defs.classList.remove('open'); }
     defsBtn.addEventListener('click', openDefs);
     defsBack.addEventListener('click', closeDefs);
 
-    // Clicking prompt or empty space => new phrase
-    result.addEventListener('click', ()=> newPhrase());
-    document.body.addEventListener('click', (e)=>{
-      if(e.target.closest('button, input, .sheet, .suggestions, .toggle, .output, .focusControls, .defs')) return;
-      newPhrase();
+    // Tap anywhere on definitions content to advance to a NEW-LETTER phrase
+    defsContent.addEventListener('click', (e)=>{
+      if(e.target.closest('.defsBottom, button')) return; // ignore button taps
+      newDifferentLetterPhrase();
     });
 
-    // ==== Bottom sheet controls ===========================================
+    // Clicking prompt or empty space => NEW-LETTER phrase
+    result.addEventListener('click', ()=> newDifferentLetterPhrase());
+    document.body.addEventListener('click', (e)=>{
+      if(e.target.closest('button, input, .sheet, .suggestions, .toggle, .output, .focusControls, .defs')) return;
+      newDifferentLetterPhrase();
+    });
+
+    // ======= Bottom sheet controls =========================================
     let curPage = 0; // 0..3
     function applyPage(){ pages.style.transform = `translateX(-${curPage*100}vw)`; tabs.forEach(t=>t.classList.remove('active')); const active = Array.from(tabs).find(t=>Number(t.dataset.ix)===curPage); if(active) active.classList.add('active'); }
     function openSheet(){ sheet.classList.add('open'); }
@@ -910,7 +949,7 @@
     flipNext.addEventListener('click', ()=>{ curPage = (curPage+1)%4; applyPage(); });
     document.addEventListener('keydown', e=>{ if(!sheet.classList.contains('open')) return; if(e.key==='ArrowRight'){ e.preventDefault(); flipNext.click(); } if(e.key==='ArrowLeft'){ e.preventDefault(); flipPrev.click(); } });
 
-    // ==== Gestures ==========================================================
+    // ======= Gestures =======================================================
     let startX=null, startY=null, handled=false; const H=35, V=60;
     window.addEventListener('pointerdown', e=>{ startX=e.clientX; startY=e.clientY; handled=false; }, {passive:false});
     window.addEventListener('pointermove', e=>{
@@ -929,8 +968,8 @@
     }, {passive:false});
     window.addEventListener('pointerup', ()=>{ startX=null; startY=null; handled=false; }, {passive:false});
 
-    // ==== Auto-play & Settings ============================================
-    function updatePlayButtons(){ playBtn.classList.toggle('active',playing); focusPlayBtn.classList.toggle('active',playing); focusPlayBtn.textContent = playing ? 'Stop' : 'Play'; }
+    // ======= Auto-play & Settings ==========================================
+    function updatePlayButtons(){ playBtn.classList.toggle('active',playing); focusPlayBtn.classList.toggle('active',playing); focusPlayBtn.textContent = playing ? 'Stop' : 'Play'; defsPlayBtn && defsPlayBtn.classList.toggle('active', playing); defsPlayBtn && (defsPlayBtn.textContent = playing ? 'Stop' : 'Play'); }
     function scheduleNext(){ if(!playing) return; clearTimeout(timer); timer=setTimeout(()=>{ newPhrase(); scheduleNext(); }, segSec*1000); }
     function togglePlay(){ playing=!playing; updatePlayButtons(); if(playing) scheduleNext(); else clearTimeout(timer); }
     playBtn.addEventListener('click', togglePlay); focusPlayBtn.addEventListener('click', togglePlay);
@@ -953,8 +992,8 @@
     function updateAudioBtn(){ audioBtn.classList.toggle('active', audioOn); }
     audioBtn.addEventListener('click', ()=>{ audioOn=!audioOn; updateAudioBtn(); if(!audioOn && 'speechSynthesis' in window) window.speechSynthesis.cancel(); });
 
-    // Global PC shortcuts
-    document.addEventListener('keydown', e=>{ if(document.activeElement===p1Search) return; if(e.key==='Enter'){ e.preventDefault(); newPhraseAlpha(+1); } if(e.key==='ArrowRight'){ e.preventDefault(); newPhraseAlpha(+1); } if(e.key==='ArrowLeft'){ e.preventDefault(); newPhraseAlpha(-1); } });
+    // Global PC shortcuts (outside inputs)
+    document.addEventListener('keydown', e=>{ if(document.activeElement===p1Search) return; if(e.key==='Enter'){ e.preventDefault(); newDifferentLetterPhrase(); } if(e.key==='ArrowRight'){ e.preventDefault(); newPhraseAlpha(+1); } if(e.key==='ArrowLeft'){ e.preventDefault(); newPhraseAlpha(-1); } });
 
     // Try fullscreen after first interaction
     let triedFS=false; function tryFS(){ if(triedFS) return; triedFS=true; const el=document.documentElement; const fn=el.requestFullscreen||el.webkitRequestFullscreen||el.msRequestFullscreen; if(fn) { try{ fn.call(el); }catch(e){} } }
@@ -963,7 +1002,7 @@
     // Splash hide after 30s
     setTimeout(()=>{ splash.classList.add('hide'); }, 30000);
 
-    // ==== Definitions logic ===============================================
+    // ======= Definitions logic =============================================
     function defForWord(w){
       const s=(w||'').toLowerCase();
       if(chemDefs[s]) return chemDefs[s];
@@ -981,6 +1020,15 @@
       defNameLbl.textContent = current.name;
       defNameTxt.textContent = 'a personal name.';
     }
+
+    function updateDefsBottom(){
+      defsPlayBtn.classList.toggle('active', playing);
+      defsPlayBtn.textContent = playing ? 'Stop' : 'Play';
+      defsAlphaBtn.classList.toggle('active', alphaToggle.checked);
+    }
+    defsPlayBtn.addEventListener('click', togglePlay);
+    defsEnlargeBtn.addEventListener('click', ()=> document.body.classList.add('focus'));
+    defsAlphaBtn.addEventListener('click', ()=>{ alphaToggle.checked = !alphaToggle.checked; updateDefsBottom(); });
 
     // Boot ------------------------------------------------------------------
     updatePlayButtons();
