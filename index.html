@@ -7,7 +7,7 @@
   <meta name="mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
-  <title>Alliteration Animal Namer — v17</title>
+  <title>Alliteration Animal Namer — v19</title>
   <style>
     :root{
       --bg:#0b0b0c; --card:#151518; --text:#f6f7fb; --muted:#a9adc1; --ring:#3b82f6;
@@ -21,7 +21,7 @@
 
     /* Sticky banner prompt at absolute top */
     .banner{position:sticky;top:0;z-index:120;background:#0b0b0c;box-shadow:0 6px 16px rgba(0,0,0,.35);border-bottom:1px solid #23242d}
-    .banner .output{margin:8px 0 0;padding:18px 12px;border-radius:12px;background:#0f1117;border:1px solid #2a2e3d;font-size:clamp(32px,7vw,68px);line-height:1.15;cursor:pointer;user-select:none}
+    .banner .output{margin:8px 0 0;padding:18px 12px;border-radius:12px;background:#0f1117;border:1px solid #2a2e3d;font-size:clamp(36px,8vw,78px);line-height:1.15;cursor:pointer;user-select:none}
     .emo{color:var(--red);font-weight:900;text-transform:none}
     .animal{color:var(--green);font-weight:900}
     .name{color:var(--blue);font-weight:900}
@@ -74,7 +74,7 @@
     /* Focus (enlarged) mode */
     body.focus header, body.focus .card, body.focus .sheet, body.focus .footer, body.focus .topbar{ display:none !important; }
     body.focus .banner{ box-shadow:none; border-bottom:none; }
-    body.focus .banner .output{ font-size:clamp(40px,12vw,120px); padding:28px 16px; }
+    body.focus .banner .output{ font-size:clamp(44px,12vw,128px); padding:28px 16px; }
     body.focus .emo, body.focus .animal, body.focus .name{ display:block; text-align:left; }
     @media (orientation:landscape){ body.focus .emo, body.focus .animal, body.focus .name{ display:inline; text-align:left; } body.focus .banner .output{ text-align:left; } }
 
@@ -131,7 +131,7 @@
       </div>
     </div>
 
-    <p class="footer">Output: <span class="emo">first word</span> <span class="animal">animal</span> <span class="name">name</span>. First word can be emotion, chemistry, or movement. Delay staging shows words over time; with phonetic mode on, words share the same starting sound (e.g., <em>phony</em> / <em>fish</em>).</p>
+    <p class="footer">Output: <span class="emo">first word</span> <span class="animal">animal</span> <span class="name">name</span>. Staged reveal times are configurable; phonetic mode matches starting sounds.</p>
   </div>
 
   <!-- Bottom sheet: list-only pages with fast flip -->
@@ -178,22 +178,41 @@
         <h3 style="margin:0 0 8px">Delay function (staged reveal)</h3>
         <div class="row" style="gap:12px;align-items:center">
           <label class="toggle"><input type="checkbox" id="delayToggle" checked /> Enable</label>
-          <span style="color:var(--muted);font-size:12px">Default: 1st → +2s 2nd, 1st → +4s 3rd; new phrase every 6s while playing.</span>
+          <span style="color:var(--muted);font-size:12px">Default: <strong>3s</strong> between words; <strong>9s</strong> first→first.</span>
         </div>
         <div class="row" style="gap:24px;flex-wrap:wrap;margin-top:8px">
           <div>
-            <div style="font-weight:700;margin-bottom:6px">1st → 2nd</div>
-            <div class="row" style="gap:6px"><button class="btn small setD12" data-v="1">1s</button><button class="btn small setD12" data-v="2">2s</button><button class="btn small setD12" data-v="3">3s</button><button class="btn small setD12" data-v="4">4s</button></div>
+            <div style="font-weight:700;margin-bottom:6px">Between each word</div>
+            <div class="row" style="gap:6px">
+              <button class="btn small setWordGap" data-v="1">1s</button>
+              <button class="btn small setWordGap" data-v="2">2s</button>
+              <button class="btn small setWordGap" data-v="3">3s</button>
+              <button class="btn small setWordGap" data-v="4">4s</button>
+              <button class="btn small setWordGap" data-v="5">5s</button>
+              <button class="btn small setWordGap" data-v="6">6s</button>
+            </div>
           </div>
           <div>
-            <div style="font-weight:700;margin-bottom:6px">1st → 3rd</div>
-            <div class="row" style="gap:6px"><button class="btn small setD13" data-v="1">1s</button><button class="btn small setD13" data-v="2">2s</button><button class="btn small setD13" data-v="3">3s</button><button class="btn small setD13" data-v="4">4s</button></div>
+            <div style="font-weight:700;margin-bottom:6px">First → next First (whole phrase cadence)</div>
+            <div class="row" style="gap:6px">
+              <button class="btn small setSeg" data-v="2">2s</button>
+              <button class="btn small setSeg" data-v="3">3s</button>
+              <button class="btn small setSeg" data-v="6">6s</button>
+              <button class="btn small setSeg" data-v="9">9s</button>
+              <button class="btn small setSeg" data-v="12">12s</button>
+              <button class="btn small setSeg" data-v="15">15s</button>
+              <button class="btn small setSeg" data-v="18">18s</button>
+              <button class="btn small setSeg" data-v="20">20s</button>
+              <button class="btn small setSeg" data-v="30">30s</button>
+              <button class="btn small setSeg" data-v="40">40s</button>
+            </div>
           </div>
         </div>
+        <p style="margin:8px 0 0; color:var(--muted); font-size:12px">Example: 3s between words + 9s first→first ⇒ 3s (w1→w2), 3s (w2→w3), then 3s (w3→next w1).</p>
       </section>
 
       <section>
-        <h3 style="margin:0 0 8px">Time between prompts (used when Delay is off)</h3>
+        <h3 style="margin:0 0 8px">Time between prompts (used when Delay is OFF)</h3>
         <div class="row" style="gap:8px;flex-wrap:wrap">
           <button class="btn small setGap" data-gap="3">3s</button>
           <button class="btn small setGap" data-gap="5">5s</button>
@@ -209,7 +228,7 @@
   </div>
 
   <!-- Startup splash (shows for 30s then fades) -->
-  <div class="splash" id="splash"><div class="pill">Jimmy James 24.09.2025 - v17</div></div>
+  <div class="splash" id="splash"><div class="pill">Jimmy James 24.09.2025 - v19</div></div>
 
   <script>
     // ==== DATA ==============================================================
@@ -249,7 +268,7 @@
       d:['Daisy','Daniel','Derek','Delilah','Diego','Daphne'],
       e:['Ella','Edward','Eve','Elijah','Emilia','Ethan'],
       f:['Felix','Fiona','Frank','Faith','Freya','Floyd'],
-      g:['George','Geetha','Grace','Gabriel','Gavin','Giselle'],
+      g:['George','Geetha','Grace','Gabriel','Gavin','Giselle','Giraffe?'],
       h:['Hank','Hannah','Harry','Hazel','Helen','Hugo'],
       i:['Isla','Isaac','India','Ivan','Ivy','Ines'],
       j:['Jasper','Julie','Jordan','June','Jonah','James','Jim','Jimmy'],
@@ -261,7 +280,7 @@
       p:['Piper','Paul','Penelope','Phoebe','Peter','Pravin'],
       q:['Quinn','Quentin','Queen','Quincy','Quiana','Quade'],
       r:['Ruby','Ryan','Rachel','Rafael','Riley','Remi'],
-      s:['Sally','Sam','Santiago','Sophia','Sarachandra','Simon'],
+      s:['Sally','Sam','Santiago','Sophia','Sarachandra','Simon','Shabana','Shayla'],
       t:['Tony','Tina','Thomas','Talia','Trevor','Tracy'],
       u:['Uma','Ulysses','Ursula','Ugne','Ulric','Umi'],
       v:['Violet','Victor','Vanessa','Valentina','Vikram','Vince'],
@@ -302,7 +321,7 @@
       'radioactive','reactive','reductive','resonant',
       'saturated','stoichiometric','supersaturated','synthetic','soluble','solvent',
       'titrated','thermal','turbulent','tensile',
-      'unsaturated','uniform',
+      'unsaturated','uniform','united','utopian',
       'valent','volatile','viscous',
       'weakly-bound','wavelike','wettable',
       'xenon-like','xeric',
@@ -349,11 +368,11 @@
     const phoneticToggle = document.getElementById('phoneticToggle');
     const delayToggle = document.getElementById('delayToggle');
 
-    let playing=true; let timer=null; let gapSec=5; // default manual gap
-    let delayOn=true; const segmentSec=6; let d12=2; let d13=4; // staged timings
+    let playing=true; let timer=null; let gapSec=5; // used when delay OFF
+    let segSec=9; let wordDelay=3; // defaults per v19
     let audioOn=false; let phoneticOn=true;
 
-    // Track current parts so we can preserve across actions
+    // Track current parts
     let current = { word: 'breathing', letter: 'b', animal: 'bear', name: 'Barry' };
 
     // Page 1 typing/suggestions state
@@ -374,16 +393,22 @@
 
     function initialPhoneme(w){
       const s=(w||'').toLowerCase();
+      if(!s) return '';
+      // clusters
       if(s.startsWith('ph')) return 'f';
+      if(s.startsWith('sh')) return 'sh';
+      if(s.startsWith('ch')) return 'ch';
+      if(s.startsWith('th')) return 'th';
       if(s.startsWith('kn')||s.startsWith('gn')||s.startsWith('pn')) return 'n';
       if(s.startsWith('wr')) return 'r';
       if(s.startsWith('wh')) return 'w';
       if(s.startsWith('ps')) return 's';
-      if(s.startsWith('ch')) return 'ch';
-      if(s.startsWith('sh')) return 'sh';
-      if(s.startsWith('th')) return 'th';
-      if(s.startsWith('qu')) return 'k'; // treat "qu" as hard k for matching
-      const c=s[0]||''; const n=s[1]||'';
+      if(s.startsWith('qu')) return 'k'; // treat qu ≈ k
+      // special vowels: "u" splits into "y" vs "ur"
+      if(/^uni/.test(s) || /^ut/.test(s) || /^use/.test(s) || /^user/.test(s)) return 'y'; // e.g., uniform, utopia
+      if(/^ur/.test(s)) return 'ur'; // urchin, ursula
+      // single-letter rules
+      const c=s[0]; const n=s[1]||'';
       if(c==='c') return 'eiy'.includes(n) ? 's' : 'k';
       if(c==='g') return 'eiy'.includes(n) ? 'j' : 'g';
       if(c==='x') return 'z';
@@ -416,7 +441,6 @@
       [t2,t3].forEach(t=> clearTimeout(t));
       if('speechSynthesis' in window) window.speechSynthesis.cancel();
 
-      const activeWords = getActiveFirstWordList();
       const wRaw = (word||current.word);
       const w = wRaw.toLowerCase();
       const firstLetter = w[0]||current.letter||'a';
@@ -443,34 +467,22 @@
       const showAnimal = chkAnimal.checked;
       const showName = chkName.checked;
 
-      if(delayOn){
-        // Stage 1: show first word and speak it
-        result.innerHTML = `<span class="emo">${w}</span>`;
-        speak(w);
-        // Determine schedule for 2nd and 3rd
-        if(showAnimal){
-          t2 = setTimeout(()=>{
-            result.innerHTML = `<span class=\"emo\">${w}</span> <span class=\"animal\">${current.animal}</span>`;
-            speak(current.animal);
-          }, d12*1000);
-        }
-        if(showName){
-          const at = showAnimal ? d13 : d12; // if no animal, the name comes at the first offset
-          t3 = setTimeout(()=>{
-            result.innerHTML = `<span class=\"emo\">${w}</span>${showAnimal?` <span class=\"animal\">${current.animal}</span>`:''} <span class=\"name\">${current.name}</span>`;
-            speak(current.name);
-          }, at*1000);
-        }
-      } else {
-        // instant render & single speak
-        let html = `<span class="emo">${w}</span>`;
-        if(showAnimal) html += ` <span class="animal">${current.animal}</span>`;
-        if(showName) html += ` <span class="name">${current.name}</span>`;
-        result.innerHTML = html;
-        speak(`${w}${showAnimal? ' '+current.animal:''}${showName? ' '+current.name:''}`);
+      // Delay mode: speak as each word appears
+      result.innerHTML = `<span class="emo">${w}</span>`;
+      speak(w);
+      if(showAnimal){
+        t2 = setTimeout(()=>{
+          result.innerHTML = `<span class=\"emo\">${w}</span> <span class=\"animal\">${current.animal}</span>`;
+          speak(current.animal);
+        }, wordDelay*1000);
       }
-
-      updatePlayButtons();
+      if(showName){
+        const mul = showAnimal ? 2 : 1;
+        t3 = setTimeout(()=>{
+          result.innerHTML = `<span class=\"emo\">${w}</span>${showAnimal?` <span class=\"animal\">${current.animal}</span>`:''} <span class=\"name\">${current.name}</span>`;
+          speak(current.name);
+        }, mul*wordDelay*1000);
+      }
     }
 
     function groupIdxForWord(w){ const f=w[0].toLowerCase(); if(f<'f') return 0; if(f<'k') return 1; if(f<'p') return 2; return 3; }
@@ -482,7 +494,7 @@
       activeWords.forEach(w=>{ const ix=groupIdxForWord(w); const btn=makeWordBtn(w); ([grid12,gridFJ,gridKO,gridPZ][ix]).appendChild(btn); });
     }
 
-    // Clicking grid buttons: choose that first word (reshuffle animal/name)
+    // Clicking grid buttons: choose that first word
     function onGridClick(e){ const b = e.target.closest('button.btn'); if(!b) return; const w=b.dataset.word; if(!w) return; render(w, { keepAnimal:false, keepName:false }); }
     grid12.addEventListener('click', onGridClick);
     gridFJ.addEventListener('click', onGridClick);
@@ -510,7 +522,7 @@
       const q=e.target.value.trim().toLowerCase();
       if(!q){ p1Suggest.innerHTML=''; return; }
       const newLetter=q[0];
-      // pick animals/names for this letter live
+      // pick animals/names live (keep or refresh by letter)
       if(newLetter!==current.letter){ render(q,{keepAnimal:false,keepName:false}); } else { render(q,{keepAnimal:true,keepName:true}); }
       const activeWords = getActiveFirstWordList();
       p1List = activeWords.filter(w=>w.startsWith(q));
@@ -538,9 +550,7 @@
       let l=current.letter||'a';
       if(alphaToggle.checked){ l = step>0? nextLetter(l) : prevLetter(l); }
       let w = pickWordForLetter(l);
-      if(!w){ // find next available letter that has an active word
-        for(let i=0;i<26;i++){ l = step>0? nextLetter(l) : prevLetter(l); w = pickWordForLetter(l); if(w) break; }
-      }
+      if(!w){ for(let i=0;i<26;i++){ l = step>0? nextLetter(l) : prevLetter(l); w = pickWordForLetter(l); if(w) break; } }
       render(w||rand(getActiveFirstWordList()), { keepAnimal:false, keepName:false });
     }
 
@@ -575,22 +585,16 @@
     flipNext.addEventListener('click', ()=>{ curPage = (curPage+1)%4; applyPage(); });
     document.addEventListener('keydown', e=>{ if(!sheet.classList.contains('open')) return; if(e.key==='ArrowRight'){ e.preventDefault(); flipNext.click(); } if(e.key==='ArrowLeft'){ e.preventDefault(); flipPrev.click(); } });
 
-    // ==== Gestures: anywhere swipes =======================================
-    let startX=null, startY=null, handled=false;
-    const H=35, V=60; // thresholds
+    // ==== Gestures ==========================================================
+    let startX=null, startY=null, handled=false; const H=35, V=60;
     window.addEventListener('pointerdown', e=>{ startX=e.clientX; startY=e.clientY; handled=false; }, {passive:false});
     window.addEventListener('pointermove', e=>{
       if(startX===null) return;
-      const dx=e.clientX-startX, dy=e.clientY-startY;
-      const ax=Math.abs(dx), ay=Math.abs(dy);
+      const dx=e.clientX-startX, dy=e.clientY-startY; const ax=Math.abs(dx), ay=Math.abs(dy);
       if(handled) { e.preventDefault(); return; }
-
       if(ax>H && ax>ay){ // horizontal
-        if(sheet.classList.contains('open')){
-          if(dx>0){ curPage=(curPage+3)%4; applyPage(); } else { curPage=(curPage+1)%4; applyPage(); }
-        } else {
-          if(dx>0){ document.body.classList.add('focus'); } else { document.body.classList.remove('focus'); }
-        }
+        if(sheet.classList.contains('open')){ if(dx>0){ curPage=(curPage+3)%4; } else { curPage=(curPage+1)%4; } applyPage(); }
+        else { if(dx>0){ document.body.classList.add('focus'); } else { document.body.classList.remove('focus'); } }
         handled=true; e.preventDefault(); return;
       }
       if(ay>V && ay>ax){ // vertical
@@ -601,52 +605,33 @@
     window.addEventListener('pointerup', ()=>{ startX=null; startY=null; handled=false; }, {passive:false});
 
     // ==== Auto-play & Settings ============================================
-    function updatePlayButtons(){
-      playBtn.classList.toggle('active',playing);
-      focusPlayBtn.classList.toggle('active',playing);
-      focusPlayBtn.textContent = playing ? 'Stop' : 'Play';
-    }
-    function scheduleNext(){
-      if(!playing) return;
-      const ms = (delayOn ? segmentSec : gapSec) * 1000;
-      clearTimeout(timer);
-      timer=setTimeout(()=>{ newPhrase(); scheduleNext(); }, ms);
-    }
+    function updatePlayButtons(){ playBtn.classList.toggle('active',playing); focusPlayBtn.classList.toggle('active',playing); focusPlayBtn.textContent = playing ? 'Stop' : 'Play'; }
+    function scheduleNext(){ if(!playing) return; clearTimeout(timer); timer=setTimeout(()=>{ newPhrase(); scheduleNext(); }, segSec*1000); }
     function togglePlay(){ playing=!playing; updatePlayButtons(); if(playing) scheduleNext(); else clearTimeout(timer); }
-    playBtn.addEventListener('click', togglePlay);
-    focusPlayBtn.addEventListener('click', togglePlay);
+    playBtn.addEventListener('click', togglePlay); focusPlayBtn.addEventListener('click', togglePlay);
 
-    // Settings sheet toggle & highlight
     const settingsSheet = document.getElementById('settings');
     function toggleSettings(){ const open = settingsSheet.classList.toggle('open'); settingsBtn.classList.toggle('active', open); }
     settingsBtn.addEventListener('click', toggleSettings);
     settingsSheet.addEventListener('click', e=>{ if(e.target.id==='settings'){ settingsSheet.classList.remove('open'); settingsBtn.classList.remove('active'); }});
-    document.querySelectorAll('.setGap').forEach(b=> b.addEventListener('click', ()=>{ const v=Number(b.dataset.gap)||5; gapSec=v; settingsSheet.classList.remove('open'); settingsBtn.classList.remove('active'); if(playing && !delayOn) scheduleNext(); }));
 
-    // Delay & phonetic toggles
-    delayToggle.addEventListener('change', ()=>{ delayOn=delayToggle.checked; if(playing) scheduleNext(); render(current.word, { keepAnimal:true, keepName:true }); });
-    phoneticToggle.addEventListener('change', ()=>{ phoneticOn=phoneticToggle.checked; render(current.word,{ keepAnimal:false, keepName:false }); });
+    // Delay controls
+    document.querySelectorAll('.setWordGap').forEach(b=> b.addEventListener('click', ()=>{ wordDelay = Number(b.dataset.v)||3; render(current.word,{ keepAnimal:true, keepName:true }); }));
+    document.querySelectorAll('.setSeg').forEach(b=> b.addEventListener('click', ()=>{ segSec = Number(b.dataset.v)||9; if(playing) scheduleNext(); }));
 
-    document.querySelectorAll('.setD12').forEach(b=> b.addEventListener('click', ()=>{ d12=Number(b.dataset.v)||2; if(delayOn) render(current.word,{ keepAnimal:true, keepName:true }); }));
-    document.querySelectorAll('.setD13').forEach(b=> b.addEventListener('click', ()=>{ d13=Number(b.dataset.v)||4; if(delayOn) render(current.word,{ keepAnimal:true, keepName:true }); }));
-
-    // Group toggles => refresh grids & suggestions
+    // Group toggles & phonetic toggle
     [chkEmotion, chkChem, chkMove].forEach(el=> el.addEventListener('change', ()=>{ fillGrids(); p1Suggest.innerHTML=''; }));
     [chkAnimal, chkName].forEach(el=> el.addEventListener('change', ()=>{ render(current.word,{ keepAnimal:true, keepName:true }); }));
+    phoneticToggle.addEventListener('change', ()=>{ phoneticOn=phoneticToggle.checked; render(current.word,{ keepAnimal:false, keepName:false }); });
 
-    // Audio toggle (highlight button when ON)
+    // Audio toggle
     function updateAudioBtn(){ audioBtn.classList.toggle('active', audioOn); }
     audioBtn.addEventListener('click', ()=>{ audioOn=!audioOn; updateAudioBtn(); if(!audioOn && 'speechSynthesis' in window) window.speechSynthesis.cancel(); });
 
-    // Global PC shortcuts: Enter=new phrase, ←/→ prev/next when not in input
-    document.addEventListener('keydown', e=>{
-      if(document.activeElement===p1Search) return; // input handles its own
-      if(e.key==='Enter'){ e.preventDefault(); newPhraseAlpha(+1); }
-      if(e.key==='ArrowRight'){ e.preventDefault(); newPhraseAlpha(+1); }
-      if(e.key==='ArrowLeft'){ e.preventDefault(); newPhraseAlpha(-1); }
-    });
+    // Global PC shortcuts
+    document.addEventListener('keydown', e=>{ if(document.activeElement===p1Search) return; if(e.key==='Enter'){ e.preventDefault(); newPhraseAlpha(+1); } if(e.key==='ArrowRight'){ e.preventDefault(); newPhraseAlpha(+1); } if(e.key==='ArrowLeft'){ e.preventDefault(); newPhraseAlpha(-1); } });
 
-    // Try to enter fullscreen on first interaction (browsers require gesture)
+    // Try fullscreen after first interaction
     let triedFS=false; function tryFS(){ if(triedFS) return; triedFS=true; const el=document.documentElement; const fn=el.requestFullscreen||el.webkitRequestFullscreen||el.msRequestFullscreen; if(fn) { try{ fn.call(el); }catch(e){} } }
     window.addEventListener('pointerdown', tryFS, { once:true });
 
@@ -657,7 +642,8 @@
     updatePlayButtons();
     fillGrids();
     render('breathing', { keepAnimal:true, keepName:true });
-    scheduleNext(); // default start playing
+    scheduleNext(); // start in play mode
   </script>
 </body>
 </html>
+
