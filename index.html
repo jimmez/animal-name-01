@@ -7,7 +7,7 @@
   <meta name="mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
-  <title>Alliteration Animal Namer — v20</title>
+  <title>Alliteration Animal Namer — v22</title>
   <style>
     :root{
       --bg:#0b0b0c; --card:#151518; --text:#f6f7fb; --muted:#a9adc1; --ring:#3b82f6;
@@ -82,6 +82,15 @@
     .focusControls{position:fixed;bottom:14px;left:14px;z-index:130;display:none;gap:10px}
     body.focus .focusControls{display:flex}
 
+    /* Definitions page */
+    .defs{position:fixed;inset:0;background:#0c0e14;z-index:140;display:none}
+    .defs.open{display:block}
+    .defsTop{display:flex;align-items:center;gap:10px;padding:10px}
+    .defsContent{padding:12px 16px 80px;display:grid;gap:16px}
+    .defCard{background:#10131b;border:1px solid #262a36;border-radius:16px;padding:14px}
+    .defCard .label{font-weight:900;margin-bottom:6px}
+    .defCard .def{color:#c9cedd;font-size:15px;text-transform:lowercase}
+
     .footer{margin:28px 2px 12px;color:var(--muted);font-size:12px}
   </style>
 </head>
@@ -110,7 +119,7 @@
           <svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M19.14,12.94a7.43,7.43,0,0,0,.05-.94,7.43,7.43,0,0,0-.05-.94l2.11-1.65a.48.48,0,0,0,.11-.61l-2-3.46a.5.5,0,0,0-.6-.22L16.9,5.5a7.5,7.5,0,0,0-1.63-.94l-.25-2.65A.49.49,0,0,0,14.54,1H9.46a.49.49,0,0,0-.48.41L8.73,4.06A7.5,7.5,0,0,0,7.1,5L4.24,4.12a.5.5,0,0,0-.6.22l-2,3.46a.48.48,0,0,0,.11.61L3.86,10a7.43,7.43,0,0,0-.05.94,7.43,7.43,0,0,0,.05.94L1.75,13.53a.48.48,0,0,0-.11.61l2,3.46a.5.5,0,0,0,.6.22L7.1,18.5a7.5,7.5,0,0,0,1.63.94l.25,2.65a.49.49,0,0,0,.48.41h5.08a.49.49,0,0,0,.48-.41l.25-2.65a7.5,7.5,0,0,0,1.63-.94l2.86.88a.5.5,0,0,0,.6-.22l2-3.46a.48.48,0,0,0-.11-.61ZM12,15.5A3.5,3.5,0,1,1,15.5,12,3.5,3.5,0,0,1,12,15.5Z"/></svg>
         </button>
       </div>
-      <h1>Alliteration Animal Namer — v20</h1>
+      <h1>Alliteration Animal Namer — v22</h1>
     </header>
 
     <div class="card">
@@ -128,10 +137,11 @@
         <button class="btn" id="newNameBtn">New name</button>
         <button class="btn" id="openSheet">Open pages</button>
         <button class="btn" id="enlargeBtn">Enlarge</button>
+        <button class="btn" id="defsBtn">Definitions</button>
       </div>
     </div>
 
-    <p class="footer">Output: <span class="emo">first word</span> <span class="animal">animal</span> <span class="name">name</span>. Staged reveal times are configurable; phonetic mode matches starting sounds.</p>
+    <p class="footer">Output: <span class="emo">first word</span> <span class="animal">animal</span> <span class="name">name</span>. Phonetic mode honors “ee” vs “eye” groupings for tricky vowels.</p>
   </div>
 
   <!-- Bottom sheet: list-only pages with fast flip -->
@@ -228,7 +238,28 @@
   </div>
 
   <!-- Startup splash (shows for 30s then fades) -->
-  <div class="splash" id="splash"><div class="pill">Jimmy James 24.09.2025 - v20</div></div>
+  <div class="splash" id="splash"><div class="pill">Jimmy James 24.09.2025 - v22</div></div>
+
+  <!-- Definitions overlay -->
+  <div class="defs" id="defs">
+    <div class="defsTop">
+      <button class="btn" id="defsBack">← Back</button>
+    </div>
+    <div class="defsContent">
+      <div class="defCard">
+        <div class="label emo" id="defWordLbl">word</div>
+        <div class="def" id="defWordTxt">definition here…</div>
+      </div>
+      <div class="defCard">
+        <div class="label animal" id="defAnimalLbl">animal</div>
+        <div class="def" id="defAnimalTxt">definition here…</div>
+      </div>
+      <div class="defCard">
+        <div class="label name" id="defNameLbl">name</div>
+        <div class="def" id="defNameTxt">a personal name.</div>
+      </div>
+    </div>
+  </div>
 
   <script>
     // ==== DATA ==============================================================
@@ -290,46 +321,7 @@
       z:['Zoe','Zach','Zara','Zeke','Zelda','Zane'],
     };
 
-    // Emotion/Movement/Extra
-    const emotionList = [
-      'afraid','agitated','aloof','amused','angry','annoyed','anxious','ashamed','astonished','awkward','baffled','bitter','blissful','bold','brave','calm','cheerful','confident','confused','content','cranky','curious','defiant','delighted','depressed','determined','disgusted','dismayed','eager','ecstatic','embarrassed','envious','excited','fearful','frustrated','giddy','gloomy','grateful','grumpy','guilty','happy','hopeful','hostile','impatient','insecure','irritated','joyful','lonely','melancholy','nervous','optimistic','overwhelmed','peaceful','proud','relieved','resentful','restless','satisfied','scared','serene','shocked','shy','silly','sorrowful','startled','stressed','tense','tired','tranquil','upbeat','wistful','zealous'
-    ];
-    const movementList = [
-      'arching','basking','bending','bouncy','bounding','breathing','bursting','crawling','choppy','contracting','circling','coiling','creeping','darting','dragging','drooping','expanding','fast','floating','flowing','fluttering','galloping','gliding','hopping','heavy','jerky','leaping','light','lunging','marching','pirouetting','pulsing','quivering','rigid','rolling','rocking','sprinting','sauntering','shuffling','skipping','slithering','spiraling','staggering','stomping','striding','swaying','swinging','tilting','tiptoeing','trembling','twisting','undulating','vibrating','wobbling','zigzagging'
-    ];
-    const extraList = ['bad','brisk','bright','bouncy','bold','soft','strong','swift','sturdy','spry','sleepy','soggy','silky','harmful','haphazardful'];
-
-    // Chemistry/Science
-    const chemistryList = [
-      'acidic','activated','aerobic','alkaline','allotropic','amphoteric','aqueous','atomic',
-      'basic','binding','biochemical','boiling','bonded','buffered','buoyant',
-      'catalytic','charged','chemical','colloidal','conductive','crystalline','covalent',
-      'diffusive','dilute','dimeric','dynamic',
-      'electrolytic','endothermic','enzymatic','equilibrated','exothermic',
-      'ferrous','ferric','fluorescent','fluid','fusion',
-      'gaseous','galvanic','geometric','glycolytic',
-      'hydrophilic','hydrophobic','hypertonic','hypotonic',
-      'ionic','isomeric','isotopic','isotonic',
-      'joule-rich','junctional',
-      'kinetic',
-      'lattice','luminescent','liquid',
-      'malleable','metallic','molar','molecular','magnetic',
-      'neutral','nucleophilic','nonpolar',
-      'oxidative','osmotic','organic',
-      'paramagnetic','photonic','polar','polymeric','precipitated',
-      'quantized','quaternary',
-      'radioactive','reactive','reductive','resonant',
-      'saturated','stoichiometric','supersaturated','synthetic','soluble','solvent',
-      'titrated','thermal','turbulent','tensile',
-      'unsaturated','uniform','united','utopian',
-      'valent','volatile','viscous',
-      'weakly-bound','wavelike','wettable',
-      'xenon-like','xeric',
-      'yielding','ytterbic',
-      'zeta-potential','zwitterionic'
-    ];
-
-    // Add Kerala (India) popular-style names (male & female), ~4 per letter where possible
+    // Kerala names (merged in)
     const keralaNamesByLetter = {
       a:['Anoop','Anil','Anitha','Anju'],
       b:['Binu','Biju','Beena','Bindhu'],
@@ -358,11 +350,286 @@
       y:['Yadhu','Yaseen','Yamini','Yohan'],
       z:['Zain','Ziyad','Zareena','Zahra'],
     };
-
-    // Merge Kerala names into master list (deduplicated)
     for(const [ltr, arr] of Object.entries(keralaNamesByLetter)){
       namesByLetter[ltr] = Array.from(new Set([...(namesByLetter[ltr]||[]), ...arr]));
     }
+
+    // Emotion/Movement/Extra lists
+    const emotionList = [
+      'afraid','agitated','aloof','amused','angry','annoyed','anxious','ashamed','astonished','awkward','baffled','bitter','blissful','bold','brave','calm','cheerful','confident','confused','content','cranky','curious','defiant','delighted','depressed','determined','disgusted','dismayed','eager','ecstatic','embarrassed','envious','excited','fearful','frustrated','giddy','gloomy','grateful','grumpy','guilty','happy','hopeful','hostile','impatient','insecure','irritated','joyful','lonely','melancholy','nervous','optimistic','overwhelmed','peaceful','proud','relieved','resentful','restless','satisfied','scared','serene','shocked','shy','silly','sorrowful','startled','stressed','tense','tired','tranquil','upbeat','wistful','zealous'
+    ];
+    const movementList = [
+      'arching','basking','bending','bouncy','bounding','breathing','bursting','crawling','choppy','contracting','circling','coiling','creeping','darting','dragging','drooping','expanding','fast','floating','flowing','fluttering','galloping','gliding','hopping','heavy','jerky','leaping','light','lunging','marching','pirouetting','pulsing','quivering','rigid','rolling','rocking','sprinting','sauntering','shuffling','skipping','slithering','spiraling','staggering','stomping','striding','swaying','swinging','tilting','tiptoeing','trembling','twisting','undulating','vibrating','wobbling','zigzagging'
+    ];
+    const extraList = ['bad','brisk','bright','bouncy','bold','soft','strong','swift','sturdy','spry','sleepy','soggy','silky','harmful','haphazardful'];
+
+    // Chemistry list + definitions (subset from v19 full list)
+    const chemistryList = [
+      'acidic','activated','aerobic','alkaline','allotropic','amphoteric','aqueous','atomic','basic','binding','biochemical','boiling','bonded','buffered','buoyant','catalytic','charged','chemical','colloidal','conductive','crystalline','covalent','diffusive','dilute','dimeric','dynamic','electrolytic','endothermic','enzymatic','equilibrated','exothermic','ferrous','ferric','fluorescent','fluid','fusion','gaseous','galvanic','geometric','glycolytic','hydrophilic','hydrophobic','hypertonic','hypotonic','ionic','isomeric','isotopic','isotonic','joule-rich','junctional','kinetic','lattice','luminescent','liquid','malleable','metallic','molar','molecular','magnetic','neutral','nucleophilic','nonpolar','oxidative','osmotic','organic','paramagnetic','photonic','polar','polymeric','precipitated','quantized','quaternary','radioactive','reactive','reductive','resonant','saturated','stoichiometric','supersaturated','synthetic','soluble','solvent','titrated','thermal','turbulent','tensile','unsaturated','uniform','valent','volatile','viscous','weakly-bound','wavelike','wettable','xenon-like','xeric','yielding','ytterbic','zeta-potential','zwitterionic'
+    ];
+
+    const chemDefs = {
+      'acidic':'having properties of an acid; ph < 7; donates protons.',
+      'activated':'made more reactive by added energy or a catalyst.',
+      'aerobic':'occurring in the presence of oxygen.',
+      'alkaline':'basic; ph > 7; rich in hydroxide ions.',
+      'allotropic':'same element in different structural forms.',
+      'amphoteric':'can act as either an acid or a base.',
+      'aqueous':'dissolved in water; water is the solvent.',
+      'atomic':'relating to atoms or atomic scale.',
+      'basic':'opposite of acidic; accepts protons; pH > 7.',
+      'binding':'forming attachments/bonds between species.',
+      'biochemical':'chemistry of living systems.',
+      'boiling':'phase change from liquid to gas at boiling point.',
+      'bonded':'connected by chemical bonds.',
+      'buffered':'resists ph change when acid/base is added.',
+      'buoyant':'capable of floating in a fluid.',
+      'catalytic':'increases reaction rate without being consumed.',
+      'charged':'bearing net electric charge (cation/anion).',
+      'chemical':'relating to substances and their transformations.',
+      'colloidal':'dispersed particles (≈1–1000 nm) that do not settle quickly.',
+      'conductive':'able to conduct electricity or heat.',
+      'crystalline':'having a long-range ordered lattice.',
+      'covalent':'involving shared electron pairs.',
+      'diffusive':'spreading via diffusion down a gradient.',
+      'dilute':'low solute concentration.',
+      'dimeric':'composed of two similar subunits (a dimer).',
+      'dynamic':'changing with time; relates to kinetics/equilibria.',
+      'electrolytic':'involving current through an electrolyte; electrolysis.',
+      'endothermic':'absorbing heat (Δh > 0).',
+      'enzymatic':'catalyzed by enzymes.',
+      'equilibrated':'brought to equilibrium; forward and reverse rates equal.',
+      'exothermic':'releasing heat (Δh < 0).',
+      'ferrous':'containing iron in the +2 oxidation state.',
+      'ferric':'containing iron in the +3 oxidation state.',
+      'fluorescent':'emitting light shortly after excitation.',
+      'fluid':'able to flow; a liquid or gas.',
+      'fusion':'melting: solid → liquid (context-dependent).',
+      'gaseous':'in the gas phase.',
+      'galvanic':'producing electricity via spontaneous redox.',
+      'geometric':'relating to molecular geometry/isomerism.',
+      'glycolytic':'pertaining to glycolysis.',
+      'hydrophilic':'water-attracting; interacts with water.',
+      'hydrophobic':'water-repelling; avoids water.',
+      'hypertonic':'higher solute concentration than a reference.',
+      'hypotonic':'lower solute concentration than a reference.',
+      'ionic':'involving ions or ionic bonds.',
+      'isomeric':'same formula, different arrangement.',
+      'isotopic':'relating to isotopes (same z, different neutrons).',
+      'isotonic':'equal osmotic pressure relative to another solution.',
+      'joule-rich':'energy-dense; high energy content.',
+      'junctional':'relating to junctions or interfaces.',
+      'kinetic':'relating to motion or reaction rates.',
+      'lattice':'regular, repeating 3d arrangement in crystals.',
+      'luminescent':'emitting light without high temperature.',
+      'liquid':'liquid phase; fixed volume, variable shape.',
+      'malleable':'can be hammered/rolled into sheets.',
+      'metallic':'exhibiting metal-like properties.',
+      'molar':'relating to moles or mol·l⁻¹ concentration.',
+      'molecular':'relating to molecules.',
+      'magnetic':'exhibiting magnetism.',
+      'neutral':'ph ~7 or no net charge.',
+      'nucleophilic':'electron-pair donor toward electrophiles.',
+      'nonpolar':'little charge separation; weakly interacts with water.',
+      'oxidative':'involving oxidation.',
+      'osmotic':'related to osmosis across membranes.',
+      'organic':'carbon-based compounds.',
+      'paramagnetic':'attracted to fields due to unpaired electrons.',
+      'photonic':'relating to photons/light.',
+      'polar':'uneven charge distribution; strong dipoles.',
+      'polymeric':'composed of repeating monomer units.',
+      'precipitated':'formed as an insoluble solid from solution.',
+      'quantized':'restricted to discrete values.',
+      'quaternary':'protein subunit assembly; also degree-4 substitution.',
+      'radioactive':'emitting ionizing radiation from unstable nuclei.',
+      'reactive':'readily undergoes chemical change.',
+      'reductive':'involving reduction.',
+      'resonant':'electron delocalization; resonance stabilization.',
+      'saturated':'at solubility limit; or only single c–c bonds.',
+      'stoichiometric':'exact ratios from a balanced equation.',
+      'supersaturated':'contains more solute than equilibrium allows.',
+      'synthetic':'man-made via chemical synthesis.',
+      'soluble':'capable of dissolving in a given solvent.',
+      'solvent':'the medium that dissolves solutes.',
+      'titrated':'quantified by titration.',
+      'thermal':'relating to heat or temperature.',
+      'turbulent':'chaotic, eddying fluid flow.',
+      'tensile':'relating to resistance to pulling.',
+      'unsaturated':'below solubility limit; or has c=c/c≡c bonds.',
+      'uniform':'evenly distributed; consistent throughout.',
+      'valent':'relating to valence.',
+      'volatile':'evaporates readily; high vapor pressure.',
+      'viscous':'high resistance to flow.',
+      'weakly-bound':'held by weak interactions or low bond energy.',
+      'wavelike':'exhibiting wave characteristics.',
+      'wettable':'easily spread by a liquid.',
+      'xenon-like':'noble-gas-like/inert behavior.',
+      'xeric':'occurring/adapted to dry environments.',
+      'yielding':'producing; or giving way under stress.',
+      'ytterbic':'pertaining to ytterbium.',
+      'zeta-potential':'electrokinetic potential at the slipping plane.',
+      'zwitterionic':'contains both + and − charges, overall neutral.'
+    };
+
+    // Animal definitions (covering all in animalsByLetter)
+    const animalDefs = {
+      'ant':'a social insect known for cooperative colonies.',
+      'aardvark':'a nocturnal african mammal that eats ants and termites.',
+      'albatross':'a large oceanic seabird noted for long-distance soaring.',
+      'anole':'a small lizard (anolis), often capable of color change.',
+      'auk':'a diving seabird of northern oceans.',
+      'axolotl':'an aquatic salamander that retains larval features (neoteny).',
+      'bear':'a large omnivorous mammal of the family ursidae.',
+      'beaver':'a semi-aquatic rodent that builds dams and lodges.',
+      'buffalo':'a large bovine; african buffalo or asian water buffalo.',
+      'baboon':'a ground-dwelling old world monkey with a long snout.',
+      'bluebird':'a small north american thrush with blue plumage.',
+      'boar':'a wild male pig; also wild swine species.',
+      'cheetah':'the fastest land mammal; a spotted african big cat.',
+      'cougar':'a large north american cat also called puma or mountain lion.',
+      'capybara':'the world’s largest rodent, semi-aquatic and social.',
+      'cobra':'a venomous snake known for its hood display.',
+      'crab':'a decapod crustacean with a broad carapace and pincers.',
+      'crow':'an intelligent black passerine bird (genus corvus).',
+      'dog':'a domesticated canid, common human companion.',
+      'deer':'a hoofed ruminant; males typically with antlers.',
+      'dolphin':'a highly intelligent toothed whale.',
+      'duck':'a waterfowl with broad bill and webbed feet.',
+      'donkey':'a domesticated ass used as a pack animal.',
+      'dragonfly':'an agile predatory insect with two pairs of strong wings.',
+      'eagle':'a large bird of prey with powerful beak and talons.',
+      'emu':'a large flightless bird native to australia.',
+      'eel':'an elongated fish with a snake-like body.',
+      'elephant':'the largest land mammal, with trunk and tusks.',
+      'egret':'a long-legged wading bird; typically white herons.',
+      'echidna':'a spiny egg-laying mammal (monotreme).',
+      'fox':'a small to medium omnivorous canid with bushy tail.',
+      'frog':'an amphibian with long hind legs for jumping.',
+      'falcon':'a fast bird of prey known for stooping dives.',
+      'ferret':'a domesticated polecat used for hunting or as a pet.',
+      'flamingo':'a pink wading bird that filters food with its curved bill.',
+      'firefly':'a beetle that produces light (bioluminescent).',
+      'giraffe':'the tallest living land animal, with a very long neck.',
+      'goat':'a hardy domesticated ruminant kept for milk and meat.',
+      'goose':'a large waterfowl; plural geese.',
+      'gecko':'a small lizard with adhesive toe pads.',
+      'gorilla':'the largest living primate; ground-dwelling and herbivorous.',
+      'goldfish':'a domesticated carp commonly kept as an aquarium fish.',
+      'horse':'a hoofed mammal domesticated for riding and work.',
+      'hamster':'a small burrowing rodent kept as a pet.',
+      'heron':'a long-legged wading bird often found near water.',
+      'hyena':'a carnivorous mammal known for strong jaws and social clans.',
+      'hedgehog':'a small spiny insectivorous mammal that can roll into a ball.',
+      'hawk':'a bird of prey with keen vision and hooked beak.',
+      'iguana':'a large arboreal lizard native to the americas.',
+      'impala':'a medium-sized african antelope known for agility.',
+      'ibis':'a wading bird with a long downcurved bill.',
+      'inchworm':'the looping larva of certain geometer moths.',
+      'isopod':'a crustacean group including pill bugs and marine species.',
+      'irish setter':'a red-coated gundog breed.',
+      'jaguar':'a powerful spotted big cat native to the americas.',
+      'jellyfish':'a gelatinous cnidarian with tentacles and stinging cells.',
+      'jackal':'a small wild canid of africa and asia.',
+      'jay':'a colorful and vocal corvid.',
+      'jerboa':'a desert rodent with long hind legs for jumping.',
+      'joey':'a young marsupial such as a baby kangaroo.',
+      'koala':'an arboreal marsupial that feeds on eucalyptus leaves.',
+      'kangaroo':'a large marsupial with powerful hind legs and tail.',
+      'kingfisher':'a bright-colored bird that dives for fish.',
+      'kestrel':'a small falcon that hovers while hunting.',
+      'kiwi':'a small flightless bird native to new zealand.',
+      'komodo':'the komodo dragon, the world’s largest lizard.',
+      'lion':'a large social big cat; males often have manes.',
+      'lemur':'a primate from madagascar, many species nocturnal.',
+      'lobster':'a large marine crustacean with long antennae and claws.',
+      'llama':'a domesticated south american camelid used as pack animal.',
+      'lynx':'a medium wild cat with tufted ears.',
+      'lark':'a small songbird known for melodious flight songs.',
+      'monkey':'a primate, generally with a tail; many arboreal species.',
+      'moose':'the largest deer species, with broad palmate antlers.',
+      'magpie':'an intelligent black-and-white corvid.',
+      'macaw':'a large, long-tailed parrot of tropical america.',
+      'marmot':'a large burrowing ground squirrel.',
+      'mantis':'a predatory insect with grasping forelegs.',
+      'narwhal':'an arctic whale known for its long spiral tusk.',
+      'newt':'a semi-aquatic salamander.',
+      'nightingale':'a small songbird celebrated for rich songs.',
+      'nighthawk':'a nocturnal insect-eating bird (nightjar family).',
+      'nudibranch':'a colorful sea slug (marine gastropod).',
+      'nene':'the hawaiian goose, hawaii’s state bird.',
+      'owl':'a nocturnal bird of prey with forward-facing eyes.',
+      'otter':'a playful semi-aquatic carnivorous mammal.',
+      'ocelot':'a medium spotted wild cat of the americas.',
+      'oriole':'a bright-colored songbird.',
+      'orangutan':'a great ape with long arms, native to borneo and sumatra.',
+      'ox':'a domesticated bovine used as a draft animal.',
+      'penguin':'a flightless seabird adapted to swimming and cold.',
+      'panda':'a black-and-white bamboo-eating bear (usually giant panda).',
+      'panther':'a term for melanistic leopards/jaguars; sometimes mountain lions.',
+      'parrot':'a colorful, intelligent bird with a strong curved beak.',
+      'puffin':'a seabird with a colorful beak, excellent diver.',
+      'porpoise':'a small toothed whale with a blunt snout.',
+      'quail':'a small ground-dwelling game bird.',
+      'quetzal':'a resplendent central american trogon with long tail.',
+      'quokka':'a small australian marsupial often appearing to “smile”.',
+      'queen bee':'the reproductive female in a honeybee colony.',
+      'quoll':'a spotted carnivorous marsupial from australia.',
+      'quagga':'an extinct zebra subspecies once native to south africa.',
+      'rabbit':'a fast-breeding lagomorph with long ears.',
+      'raccoon':'an omnivorous mammal with a bandit-like face mask.',
+      'ram':'an adult male sheep.',
+      'raven':'a large, intelligent corvid with all-black plumage.',
+      'robin':'a small thrush; name used for different species in europe/america.',
+      'reindeer':'also caribou; an arctic deer species.',
+      'seal':'a fin-footed marine mammal (pinniped).',
+      'sparrow':'a small seed-eating passerine bird.',
+      'shark':'a cartilaginous fish; many apex marine predators.',
+      'swan':'a large waterfowl with long neck; graceful swimmer.',
+      'serval':'a lanky african wild cat with large ears.',
+      'skunk':'a small mammal known for defensive spray.',
+      'tiger':'a striped big cat native to asia.',
+      'turkey':'a large ground-dwelling bird native to north america.',
+      'toucan':'a tropical bird with a huge colorful bill.',
+      'tortoise':'a terrestrial turtle with a domed shell.',
+      'tapir':'a large herbivore with a short prehensile snout.',
+      'tarantula':'a large hairy spider (theraphosidae).',
+      'urchin':'a sea urchin; spiny echinoderm.',
+      'uakari':'a short-tailed amazon monkey with a red face.',
+      'urial':'a wild mountain sheep of central/south asia.',
+      'uguisu':'a japanese bush warbler famed for its song.',
+      'umbrella bird':'a tropical bird with an umbrella-like crest.',
+      'unicornfish':'a surgeonfish with a horn-like projection.',
+      'viper':'a venomous snake (viperidae).',
+      'vulture':'a scavenging raptor with a bald head.',
+      'vicuna':'a wild andean camelid valued for fine wool.',
+      'vole':'a small burrowing rodent.',
+      'vaquita':'a critically endangered gulf of california porpoise.',
+      'veery':'a north american thrush with fluty song.',
+      'wolf':'a social wild canid that lives in packs.',
+      'walrus':'a large arctic pinniped with tusks.',
+      'wren':'a tiny active songbird.',
+      'weasel':'a small elongated carnivore.',
+      'whale':'a large marine mammal (cetacean).',
+      'wombat':'a stocky australian burrowing marsupial.',
+      'x-ray tetra':'a transparent-bodied aquarium fish.',
+      'xerus':'an african ground squirrel.',
+      'xenops':'a small neotropical ovenbird with upturned bill.',
+      'xoloitzcuintli':'a hairless mexican dog breed.',
+      'xenopus':'an african clawed frog (aquatic).',
+      'xantus hummingbird':'a hummingbird of baja california.',
+      'yak':'a long-haired himalayan bovine.',
+      'yellowtail':'several fish species with yellow tail (e.g., amberjack).',
+      'yabby':'a freshwater crayfish of australia.',
+      'yapok':'a semi-aquatic water opossum.',
+      'yellowhammer':'a eurasian bunting with yellow plumage.',
+      'yakutian laika':'a hardy russian spitz-type dog.',
+      'zebra':'a striped african equid.',
+      'zorilla':'an african striped polecat with strong odor.',
+      'zebu':'a humped south asian cattle.',
+      'zander':'a european pike-perch fish.',
+      'zooplankter':'a drifting aquatic animal organism.',
+      'zipper fish':'a colloquial label; fish with zipper-like markings.'
+    };
 
     // ==== ELEMENTS & STATE ================================================
     const result = document.getElementById('result');
@@ -377,6 +644,7 @@
     const newNameBtn = document.getElementById('newNameBtn');
     const openSheetBtn = document.getElementById('openSheet');
     const enlargeBtn = document.getElementById('enlargeBtn');
+    const defsBtn = document.getElementById('defsBtn');
 
     const alphaToggle = document.getElementById('alphaToggle');
 
@@ -403,8 +671,18 @@
     const phoneticToggle = document.getElementById('phoneticToggle');
     const delayToggle = document.getElementById('delayToggle');
 
+    // Definitions overlay elements
+    const defs = document.getElementById('defs');
+    const defsBack = document.getElementById('defsBack');
+    const defWordLbl = document.getElementById('defWordLbl');
+    const defWordTxt = document.getElementById('defWordTxt');
+    const defAnimalLbl = document.getElementById('defAnimalLbl');
+    const defAnimalTxt = document.getElementById('defAnimalTxt');
+    const defNameLbl = document.getElementById('defNameLbl');
+    const defNameTxt = document.getElementById('defNameTxt');
+
     let playing=true; let timer=null; let gapSec=5; // used when delay OFF
-    let segSec=9; let wordDelay=3; // defaults per v19
+    let segSec=9; let wordDelay=3; // defaults per v19/20/21
     let audioOn=false; let phoneticOn=true;
 
     // Track current parts
@@ -439,9 +717,13 @@
       if(s.startsWith('wh')) return 'w';
       if(s.startsWith('ps')) return 's';
       if(s.startsWith('qu')) return 'k'; // treat qu ≈ k
-      // special vowels: "u" splits into "y" vs "ur"
-      if(/^uni/.test(s) || /^ut/.test(s) || /^use/.test(s) || /^user/.test(s)) return 'y'; // e.g., uniform, utopia
-      if(/^ur/.test(s)) return 'ur'; // urchin, ursula
+      // tricky vowels: "ee" vs "eye" groupings
+      if(s.startsWith('eye')) return 'eye';
+      if(/^i(sland|sle|phone|pad|pod|watch)/.test(s)) return 'eye'; // island/isle/iphone etc.
+      if(/^e(agle|el|erie|vil|qual|gret)/.test(s)) return 'ee'; // eagle, eel, eerie, evil, equal, egret
+      // u-starts
+      if(/^uni/.test(s) || /^ut/.test(s) || /^use/.test(s) || /^user/.test(s)) return 'y'; // uniform etc → y
+      if(/^ur/.test(s)) return 'ur'; // urchin/ursula
       // single-letter rules
       const c=s[0]; const n=s[1]||'';
       if(c==='c') return 'eiy'.includes(n) ? 's' : 'k';
@@ -502,13 +784,14 @@
       const showAnimal = chkAnimal.checked;
       const showName = chkName.checked;
 
-      // Delay mode: speak as each word appears
+      // Delay mode always on for staged reveal visual (definitions update too)
       result.innerHTML = `<span class="emo">${w}</span>`;
       speak(w);
       if(showAnimal){
         t2 = setTimeout(()=>{
           result.innerHTML = `<span class=\"emo\">${w}</span> <span class=\"animal\">${current.animal}</span>`;
           speak(current.animal);
+          updateDefs();
         }, wordDelay*1000);
       }
       if(showName){
@@ -516,8 +799,10 @@
         t3 = setTimeout(()=>{
           result.innerHTML = `<span class=\"emo\">${w}</span>${showAnimal?` <span class=\"animal\">${current.animal}</span>`:''} <span class=\"name\">${current.name}</span>`;
           speak(current.name);
+          updateDefs();
         }, mul*wordDelay*1000);
       }
+      updateDefs();
     }
 
     function groupIdxForWord(w){ const f=w[0].toLowerCase(); if(f<'f') return 0; if(f<'k') return 1; if(f<'p') return 2; return 3; }
@@ -557,7 +842,6 @@
       const q=e.target.value.trim().toLowerCase();
       if(!q){ p1Suggest.innerHTML=''; return; }
       const newLetter=q[0];
-      // pick animals/names live (keep or refresh by letter)
       if(newLetter!==current.letter){ render(q,{keepAnimal:false,keepName:false}); } else { render(q,{keepAnimal:true,keepName:true}); }
       const activeWords = getActiveFirstWordList();
       p1List = activeWords.filter(w=>w.startsWith(q));
@@ -601,10 +885,16 @@
     enlargeBtn.addEventListener('click', ()=> document.body.classList.add('focus'));
     document.getElementById('minimizeBtn').addEventListener('click', ()=> document.body.classList.remove('focus'));
 
+    // Definitions overlay
+    function openDefs(){ defs.classList.add('open'); updateDefs(); }
+    function closeDefs(){ defs.classList.remove('open'); }
+    defsBtn.addEventListener('click', openDefs);
+    defsBack.addEventListener('click', closeDefs);
+
     // Clicking prompt or empty space => new phrase
     result.addEventListener('click', ()=> newPhrase());
     document.body.addEventListener('click', (e)=>{
-      if(e.target.closest('button, input, .sheet, .suggestions, .toggle, .output, .focusControls')) return;
+      if(e.target.closest('button, input, .sheet, .suggestions, .toggle, .output, .focusControls, .defs')) return;
       newPhrase();
     });
 
@@ -673,9 +963,29 @@
     // Splash hide after 30s
     setTimeout(()=>{ splash.classList.add('hide'); }, 30000);
 
+    // ==== Definitions logic ===============================================
+    function defForWord(w){
+      const s=(w||'').toLowerCase();
+      if(chemDefs[s]) return chemDefs[s];
+      if(animalDefs[s]) return animalDefs[s];
+      if(emotionList.includes(s)) return `a feeling of being ${s}.`;
+      if(movementList.includes(s)) return `movement described as “${s}”.`;
+      if(extraList.includes(s)) return `a descriptive quality: ${s}.`;
+      return `a word meaning “${s}”.`;
+    }
+    function updateDefs(){
+      defWordLbl.textContent = current.word;
+      defWordTxt.textContent = defForWord(current.word);
+      defAnimalLbl.textContent = current.animal;
+      defAnimalTxt.textContent = defForWord(current.animal);
+      defNameLbl.textContent = current.name;
+      defNameTxt.textContent = 'a personal name.';
+    }
+
     // Boot ------------------------------------------------------------------
     updatePlayButtons();
     fillGrids();
+    updateAudioBtn();
     render('breathing', { keepAnimal:true, keepName:true });
     scheduleNext(); // start in play mode
   </script>
