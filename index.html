@@ -7,7 +7,7 @@
   <meta name="mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
-  <title>Alliteration Animal Namer — v33</title>
+  <title>Alliteration Animal Namer — v34</title>
   <style>
     :root{
       --bg:#0b0b0c; --card:#151518; --text:#f6f7fb; --muted:#a9adc1; --ring:#3b82f6;
@@ -21,7 +21,8 @@
 
     /* Sticky banner prompt at the very top (takes 50% height) */
     .banner{position:sticky;top:0;z-index:120;background:#0b0b0c;box-shadow:0 6px 16px rgba(0,0,0,.35);border-bottom:1px solid #23242d}
-    .banner .output{margin:8px 0 0;padding:18px 12px;border-radius:12px;background:#0f1117;border:1px solid #2a2e3d;font-size:clamp(56px,9vw,120px);line-height:1.12;cursor:pointer;user-select:none;min-height:50vh;display:flex;align-items:center}
+    .banner .output{margin:8px 0 0;padding:18px 12px;border-radius:12px;background:#0f1117;border:1px solid #2a2e3d;font-size:clamp(56px,9vw,120px);line-height:1.12;cursor:pointer;user-select:none;min-height:50vh;white-space:normal;word-break:keep-all}
+    .output .emo,.output .animal,.output .name{margin-right:.2em}
     .emo{color:var(--red);font-weight:900;text-transform:none}
     .animal{color:var(--green);font-weight:900}
     .name{color:var(--blue);font-weight:900}
@@ -44,6 +45,10 @@
     .pages{display:flex;transition:transform .25s ease}
     .page{min-width:100vw;max-width:100vw;padding:12px}
     .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(120px,1fr));gap:10px;max-height:46vh;overflow:auto;padding-right:4px}
+
+    /* Settings FULL overlay */
+    .sheet.full{top:0;bottom:0;border-radius:0}
+    body.settingsOpen .bottomArea, body.settingsOpen .sheet#sheet, body.settingsOpen .footer{display:none !important}
 
     /* Startup signature splash */
     .splash{position:fixed;left:0;right:0;bottom:12px;display:flex;justify-content:center;z-index:200;transition:opacity .6s ease, transform .6s ease}
@@ -133,8 +138,8 @@
     </div>
   </div>
 
-  <!-- Settings Sheet (Close on the left) -->
-  <div class="sheet" id="settings" style="padding-bottom:20px">
+  <!-- Settings Sheet (FULL overlay, close on the left) -->
+  <div class="sheet full" id="settings" style="padding-bottom:20px">
     <div class="handle"></div>
     <div style="display:flex;align-items:center;justify-content:space-between;padding:6px 12px;position:sticky;top:0;background:#0f1117;z-index:5;border-bottom:1px solid #262a36">
       <button class="btn small" id="settingsCloseTop">Close</button>
@@ -213,7 +218,7 @@
   </div>
 
   <!-- Startup splash (shows for 2.5s then fades) -->
-  <div class="splash" id="splash"><div class="pill">Jimmy James 25.09.2025 - v33</div></div>
+  <div class="splash" id="splash"><div class="pill">Jimmy James 25.09.2025 - v34</div></div>
 
   <!-- Definitions overlay (word, animal, and name) -->
   <div class="defs" id="defs">
@@ -258,12 +263,12 @@
       <button class="btn" id="mainEnlarge">Enlarge</button>
       <button class="btn" id="mainDefs">Definitions</button>
 
-      <!-- NEW toggle buttons (replacing top checkboxes) -->
+      <!-- toggle buttons -->
       <button class="btn" id="btnABC">ABC</button>
       <button class="btn active" id="btnAdv">adv.</button>
       <button class="btn" id="btnHide">hide</button>
     </div>
-    <div class="brand">Alliteration Animal Namer — v33</div>
+    <div class="brand">Alliteration Animal Namer — v34</div>
   </div>
 
   <!-- Hidden state inputs preserved for logic -->
@@ -272,7 +277,7 @@
   <input type="checkbox" id="hideToggle" style="display:none" />
 
   <script>
-    // ==== DATA (unchanged from v32) ========================================
+    // ==== DATA (same as v33) ===============================================
     const animalsByLetter = {
       a:['ant','aardvark','albatross','anole','auk','axolotl'],
       b:['bear','beaver','buffalo','baboon','bluebird','boar'],
@@ -469,7 +474,6 @@
     function speak(text){ try{ if(!audioOn || !('speechSynthesis' in window)) return; const u = new SpeechSynthesisUtterance(text); u.rate = 0.7; window.speechSynthesis.speak(u);}catch(e){} }
 
     let t2=null, t3=null; // staged timers (prompt)
-    let d2=null, d3=null; // staged timers (definitions)
 
     // ======= RENDER =========================================================
     let current = { word: 'breathing', letter: 'b', animal: 'bear', name: 'Barry' };
@@ -486,13 +490,13 @@
 
       if(delayToggle.checked){
         result.innerHTML = `<span class="emo">${w}</span>`; speak(w);
-        if(showAnimal){ t2 = setTimeout(()=>{ result.innerHTML = `<span class=\"emo\">${w}</span> <span class=\"animal\">${current.animal}</span>`; speak(current.animal); if(defs.classList.contains('open')) startDefsSequence(); }, wordDelay*1000); }
-        if(showName){ const mul = showAnimal ? 2 : 1; t3 = setTimeout(()=>{ result.innerHTML = `<span class=\"emo\">${w}</span>${showAnimal?` <span class=\"animal\">${current.animal}</span>`:''} <span class=\"name\">${current.name}</span>`; speak(current.name); if(defs.classList.contains('open')) startDefsSequence(); }, mul*wordDelay*1000); }
+        if(showAnimal){ t2 = setTimeout(()=>{ result.innerHTML = `<span class=\"emo\">${w}</span> <span class=\"animal\">${current.animal}</span>`; speak(current.animal); }, wordDelay*1000); }
+        if(showName){ const mul = showAnimal ? 2 : 1; t3 = setTimeout(()=>{ result.innerHTML = `<span class=\"emo\">${w}</span>${showAnimal?` <span class=\"animal\">${current.animal}</span>`:''} <span class=\"name\">${current.name}</span>`; speak(current.name); }, mul*wordDelay*1000); }
       } else {
         const html = `<span class=\"emo\">${w}</span>${showAnimal?` <span class=\"animal\">${current.animal}</span>`:''}${showName?` <span class=\"name\">${current.name}</span>`:''}`; result.innerHTML = html; speak(`${w} ${showAnimal?current.animal:''} ${showName?current.name:''}`.trim());
       }
 
-      if(defs.classList.contains('open')) { updateDefs(); startDefsSequence(); }
+      if(defs.classList.contains('open')) { updateDefs(); showAllDefs(); }
     }
 
     // ======= LETTER / PHRASE ===============================================
@@ -524,14 +528,14 @@
     document.getElementById('minimizeBtn').addEventListener('click', ()=> document.body.classList.remove('focus'));
     document.getElementById('focusDefsBtn').addEventListener('click', ()=> defs.classList.add('open'));
 
-    function openDefs(){ defs.classList.add('open'); updateDefs(); startDefsSequence(); }
+    function openDefs(){ defs.classList.add('open'); updateDefs(); showAllDefs(); }
     function closeDefs(){ defs.classList.remove('open'); }
     defsBtn.addEventListener('click', openDefs); defsBack.addEventListener('click', closeDefs);
 
-    defsContent.addEventListener('click', (e)=>{ if(e.target.closest('.defsBottom, button')) return; newDifferentLetterPhrase(); startDefsSequence(); });
+    defsContent.addEventListener('click', (e)=>{ if(e.target.closest('.defsBottom, button')) return; newDifferentLetterPhrase(); showAllDefs(); });
 
-    result.addEventListener('click', ()=> { newDifferentLetterPhrase(); if(defs.classList.contains('open')) startDefsSequence(); });
-    document.body.addEventListener('click', (e)=>{ if(e.target.closest('button, input, .sheet, .suggestions, .toggle, .output, .focusControls, .defs, .bottomArea')) return; newDifferentLetterPhrase(); if(defs.classList.contains('open')) startDefsSequence(); });
+    result.addEventListener('click', ()=> { newDifferentLetterPhrase(); if(defs.classList.contains('open')) showAllDefs(); });
+    document.body.addEventListener('click', (e)=>{ if(e.target.closest('button, input, .sheet, .suggestions, .toggle, .output, .focusControls, .defs, .bottomArea')) return; newDifferentLetterPhrase(); if(defs.classList.contains('open')) showAllDefs(); });
 
     // Bottom sheet controls
     let curPage = 0; function applyPage(){ pages.style.transform = `translateX(-${curPage*100}vw)`; tabs.forEach(t=>t.classList.remove('active')); const active = Array.from(tabs).find(t=>Number(t.dataset.ix)===curPage); if(active) active.classList.add('active'); }
@@ -556,29 +560,29 @@
     playBtn.addEventListener('click', togglePlay); document.getElementById('focusPlayBtn').addEventListener('click', togglePlay); defsPlayBtn.addEventListener('click', togglePlay);
 
     const settingsSheet = document.getElementById('settings');
-    function toggleSettings(){ const open = settingsSheet.classList.toggle('open'); settingsBtn.classList.toggle('active', open); if(open) updateSettingsHighlights(); }
+    function toggleSettings(){ const open = settingsSheet.classList.toggle('open'); settingsBtn.classList.toggle('active', open); document.body.classList.toggle('settingsOpen', open); if(open) updateSettingsHighlights(); }
     settingsBtn.addEventListener('click', toggleSettings);
-    settingsSheet.addEventListener('click', e=>{ if(e.target.id==='settings'){ settingsSheet.classList.remove('open'); settingsBtn.classList.remove('active'); }});
-    document.getElementById('settingsCloseTop').addEventListener('click', ()=>{ settingsSheet.classList.remove('open'); settingsBtn.classList.remove('active'); });
+    settingsSheet.addEventListener('click', e=>{ if(e.target.id==='settings'){ settingsSheet.classList.remove('open'); settingsBtn.classList.remove('active'); document.body.classList.remove('settingsOpen'); }});
+    document.getElementById('settingsCloseTop').addEventListener('click', ()=>{ settingsSheet.classList.remove('open'); settingsBtn.classList.remove('active'); document.body.classList.remove('settingsOpen'); });
 
     const wordGapButtons = () => Array.from(document.querySelectorAll('.setWordGap'));
     const segButtons     = () => Array.from(document.querySelectorAll('.setSeg'));
     const gapButtons     = () => Array.from(document.querySelectorAll('.setGap'));
     function updateSettingsHighlights(){ wordGapButtons().forEach(b=> b.classList.toggle('active', Number(b.dataset.v)===Number(wordDelay))); segButtons().forEach(b=> b.classList.toggle('active', Number(b.dataset.v)===Number(segSec))); gapButtons().forEach(b=> b.classList.toggle('active', Number(b.dataset.gap)===Number(gapSec))); updateToggleButtons(); }
 
-    document.querySelectorAll('.setWordGap').forEach(b=> b.addEventListener('click', ()=>{ wordDelay = Number(b.dataset.v)||3; updateSettingsHighlights(); render(current.word,{ keepAnimal:true, keepName:true }); if(defs.classList.contains('open')) startDefsSequence(); }));
-    document.querySelectorAll('.setSeg').forEach(b=> b.addEventListener('click', ()=>{ segSec = Number(b.dataset.v)||9; updateSettingsHighlights(); if(playing) scheduleNext(); if(defs.classList.contains('open')) startDefsSequence(); }));
+    document.querySelectorAll('.setWordGap').forEach(b=> b.addEventListener('click', ()=>{ wordDelay = Number(b.dataset.v)||3; updateSettingsHighlights(); render(current.word,{ keepAnimal:true, keepName:true }); if(defs.classList.contains('open')) showAllDefs(); }));
+    document.querySelectorAll('.setSeg').forEach(b=> b.addEventListener('click', ()=>{ segSec = Number(b.dataset.v)||9; updateSettingsHighlights(); if(playing) scheduleNext(); if(defs.classList.contains('open')) showAllDefs(); }));
     document.querySelectorAll('.setGap').forEach(b=> b.addEventListener('click', ()=>{ gapSec = Number(b.dataset.gap)||5; updateSettingsHighlights(); if(playing && !delayToggle.checked) scheduleNext(); }));
 
-    delayToggle.addEventListener('change', ()=>{ updateSettingsHighlights(); render(current.word,{ keepAnimal:true, keepName:true }); if(playing) scheduleNext(); if(defs.classList.contains('open')) startDefsSequence(); });
+    delayToggle.addEventListener('change', ()=>{ updateSettingsHighlights(); render(current.word,{ keepAnimal:true, keepName:true }); if(playing) scheduleNext(); if(defs.classList.contains('open')) showAllDefs(); });
 
     [chkEmotion, chkChem, chkMove].forEach(el=> el.addEventListener('change', ()=>{ fillGrids(); p1Suggest.innerHTML=''; }));
-    [chkAnimal, chkName].forEach(el=> el.addEventListener('change', ()=>{ render(current.word,{ keepAnimal:true, keepName:true }); if(defs.classList.contains('open')) startDefsSequence(); }));
-    phoneticToggle.addEventListener('change', ()=>{ phoneticOn=phoneticToggle.checked; render(current.word,{ keepAnimal:false, keepName:false }); if(defs.classList.contains('open')) startDefsSequence(); });
-    chkIndian.addEventListener('change', ()=>{ indianOn = chkIndian.checked; render(current.word,{ keepAnimal:true, keepName:false }); if(defs.classList.contains('open')) startDefsSequence(); });
+    [chkAnimal, chkName].forEach(el=> el.addEventListener('change', ()=>{ render(current.word,{ keepAnimal:true, keepName:true }); if(defs.classList.contains('open')) showAllDefs(); }));
+    phoneticToggle.addEventListener('change', ()=>{ phoneticOn=phoneticToggle.checked; render(current.word,{ keepAnimal:false, keepName:false }); if(defs.classList.contains('open')) showAllDefs(); });
+    chkIndian.addEventListener('change', ()=>{ indianOn = chkIndian.checked; render(current.word,{ keepAnimal:true, keepName:false }); if(defs.classList.contains('open')) showAllDefs(); });
 
     // adv toggle affects chemistry + Indian names
-    advToggle.addEventListener('change', ()=>{ if(!advToggle.checked){ chkChem.checked=false; chkIndian.checked=false; indianOn=false; } else { chkChem.checked=true; chkIndian.checked=true; indianOn=true; } fillGrids(); p1Suggest.innerHTML=''; render(current.word,{ keepAnimal:true, keepName:false }); if(defs.classList.contains('open')) startDefsSequence(); updateToggleButtons(); });
+    advToggle.addEventListener('change', ()=>{ if(!advToggle.checked){ chkChem.checked=false; chkIndian.checked=false; indianOn=false; } else { chkChem.checked=true; chkIndian.checked=true; indianOn=true; } fillGrids(); p1Suggest.innerHTML=''; render(current.word,{ keepAnimal:true, keepName:false }); if(defs.classList.contains('open')) showAllDefs(); updateToggleButtons(); });
 
     // hide mode
     hideToggle.addEventListener('change', ()=>{ document.body.classList.toggle('hide', hideToggle.checked); updateToggleButtons(); });
@@ -613,24 +617,6 @@
     function updateDefs(){ defWordLbl.textContent = current.word; defWordTxt.textContent = defForWord(current.word); defAnimalLbl.textContent = current.animal; defAnimalTxt.textContent = defForWord(current.animal); defNameLbl.textContent = current.name; defNameTxt.textContent = 'a personal name.'; }
 
     function showAllDefs(){ const cards = Array.from(document.querySelectorAll('.defCard')); cards.forEach((c,i)=>{ c.style.display = (i===0 || (i===1 && chkAnimal.checked) || (i===2 && chkName.checked)) ? 'block' : (i===0?'block':'none'); }); }
-
-    let defsSeq = 0;
-    function startDefsSequence(){
-      [d2,d3].forEach(t=> clearTimeout(t)); defsSeq++; const mySeq = defsSeq;
-      const cards = Array.from(document.querySelectorAll('.defCard'));
-      if(!cards.length){ return; }
-      const showAnimal = chkAnimal.checked; const showName = chkName.checked;
-      // If Delay OFF or cadence too short to reveal all stages before next phrase, show everything at once.
-      const requiredStages = (showAnimal?1:0) + (showName?1:0);
-      const revealWindow = segSec; // first→first cadence
-      const totalNeeded = (delayToggle.checked ? requiredStages * wordDelay : 0);
-      if(!delayToggle.checked || totalNeeded >= revealWindow){ updateDefs(); showAllDefs(); return; }
-      // Stage reveal reliably
-      updateDefs();
-      cards[0].style.display='block'; if(cards[1]) cards[1].style.display='none'; if(cards[2]) cards[2].style.display='none';
-      if(showAnimal){ d2 = setTimeout(()=>{ if(defsSeq!==mySeq) return; if(cards[1]) cards[1].style.display='block'; }, wordDelay*1000); }
-      if(showName){ const mul = showAnimal ? 2 : 1; d3 = setTimeout(()=>{ if(defsSeq!==mySeq) return; if(cards[2]) cards[2].style.display='block'; }, mul*wordDelay*1000); }
-    }
 
     // Boot
     function boot(){ fillGrids(); updateAudioUI(); updateAlphaUI(); updateToggleButtons(); render('breathing', { keepAnimal:true, keepName:true }); updatePlayButtons(); scheduleNext(); }
