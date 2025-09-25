@@ -7,7 +7,7 @@
   <meta name="mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
-  <title>Alliteration Animal Namer — v37</title>
+  <title>Alliteration Animal Namer — v38</title>
   <style>
     :root{ --bg:#0b0b0c; --card:#151518; --text:#f6f7fb; --muted:#a9adc1; --ring:#3b82f6; --red:#ef4444; --green:#10b981; --blue:#3b82f6; --play:#16a34a; --playGlow:#22c55e; }
     *{box-sizing:border-box}
@@ -85,6 +85,9 @@
     /* Hide mode */
     body.hide #searchField{display:none}
     body.hide #mainDock .primary{display:none}
+
+    /* Middle tap zone for next phrase */
+    .tapZone{min-height:34vh}
   </style>
 </head>
 <body>
@@ -92,6 +95,9 @@
     <div class="banner">
       <div class="output" id="result" title="Tap/click for NEW letter phrase (Enter on PC)">Your phrase will appear here…</div>
     </div>
+
+    <!-- Tap zone (empty middle space) -->
+    <div class="tapZone" id="tapZone" title="Tap to advance"></div>
 
     <div class="focusControls" id="focusControls">
       <button class="btn" id="focusPlayBtn">Stop</button>
@@ -188,10 +194,13 @@
         </div>
       </section>
     </div>
+    <div style="position:sticky;bottom:0;background:#0f1117;border-top:1px solid #262a36;padding:10px 12px;display:flex;justify-content:center">
+      <button class="btn" id="settingsCloseBottom">Close</button>
+    </div>
   </div>
 
   <!-- Splash -->
-  <div class="splash" id="splash"><div class="pill">Jimmy James 25.09.2025 - v37</div></div>
+  <div class="splash" id="splash"><div class="pill">Jimmy James 25.09.2025 - v38</div></div>
 
   <!-- Definitions overlay -->
   <div class="defs" id="defs">
@@ -240,7 +249,7 @@
       <button class="btn active" id="btnAdv">adv.</button>
       <button class="btn" id="btnHide">hide</button>
     </div>
-    <div class="brand">Alliteration Animal Namer — v37</div>
+    <div class="brand">Alliteration Animal Namer — v38</div>
   </div>
 
   <script>
@@ -275,26 +284,26 @@
     };
 
     const namesBaseByLetter = {
-      a:['Alex','Anjitha','Aree','Amelia','Arnold','Ava'],
-      b:['Barry','Bella','Brian','Beatrice','Bruno','Bianca'],
+      a:['Alex','Anjitha','Aree','Amelia','Arnold','Ava','Amanda','Arthur'],
+      b:['Barry','Bella','Brian','Beatrice','Bruno','Bianca','Barathy','Burt'],
       c:['Charlie','Claire','Carlos','Caroline','Cynthia','Cedric'],
-      d:['Daisy','Daniel','Derek','Delilah','Diego','Daphne'],
-      e:['Ella','Edward','Eve','Elijah','Emilia','Ethan'],
+      d:['Daisy','Daniel','Derek','Delilah','Diego','Daphne','Doreen'],
+      e:['Ella','Edward','Eve','Elijah','Emilia','Ethan','Eric','Elisabeth'],
       f:['Felix','Fiona','Frank','Faith','Freya','Floyd'],
-      g:['George','Geetha','Grace','Gabriel','Gavin','Giselle'],
+      g:['George','Geetha','Grace','Gabriel','Gavin','Giselle','Gordon'],
       h:['Hank','Hannah','Harry','Hazel','Helen','Hugo'],
       i:['Isla','Isaac','India','Ivan','Ivy','Ines'],
-      j:['Jasper','Julie','Jordan','June','Jonah','James','Jim','Jimmy'],
-      k:['Katie','Kevin','Kira','Khalid','Kyle','Kara'],
+      j:['Jasper','Julie','Jordan','June','Jonah','James','Jim','Jimmy','Julie'],
+      k:['Katie','Kevin','Kira','Khalid','Kyle','Kara','Kristine'],
       l:['Leo','Luna','Liam','Layla','Logan','Lorenzo'],
-      m:['Max','Mia','Mason','Maya','Miles','Maggie'],
-      n:['Nora','Noah','Naomi','Nelson','Natalie','Nate'],
-      o:['Oliver','Olivia','Oscar','Opal','Owen','Orla'],
-      p:['Piper','Paul','Penelope','Phoebe','Peter','Pravin'],
+      m:['Max','Mia','Mason','Maya','Miles','Maggie','Maria'],
+      n:['Nora','Noah','Naomi','Nelson','Natalie','Nate','Natassia'],
+      o:['Oliver','Olivia','Oscar','Opal','Owen','Orla','Omar'],
+      p:['Piper','Paul','Penelope','Phoebe','Peter','Pravin','Paul'],
       q:['Quinn','Quentin','Queen','Quincy','Quiana','Quade'],
-      r:['Ruby','Ryan','Rachel','Rafael','Riley','Remi'],
-      s:['Sally','Sam','Santiago','Sophia','Sarachandra','Simon','Shabana','Shayla'],
-      t:['Tony','Tina','Thomas','Talia','Trevor','Tracy'],
+      r:['Ruby','Ryan','Rachel','Rafael','Riley','Remi','Rosa','Rosemary','Robert'],
+      s:['Sally','Sam','Santiago','Sophia','Sarachandra','Simon','Shabana','Shayla','Sarah','Suzanne'],
+      t:['Tony','Tina','Thomas','Talia','Trevor','Tracy','Tenaya','Thea'],
       u:['Uma','Ulysses','Ursula','Ugne','Ulric','Umi'],
       v:['Violet','Victor','Vanessa','Valentina','Vikram','Vince'],
       w:['Wendy','Will','Willow','Wesley','Wanda','Winston'],
@@ -411,7 +420,7 @@
       'zwitterionic':'bearing both positive and negative charges.'
     };
 
-    // Short, plain animal definitions for all animals in the list
+    // Short, plain animal definitions
     const animalDefs = {
       'ant':'a small social insect that lives in colonies.',
       'aardvark':'a nocturnal african mammal that eats ants and termites.',
@@ -602,6 +611,7 @@
     // Settings page
     const settingsPage = document.getElementById('settingsPage');
     const settingsCloseTop = document.getElementById('settingsCloseTop');
+    const settingsCloseBottom = document.getElementById('settingsCloseBottom');
     const tEmo=document.getElementById('tEmo');
     const tMove=document.getElementById('tMove');
     const tChem=document.getElementById('tChem');
@@ -658,18 +668,18 @@
       return c;
     }
 
+    // UI state toggles from Settings page
+    let showEmo=true, showMove=true, showChem=true, showAnimal=true, showName=true;
+
+    function chemList(){ return Object.keys(chemDefs); }
+
     function getActiveFirstWordList(){
       let arr=[]; if(showEmo) arr=arr.concat(emotionList,extraList); if(showMove) arr=arr.concat(movementList); if(showChem) arr=arr.concat(chemList()); if(!arr.length) arr=emotionList.slice(); return Array.from(new Set(arr)).sort((a,b)=>a.localeCompare(b));
     }
 
-    function chemList(){ return Object.keys(chemDefs); }
-
     function speak(text){ try{ if(!audioOn || !('speechSynthesis' in window)) return; const u=new SpeechSynthesisUtterance(text); u.rate=0.7; speechSynthesis.speak(u);}catch(e){} }
 
     let t2=null, t3=null;
-
-    // UI state toggles from Settings page
-    let showEmo=true, showMove=true, showChem=true, showAnimal=true, showName=true;
 
     // ===== Render prompt
     let current = { word:'breathing', letter:'b', animal:'bear', name:'Barry' };
@@ -717,6 +727,11 @@
     p1Search.addEventListener('input', e=>{ const q=e.target.value.trim().toLowerCase(); if(!q){ p1Suggest.innerHTML=''; return; } const newLetter=q[0]; if(newLetter!==current.letter){ render(q,{keepAnimal:false,keepName:false}); } else { render(q,{keepAnimal:true,keepName:true}); } const active=getActiveFirstWordList(); p1List=active.filter(w=>w.startsWith(q)); p1Index=p1List.length?0:-1; p1RenderSuggest(p1List,q); });
     p1Search.addEventListener('keydown', e=>{ const key=e.key; if(key==='ArrowDown'){ e.preventDefault(); if(!p1List.length) return; p1Index=(p1Index+1)%p1List.length; updateP1Highlight(); return; } if(key==='ArrowUp'){ e.preventDefault(); if(!p1List.length) return; p1Index=(p1Index-1+p1List.length)%p1List.length; updateP1Highlight(); return; } if(key==='Enter'){ e.preventDefault(); if(p1List.length && p1Index>=0){ chooseP1Index(); } else { newDifferentLetterPhrase(); } return; } if(key==='ArrowRight'){ e.preventDefault(); newPhraseAlpha(+1); return; } if(key==='ArrowLeft'){ e.preventDefault(); newPhraseAlpha(-1); return; } });
 
+    // ===== Tap middle empty area to advance
+    const tapZone = document.getElementById('tapZone');
+    tapZone.addEventListener('click', ()=> newDifferentLetterPhrase());
+    result.addEventListener('click', ()=> newDifferentLetterPhrase());
+
     // ===== Buttons
     document.getElementById('mainNewPhrase').addEventListener('click',newPhrase);
     document.getElementById('mainNewAnimal').addEventListener('click',newAnimal);
@@ -754,9 +769,9 @@
     // Settings
     function openSettings(){ settingsPage.classList.add('open'); }
     function closeSettings(){ settingsPage.classList.remove('open'); }
-    settingsBtn.addEventListener('click', openSettings); settingsCloseTop.addEventListener('click', closeSettings);
+    settingsBtn.addEventListener('click', openSettings); settingsCloseTop.addEventListener('click', closeSettings); settingsCloseBottom.addEventListener('click', closeSettings);
 
-    // Delay + cadence controls (settings page only; not visible on Page 1)
+    // Delay + cadence controls (settings page only)
     const delayToggleEl = document.getElementById('delayToggle');
     document.querySelectorAll('.setWordGap').forEach(b=> b.addEventListener('click', ()=>{ wordDelay=Number(b.dataset.v)||3; render(current.word,{keepAnimal:true,keepName:true}); updateDefs(); }));
     document.querySelectorAll('.setSeg').forEach(b=> b.addEventListener('click', ()=>{ segSec=Number(b.dataset.v)||9; if(playing) scheduleNext(); }));
