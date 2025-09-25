@@ -7,7 +7,7 @@
   <meta name="mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
-  <title>Alliteration Animal Namer — v41</title>
+  <title>Alliteration Animal Namer — v42</title>
   <style>
     :root{ --bg:#0b0b0c; --card:#151518; --text:#f6f7fb; --muted:#a9adc1; --ring:#3b82f6; --red:#ef4444; --green:#10b981; --blue:#3b82f6; --play:#16a34a; --playGlow:#22c55e; }
     *{box-sizing:border-box}
@@ -202,7 +202,7 @@
   </div>
 
   <!-- Splash -->
-  <div class="splash" id="splash"><div class="pill">Jimmy James 25.09.2025 - v41</div></div>
+  <div class="splash" id="splash"><div class="pill">Jimmy James 25.09.2025 - v42</div></div>
 
   <!-- Definitions overlay -->
   <div class="defs" id="defs">
@@ -251,7 +251,7 @@
       <button class="btn active" id="btnAdv">adv.</button>
       <button class="btn" id="btnHide">hide</button>
     </div>
-    <div class="brand">Alliteration Animal Namer — v41</div>
+    <div class="brand">Alliteration Animal Namer — v42</div>
   </div>
 
   <script>
@@ -723,7 +723,7 @@
     function nextByMode(){ if(alphaNext) newPhraseAlpha(+1); else newDifferentLetterPhrase(); }
     const newPhrase = ()=> nextByMode();
     const newAnimal = ()=> render(current.word,{keepName:true});
-    const newName   = ()=> render(current.word,{keepAnimal=true});
+    const newName = ()=> render(current.word,{keepAnimal:true});
 
     // ===== Pages (lists)
     function groupIdxForWord(w){ const f=w[0].toLowerCase(); if(f<'f') return 0; if(f<'k') return 1; if(f<'p') return 2; return 3; }
@@ -838,4 +838,3 @@
   </script>
 </body>
 </html>
-
