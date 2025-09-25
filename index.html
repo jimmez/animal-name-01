@@ -7,7 +7,7 @@
   <meta name="mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
-  <title>Alliteration Animal Namer — v34</title>
+  <title>Alliteration Animal Namer — v35</title>
   <style>
     :root{
       --bg:#0b0b0c; --card:#151518; --text:#f6f7fb; --muted:#a9adc1; --ring:#3b82f6;
@@ -19,10 +19,10 @@
     body{margin:0;background:linear-gradient(180deg,#0b0b0c,#111217 40%,#0b0b0c);color:var(--text);font-family:system-ui,-apple-system,Segoe UI,Roboto,Inter,Arial,sans-serif;min-height:100dvh}
     .wrap{max-width:980px;margin:0 auto;padding:8px 16px 340px}
 
-    /* Sticky banner prompt at the very top (takes 50% height) */
+    /* Sticky banner prompt at the very top (takes ~30% height) */
     .banner{position:sticky;top:0;z-index:120;background:#0b0b0c;box-shadow:0 6px 16px rgba(0,0,0,.35);border-bottom:1px solid #23242d}
-    .banner .output{margin:8px 0 0;padding:18px 12px;border-radius:12px;background:#0f1117;border:1px solid #2a2e3d;font-size:clamp(56px,9vw,120px);line-height:1.12;cursor:pointer;user-select:none;min-height:50vh;white-space:normal;word-break:keep-all}
-    .output .emo,.output .animal,.output .name{margin-right:.2em}
+    .banner .output{margin:8px 0 0;padding:18px 12px;border-radius:12px;background:#0f1117;border:1px solid #2a2e3d;font-size:clamp(56px,9vw,120px);line-height:1.12;cursor:pointer;user-select:none;min-height:30vh;white-space:normal;word-break:keep-all}
+    .output .emo,.output .animal,.output .name{margin-right:.25em}
     .emo{color:var(--red);font-weight:900;text-transform:none}
     .animal{color:var(--green);font-weight:900}
     .name{color:var(--blue);font-weight:900}
@@ -47,7 +47,7 @@
     .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(120px,1fr));gap:10px;max-height:46vh;overflow:auto;padding-right:4px}
 
     /* Settings FULL overlay */
-    .sheet.full{top:0;bottom:0;border-radius:0}
+    .sheet.full{top:0;bottom:0;border-radius:0;overflow:auto}
     body.settingsOpen .bottomArea, body.settingsOpen .sheet#sheet, body.settingsOpen .footer{display:none !important}
 
     /* Startup signature splash */
@@ -113,7 +113,7 @@
       <button class="btn" id="minimizeBtn" title="Exit enlarged view">Minimize</button>
     </div>
 
-    <p class="footer">Tap/Enter for a phrase with a <em>different</em> starting letter. Phonetics honors “ee” vs “eye”.</p>
+    <p class="footer">Tap/Enter for a phrase with a <em>different</em> starting letter. Prompt block now uses ~30% height.</p>
   </div>
 
   <!-- Bottom sheet: list-only pages with fast flip -->
@@ -218,7 +218,7 @@
   </div>
 
   <!-- Startup splash (shows for 2.5s then fades) -->
-  <div class="splash" id="splash"><div class="pill">Jimmy James 25.09.2025 - v34</div></div>
+  <div class="splash" id="splash"><div class="pill">Jimmy James 25.09.2025 - v35</div></div>
 
   <!-- Definitions overlay (word, animal, and name) -->
   <div class="defs" id="defs">
@@ -268,7 +268,7 @@
       <button class="btn active" id="btnAdv">adv.</button>
       <button class="btn" id="btnHide">hide</button>
     </div>
-    <div class="brand">Alliteration Animal Namer — v34</div>
+    <div class="brand">Alliteration Animal Namer — v35</div>
   </div>
 
   <!-- Hidden state inputs preserved for logic -->
@@ -277,7 +277,7 @@
   <input type="checkbox" id="hideToggle" style="display:none" />
 
   <script>
-    // ==== DATA (same as v33) ===============================================
+    // ==== DATA (same as v34) ===============================================
     const animalsByLetter = {
       a:['ant','aardvark','albatross','anole','auk','axolotl'],
       b:['bear','beaver','buffalo','baboon','bluebird','boar'],
@@ -532,8 +532,12 @@
     function closeDefs(){ defs.classList.remove('open'); }
     defsBtn.addEventListener('click', openDefs); defsBack.addEventListener('click', closeDefs);
 
-    defsContent.addEventListener('click', (e)=>{ if(e.target.closest('.defsBottom, button')) return; newDifferentLetterPhrase(); showAllDefs(); });
+    // Tap anywhere on definitions overlay to advance
+    function defsTapAdvance(e){ if(e.target.closest('.defsBottom, button')) return; newDifferentLetterPhrase(); updateDefs(); showAllDefs(); }
+    defsContent.addEventListener('click', defsTapAdvance);
+    defs.addEventListener('click', defsTapAdvance);
 
+    // Tap empty space on page 1 to advance
     result.addEventListener('click', ()=> { newDifferentLetterPhrase(); if(defs.classList.contains('open')) showAllDefs(); });
     document.body.addEventListener('click', (e)=>{ if(e.target.closest('button, input, .sheet, .suggestions, .toggle, .output, .focusControls, .defs, .bottomArea')) return; newDifferentLetterPhrase(); if(defs.classList.contains('open')) showAllDefs(); });
 
