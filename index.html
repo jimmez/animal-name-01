@@ -7,7 +7,7 @@
   <meta name="mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
-  <title>Alliteration Animal Namer — v32</title>
+  <title>Alliteration Animal Namer — v33</title>
   <style>
     :root{
       --bg:#0b0b0c; --card:#151518; --text:#f6f7fb; --muted:#a9adc1; --ring:#3b82f6;
@@ -17,33 +17,22 @@
     *{box-sizing:border-box}
     html,body{height:100%}
     body{margin:0;background:linear-gradient(180deg,#0b0b0c,#111217 40%,#0b0b0c);color:var(--text);font-family:system-ui,-apple-system,Segoe UI,Roboto,Inter,Arial,sans-serif;min-height:100dvh}
-    .wrap{max-width:980px;margin:0 auto;padding:8px 16px 300px}
+    .wrap{max-width:980px;margin:0 auto;padding:8px 16px 340px}
 
-    /* Sticky banner prompt at the very top */
+    /* Sticky banner prompt at the very top (takes 50% height) */
     .banner{position:sticky;top:0;z-index:120;background:#0b0b0c;box-shadow:0 6px 16px rgba(0,0,0,.35);border-bottom:1px solid #23242d}
-    .banner .output{margin:8px 0 0;padding:18px 12px;border-radius:12px;background:#0f1117;border:1px solid #2a2e3d;font-size:clamp(52px,8vw,112px);line-height:1.12;cursor:pointer;user-select:none}
+    .banner .output{margin:8px 0 0;padding:18px 12px;border-radius:12px;background:#0f1117;border:1px solid #2a2e3d;font-size:clamp(56px,9vw,120px);line-height:1.12;cursor:pointer;user-select:none;min-height:50vh;display:flex;align-items:center}
     .emo{color:var(--red);font-weight:900;text-transform:none}
     .animal{color:var(--green);font-weight:900}
     .name{color:var(--blue);font-weight:900}
-
-    header{display:flex;flex-direction:column;gap:8px;margin:10px 0 12px}
-    h1{font-size:clamp(18px,3vw,24px);margin:0;font-weight:800;letter-spacing:.2px}
 
     .card{background:var(--card);border:1px solid #23242d;border-radius:20px;padding:16px;box-shadow:0 10px 30px rgba(0,0,0,.35)}
 
     .btn{appearance:none;border:1px solid #2a2f3d;background:#121420;color:#fff;padding:12px 16px;border-radius:12px;font-weight:800;cursor:pointer;transition:background .2s,border-color .2s,box-shadow .2s}
     .btn.small{padding:8px 10px;font-size:12px}
     .btn.icon{padding:10px 12px;display:inline-flex;align-items:center;justify-content:center;gap:6px}
-    .btn.icon svg{width:20px;height:20px;display:block}
     .btn:active{transform:translateY(1px)}
     .btn.active{background:linear-gradient(135deg,var(--play),var(--playGlow));border-color:transparent;box-shadow:0 0 0 3px rgba(34,197,94,.25)}
-
-    .row{display:flex;gap:12px;align-items:center;flex-wrap:wrap}
-
-    /* Page 1 toggles */
-    .p1bar{display:flex;gap:14px;align-items:center;margin-bottom:6px;flex-wrap:wrap}
-    .toggle{display:inline-flex;align-items:center;gap:8px}
-    .toggle input{width:18px;height:18px}
 
     /* Bottom sheet */
     .sheet{position:fixed;left:0;right:0;bottom:-100%;background:#0f1117;border-top-left-radius:16px;border-top-right-radius:16px;border:1px solid #262a36;box-shadow:0 -20px 30px rgba(0,0,0,.45);transition:bottom .25s ease;z-index:110}
@@ -62,7 +51,7 @@
     .splash.hide{opacity:0;pointer-events:none;transform:translateY(10px)}
 
     /* Focus (enlarged) mode */
-    body.focus header, body.focus .card, body.focus .sheet, body.focus .footer, body.focus .topbar{ display:none !important; }
+    body.focus .sheet, body.focus .footer, body.focus .topbar, body.focus .bottomArea{ display:none !important; }
     body.focus .banner{ box-shadow:none; border-bottom:none; }
     body.focus .banner .output{ font-size:clamp(64px,12vw,160px); padding:28px 16px; }
     body.focus .emo, body.focus .animal, body.focus .name{ display:block; text-align:left; }
@@ -73,10 +62,10 @@
     body.focus .focusControls{display:grid;grid-template-columns:repeat(3,minmax(120px,1fr));grid-auto-rows:auto}
     .focusControls .btn{padding:10px 12px;font-size:14px}
 
-    /* Fixed bottom area for search + main actions */
+    /* Fixed bottom area (search + all buttons + brand) */
     .bottomArea{position:fixed;left:14px;right:14px;bottom:14px;z-index:115;display:grid;gap:10px}
     .searchFixed{position:relative}
-    .searchFixed input{width:100%;padding:16px 48px 16px 16px;border-radius:14px;border:1px solid #272a36;background:#0f1117;color:var(--text);font-size:18px;outline:none;transition:border .18s, box-shadow .18s}
+    .searchFixed input{width:100%;padding:14px 16px;border-radius:14px;border:1px solid #272a36;background:#0f1117;color:var(--text);font-size:18px;outline:none;transition:border .18s, box-shadow .18s}
     .searchFixed input:focus{border-color:var(--ring);box-shadow:0 0 0 4px rgba(59,130,246,.25)}
     .suggestions{position:relative;margin-top:8px}
     .suggestions ul{position:absolute;z-index:40;list-style:none;margin:0;padding:6px;background:#0f1117;border:1px solid #262a36;border-radius:12px;width:100%;max-height:260px;overflow:auto;box-shadow:0 20px 30px rgba(0,0,0,.35)}
@@ -85,6 +74,7 @@
 
     .mainDock{display:grid;gap:10px;grid-template-columns:repeat(3,minmax(120px,1fr))}
     .mainDock .btn{padding:10px 12px;font-size:14px}
+    .brand{color:#a9adc1;text-align:center;font-size:12px}
 
     /* Definitions page */
     .defs{position:fixed;inset:0;background:#0c0e14;z-index:140;display:none}
@@ -98,7 +88,8 @@
     .footer{margin:28px 2px 12px;color:var(--muted);font-size:12px}
 
     /* Hide mode */
-    body.hide #mainRow1{display:none}
+    body.hide #searchField{display:none}
+    body.hide #mainDock .primary{display:none}
   </style>
 </head>
 <body>
@@ -117,19 +108,7 @@
       <button class="btn" id="minimizeBtn" title="Exit enlarged view">Minimize</button>
     </div>
 
-    <header>
-      <h1>Alliteration Animal Namer — v32</h1>
-    </header>
-
-    <div class="card">
-      <div class="p1bar">
-        <label class="toggle"><input type="checkbox" id="alphaToggle" /> ABC next-letter</label>
-        <label class="toggle"><input type="checkbox" id="advToggle" checked /> adv.</label>
-        <label class="toggle"><input type="checkbox" id="hideToggle" /> hide</label>
-      </div>
-    </div>
-
-    <p class="footer">Output: <span class="emo">first word</span> <span class="animal">animal</span> <span class="name">name</span>. Tap or press Enter to jump to a phrase with a <em>different</em> starting letter. Phonetics honors “ee” vs “eye”.</p>
+    <p class="footer">Tap/Enter for a phrase with a <em>different</em> starting letter. Phonetics honors “ee” vs “eye”.</p>
   </div>
 
   <!-- Bottom sheet: list-only pages with fast flip -->
@@ -154,13 +133,12 @@
     </div>
   </div>
 
-  <!-- Settings Sheet -->
+  <!-- Settings Sheet (Close on the left) -->
   <div class="sheet" id="settings" style="padding-bottom:20px">
     <div class="handle"></div>
     <div style="display:flex;align-items:center;justify-content:space-between;padding:6px 12px;position:sticky;top:0;background:#0f1117;z-index:5;border-bottom:1px solid #262a36">
       <button class="btn small" id="settingsCloseTop">Close</button>
-      <span class="row" style="gap:8px"><svg width="18" height="18" viewBox="0 0 24 24" aria-hidden="true"><path fill="#a9adc1" d="M19.14,12.94a7.43,7.43,0,0,0,.05-.94,7.43,7.43,0,0,0-.05-.94l2.11-1.65a.48.48,0,0,0,.11-.61l-2-3.46a.5.5,0,0,0-.6-.22L16.9,5.5a7.5,7.5,0,0,0-1.63-.94l-.25-2.65A.49.49,0,0,0,14.54,1H9.46a.49.49,0,0,0-.48.41L8.73,4.06A7.5,7.5,0,0,0,7.1,5L4.24,4.12a.5.5,0,0,0-.6.22l-2,3.46a.48.48,0,0,0,.11.61L3.86,10a7.43,7.43,0,0,0-.05.94,7.43,7.43,0,0,0,.05.94L1.75,13.53a.48.48,0,0,0-.11.61l2,3.46a.5.5,0,0,0,.6.22L7.1,18.5a7.5,7.5,0,0,0,1.63.94l.25,2.65a.49.49,0,0,0,.48.41h5.08a.49.49,0,0,0,.48-.41l.25-2.65a7.5,7.5,0,0,0,1.63-.94l2.86.88a.5.5,0,0,0,.6-.22l2-3.46a.48.48,0,0,0,.11-.61ZM12,15.5A3.5,3.5,0,1,1,15.5,12,3.5,3.5,0,0,1,12,15.5Z"/></svg>
-        <strong style="color:#a9adc1">Settings</strong></span>
+      <span class="row" style="gap:8px"><strong style="color:#a9adc1">Settings</strong></span>
       <span></span>
     </div>
     <div style="padding:12px 16px;display:grid;gap:16px">
@@ -219,7 +197,7 @@
       </section>
 
       <section>
-        <h3 style="margin:0 0 8px">Time between prompts (used when Delay is OFF)</h3>
+        <h3 style="margin:0 0 8px">Time between prompts (Delay OFF)</h3>
         <div class="row" style="gap:8px;flex-wrap:wrap">
           <button class="btn small setGap" data-gap="3">3s</button>
           <button class="btn small setGap" data-gap="5">5s</button>
@@ -235,7 +213,7 @@
   </div>
 
   <!-- Startup splash (shows for 2.5s then fades) -->
-  <div class="splash" id="splash"><div class="pill">Jimmy James 25.09.2025 - v32</div></div>
+  <div class="splash" id="splash"><div class="pill">Jimmy James 25.09.2025 - v33</div></div>
 
   <!-- Definitions overlay (word, animal, and name) -->
   <div class="defs" id="defs">
@@ -261,7 +239,7 @@
     </div>
   </div>
 
-  <!-- Fixed bottom area: search + main actions -->
+  <!-- Fixed bottom area: search + all actions + brand -->
   <div class="bottomArea" id="bottomArea">
     <div class="searchFixed" id="searchField">
       <input id="page1Search" type="text" placeholder="Type a prefix. ↑/↓ navigate, Enter select. ← prev • → next • Enter = NEW letter" autocomplete="off" />
@@ -272,18 +250,29 @@
       <button class="btn" id="audioBtn" title="Audio on/off" aria-label="Audio">Audio</button>
       <button class="btn" id="settingsBtn" title="Settings" aria-label="Settings">Settings</button>
 
-      <button class="btn" id="mainNewPhrase">New phrase</button>
-      <button class="btn" id="mainNewAnimal">New animal</button>
-      <button class="btn" id="mainNewName">New name</button>
+      <button class="btn primary" id="mainNewPhrase">New phrase</button>
+      <button class="btn primary" id="mainNewAnimal">New animal</button>
+      <button class="btn primary" id="mainNewName">New name</button>
 
       <button class="btn" id="mainOpenPages">Open pages</button>
       <button class="btn" id="mainEnlarge">Enlarge</button>
       <button class="btn" id="mainDefs">Definitions</button>
+
+      <!-- NEW toggle buttons (replacing top checkboxes) -->
+      <button class="btn" id="btnABC">ABC</button>
+      <button class="btn active" id="btnAdv">adv.</button>
+      <button class="btn" id="btnHide">hide</button>
     </div>
+    <div class="brand">Alliteration Animal Namer — v33</div>
   </div>
 
+  <!-- Hidden state inputs preserved for logic -->
+  <input type="checkbox" id="alphaToggle" style="display:none" />
+  <input type="checkbox" id="advToggle" style="display:none" checked />
+  <input type="checkbox" id="hideToggle" style="display:none" />
+
   <script>
-    // ==== DATA (same as v31) ===============================================
+    // ==== DATA (unchanged from v32) ========================================
     const animalsByLetter = {
       a:['ant','aardvark','albatross','anole','auk','axolotl'],
       b:['bear','beaver','buffalo','baboon','bluebird','boar'],
@@ -366,7 +355,6 @@
       'acidic','activated','aerobic','alkaline','allotropic','amphoteric','aqueous','atomic','basic','binding','biochemical','boiling','bonded','buffered','buoyant','catalytic','charged','chemical','colloidal','conductive','crystalline','covalent','diffusive','dilute','dimeric','dynamic','electrolytic','endothermic','enzymatic','equilibrated','exothermic','ferrous','ferric','fluorescent','fluid','fusion','gaseous','galvanic','geometric','glycolytic','hydrophilic','hydrophobic','hypertonic','hypotonic','ionic','isomeric','isotopic','isotonic','joule-rich','junctional','kinetic','lattice','luminescent','liquid','malleable','metallic','molar','molecular','magnetic','neutral','nucleophilic','nonpolar','oxidative','osmotic','organic','paramagnetic','photonic','polar','polymeric','precipitated','quantized','quaternary','radioactive','reactive','reductive','resonant','saturated','stoichiometric','supersaturated','synthetic','soluble','solvent','titrated','thermal','turbulent','tensile','unsaturated','uniform','valent','volatile','viscous','weakly-bound','wavelike','wettable','xenon-like','xeric','yielding','ytterbic','zeta-potential','zwitterionic'
     ];
 
-    // Minimal defs (same as previous) — shortened to keep file compact
     const chemDefs = { 'acidic':'having properties of an acid; ph < 7; donates protons.', 'alkaline':'basic; ph > 7; rich in hydroxide ions.', 'amphoteric':'can act as either an acid or a base.', 'aqueous':'dissolved in water.', 'catalytic':'increases reaction rate without being consumed.', 'covalent':'shared electron pairs.', 'endothermic':'absorbing heat.', 'exothermic':'releasing heat.', 'fluorescent':'emitting light after excitation.', 'hydrophilic':'water-attracting.', 'hydrophobic':'water-repelling.', 'ionic':'involving ions.', 'isomeric':'same formula, different arrangement.', 'isotopic':'relating to isotopes.', 'magnetic':'exhibiting magnetism.', 'neutral':'ph ~7 or no net charge.', 'nonpolar':'little charge separation.', 'organic':'carbon-based.', 'polar':'uneven charge distribution.', 'reactive':'readily undergoes chemical change.', 'reductive':'involving reduction.', 'saturated':'at solubility limit or only single c–c bonds.', 'soluble':'capable of dissolving.', 'solvent':'medium that dissolves solutes.', 'thermal':'relating to heat.', 'turbulent':'chaotic fluid flow.', 'unsaturated':'below solubility limit or has c=c/c≡c bonds.', 'uniform':'evenly distributed.', 'volatile':'evaporates readily.' };
 
     const animalDefs = { 'bear':'a large omnivorous mammal (ursidae).','seal':'a fin-footed marine mammal (pinniped).','tiger':'a striped big cat of asia.','jaguar':'a powerful spotted big cat of the americas.','giraffe':'the tallest land animal with a long neck.','wolf':'a social wild canid.','eagle':'a large bird of prey.','otter':'a playful semi-aquatic mammal.','ant':'a social insect known for colonies.' };
@@ -387,6 +375,7 @@
     const mainNewAnimal = document.getElementById('mainNewAnimal');
     const mainNewName   = document.getElementById('mainNewName');
 
+    // Hidden state checkboxes for logic
     const alphaToggle = document.getElementById('alphaToggle');
     const advToggle = document.getElementById('advToggle');
     const hideToggle = document.getElementById('hideToggle');
@@ -415,6 +404,11 @@
     const phoneticToggle = document.getElementById('phoneticToggle');
     const delayToggle = document.getElementById('delayToggle');
 
+    // Toggle buttons
+    const btnABC = document.getElementById('btnABC');
+    const btnAdv = document.getElementById('btnAdv');
+    const btnHide = document.getElementById('btnHide');
+
     // Definitions overlay elements
     const defs = document.getElementById('defs');
     const defsBack = document.getElementById('defsBack');
@@ -435,7 +429,7 @@
     let p1List = []; let p1Index = -1;
 
     // Playback & timing
-    let playing=true; let timer=null; let gapSec=5; // used when delay OFF
+    let playing=true; let timer=null; let gapSec=5; // used when Delay OFF
     let segSec=9; let wordDelay=3; // defaults
     let audioOn=false; let phoneticOn=true; let indianOn=true;
 
@@ -492,13 +486,13 @@
 
       if(delayToggle.checked){
         result.innerHTML = `<span class="emo">${w}</span>`; speak(w);
-        if(showAnimal){ t2 = setTimeout(()=>{ result.innerHTML = `<span class=\"emo\">${w}</span> <span class=\"animal\">${current.animal}</span>`; speak(current.animal); if(defs.classList.contains('open')) stageDefs(); }, wordDelay*1000); }
-        if(showName){ const mul = showAnimal ? 2 : 1; t3 = setTimeout(()=>{ result.innerHTML = `<span class=\"emo\">${w}</span>${showAnimal?` <span class=\"animal\">${current.animal}</span>`:''} <span class=\"name\">${current.name}</span>`; speak(current.name); if(defs.classList.contains('open')) stageDefs(); }, mul*wordDelay*1000); }
+        if(showAnimal){ t2 = setTimeout(()=>{ result.innerHTML = `<span class=\"emo\">${w}</span> <span class=\"animal\">${current.animal}</span>`; speak(current.animal); if(defs.classList.contains('open')) startDefsSequence(); }, wordDelay*1000); }
+        if(showName){ const mul = showAnimal ? 2 : 1; t3 = setTimeout(()=>{ result.innerHTML = `<span class=\"emo\">${w}</span>${showAnimal?` <span class=\"animal\">${current.animal}</span>`:''} <span class=\"name\">${current.name}</span>`; speak(current.name); if(defs.classList.contains('open')) startDefsSequence(); }, mul*wordDelay*1000); }
       } else {
         const html = `<span class=\"emo\">${w}</span>${showAnimal?` <span class=\"animal\">${current.animal}</span>`:''}${showName?` <span class=\"name\">${current.name}</span>`:''}`; result.innerHTML = html; speak(`${w} ${showAnimal?current.animal:''} ${showName?current.name:''}`.trim());
       }
 
-      if(defs.classList.contains('open')) { updateDefs(); if(delayToggle.checked){ stageDefs(); } }
+      if(defs.classList.contains('open')) { updateDefs(); startDefsSequence(); }
     }
 
     // ======= LETTER / PHRASE ===============================================
@@ -530,14 +524,14 @@
     document.getElementById('minimizeBtn').addEventListener('click', ()=> document.body.classList.remove('focus'));
     document.getElementById('focusDefsBtn').addEventListener('click', ()=> defs.classList.add('open'));
 
-    function openDefs(){ defs.classList.add('open'); updateDefs(); if(delayToggle.checked){ stageDefs(); } }
+    function openDefs(){ defs.classList.add('open'); updateDefs(); startDefsSequence(); }
     function closeDefs(){ defs.classList.remove('open'); }
     defsBtn.addEventListener('click', openDefs); defsBack.addEventListener('click', closeDefs);
 
-    defsContent.addEventListener('click', (e)=>{ if(e.target.closest('.defsBottom, button')) return; newDifferentLetterPhrase(); if(delayToggle.checked){ stageDefs(); } });
+    defsContent.addEventListener('click', (e)=>{ if(e.target.closest('.defsBottom, button')) return; newDifferentLetterPhrase(); startDefsSequence(); });
 
-    result.addEventListener('click', ()=> newDifferentLetterPhrase());
-    document.body.addEventListener('click', (e)=>{ if(e.target.closest('button, input, .sheet, .suggestions, .toggle, .output, .focusControls, .defs, .bottomArea')) return; newDifferentLetterPhrase(); });
+    result.addEventListener('click', ()=> { newDifferentLetterPhrase(); if(defs.classList.contains('open')) startDefsSequence(); });
+    document.body.addEventListener('click', (e)=>{ if(e.target.closest('button, input, .sheet, .suggestions, .toggle, .output, .focusControls, .defs, .bottomArea')) return; newDifferentLetterPhrase(); if(defs.classList.contains('open')) startDefsSequence(); });
 
     // Bottom sheet controls
     let curPage = 0; function applyPage(){ pages.style.transform = `translateX(-${curPage*100}vw)`; tabs.forEach(t=>t.classList.remove('active')); const active = Array.from(tabs).find(t=>Number(t.dataset.ix)===curPage); if(active) active.classList.add('active'); }
@@ -549,7 +543,7 @@
     flipNext.addEventListener('click', ()=>{ curPage = (curPage+1)%4; applyPage(); });
     document.addEventListener('keydown', e=>{ if(!sheet.classList.contains('open')) return; if(e.key==='ArrowRight'){ e.preventDefault(); flipNext.click(); } if(e.key==='ArrowLeft'){ e.preventDefault(); flipPrev.click(); } });
 
-    // Gestures (swipe up to open list, left/right to swap pages, right to focus)
+    // Gestures
     let startX=null, startY=null, handled=false; const H=35, V=60;
     window.addEventListener('pointerdown', e=>{ startX=e.clientX; startY=e.clientY; handled=false; }, {passive:false});
     window.addEventListener('pointermove', e=>{ if(startX===null) return; const dx=e.clientX-startX, dy=e.clientY-startY; const ax=Math.abs(dx), ay=Math.abs(dy); if(handled) { e.preventDefault(); return; } if(ax>H && ax>ay){ if(sheet.classList.contains('open')){ if(dx>0){ curPage=(curPage+3)%4; } else { curPage=(curPage+1)%4; } applyPage(); } else { if(dx>0){ document.body.classList.add('focus'); } else { document.body.classList.remove('focus'); } } handled=true; e.preventDefault(); return; } if(ay>V && ay>ax){ if(dy<0){ openSheet(); } else { if(sheet.classList.contains('open')) closeSheet(); } handled=true; e.preventDefault(); return; } }, {passive:false});
@@ -570,24 +564,30 @@
     const wordGapButtons = () => Array.from(document.querySelectorAll('.setWordGap'));
     const segButtons     = () => Array.from(document.querySelectorAll('.setSeg'));
     const gapButtons     = () => Array.from(document.querySelectorAll('.setGap'));
-    function updateSettingsHighlights(){ wordGapButtons().forEach(b=> b.classList.toggle('active', Number(b.dataset.v)===Number(wordDelay))); segButtons().forEach(b=> b.classList.toggle('active', Number(b.dataset.v)===Number(segSec))); gapButtons().forEach(b=> b.classList.toggle('active', Number(b.dataset.gap)===Number(gapSec))); }
+    function updateSettingsHighlights(){ wordGapButtons().forEach(b=> b.classList.toggle('active', Number(b.dataset.v)===Number(wordDelay))); segButtons().forEach(b=> b.classList.toggle('active', Number(b.dataset.v)===Number(segSec))); gapButtons().forEach(b=> b.classList.toggle('active', Number(b.dataset.gap)===Number(gapSec))); updateToggleButtons(); }
 
-    document.querySelectorAll('.setWordGap').forEach(b=> b.addEventListener('click', ()=>{ wordDelay = Number(b.dataset.v)||3; updateSettingsHighlights(); render(current.word,{ keepAnimal:true, keepName:true }); if(defs.classList.contains('open') && delayToggle.checked){ stageDefs(); } }));
-    document.querySelectorAll('.setSeg').forEach(b=> b.addEventListener('click', ()=>{ segSec = Number(b.dataset.v)||9; updateSettingsHighlights(); if(playing) scheduleNext(); }));
+    document.querySelectorAll('.setWordGap').forEach(b=> b.addEventListener('click', ()=>{ wordDelay = Number(b.dataset.v)||3; updateSettingsHighlights(); render(current.word,{ keepAnimal:true, keepName:true }); if(defs.classList.contains('open')) startDefsSequence(); }));
+    document.querySelectorAll('.setSeg').forEach(b=> b.addEventListener('click', ()=>{ segSec = Number(b.dataset.v)||9; updateSettingsHighlights(); if(playing) scheduleNext(); if(defs.classList.contains('open')) startDefsSequence(); }));
     document.querySelectorAll('.setGap').forEach(b=> b.addEventListener('click', ()=>{ gapSec = Number(b.dataset.gap)||5; updateSettingsHighlights(); if(playing && !delayToggle.checked) scheduleNext(); }));
 
-    delayToggle.addEventListener('change', ()=>{ updateSettingsHighlights(); render(current.word,{ keepAnimal:true, keepName:true }); if(playing) scheduleNext(); if(defs.classList.contains('open')){ stageDefs(); } });
+    delayToggle.addEventListener('change', ()=>{ updateSettingsHighlights(); render(current.word,{ keepAnimal:true, keepName:true }); if(playing) scheduleNext(); if(defs.classList.contains('open')) startDefsSequence(); });
 
     [chkEmotion, chkChem, chkMove].forEach(el=> el.addEventListener('change', ()=>{ fillGrids(); p1Suggest.innerHTML=''; }));
-    [chkAnimal, chkName].forEach(el=> el.addEventListener('change', ()=>{ render(current.word,{ keepAnimal:true, keepName:true }); if(defs.classList.contains('open') && delayToggle.checked){ stageDefs(); } }));
-    phoneticToggle.addEventListener('change', ()=>{ phoneticOn=phoneticToggle.checked; render(current.word,{ keepAnimal:false, keepName:false }); if(defs.classList.contains('open') && delayToggle.checked){ stageDefs(); } });
-    chkIndian.addEventListener('change', ()=>{ indianOn = chkIndian.checked; render(current.word,{ keepAnimal:true, keepName:false }); if(defs.classList.contains('open') && delayToggle.checked){ stageDefs(); } });
+    [chkAnimal, chkName].forEach(el=> el.addEventListener('change', ()=>{ render(current.word,{ keepAnimal:true, keepName:true }); if(defs.classList.contains('open')) startDefsSequence(); }));
+    phoneticToggle.addEventListener('change', ()=>{ phoneticOn=phoneticToggle.checked; render(current.word,{ keepAnimal:false, keepName:false }); if(defs.classList.contains('open')) startDefsSequence(); });
+    chkIndian.addEventListener('change', ()=>{ indianOn = chkIndian.checked; render(current.word,{ keepAnimal:true, keepName:false }); if(defs.classList.contains('open')) startDefsSequence(); });
 
     // adv toggle affects chemistry + Indian names
-    advToggle.addEventListener('change', ()=>{ if(!advToggle.checked){ chkChem.checked=false; chkIndian.checked=false; indianOn=false; } else { chkChem.checked=true; chkIndian.checked=true; indianOn=true; } fillGrids(); p1Suggest.innerHTML=''; render(current.word,{ keepAnimal:true, keepName:false }); if(defs.classList.contains('open') && delayToggle.checked){ stageDefs(); } });
+    advToggle.addEventListener('change', ()=>{ if(!advToggle.checked){ chkChem.checked=false; chkIndian.checked=false; indianOn=false; } else { chkChem.checked=true; chkIndian.checked=true; indianOn=true; } fillGrids(); p1Suggest.innerHTML=''; render(current.word,{ keepAnimal:true, keepName:false }); if(defs.classList.contains('open')) startDefsSequence(); updateToggleButtons(); });
 
     // hide mode
-    hideToggle.addEventListener('change', ()=>{ document.body.classList.toggle('hide', hideToggle.checked); });
+    hideToggle.addEventListener('change', ()=>{ document.body.classList.toggle('hide', hideToggle.checked); updateToggleButtons(); });
+
+    // Toggle buttons wiring
+    function updateToggleButtons(){ btnABC.classList.toggle('active', alphaToggle.checked); btnAdv.classList.toggle('active', advToggle.checked); btnHide.classList.toggle('active', hideToggle.checked); }
+    btnABC.addEventListener('click', ()=>{ alphaToggle.checked=!alphaToggle.checked; updateToggleButtons(); });
+    btnAdv.addEventListener('click', ()=>{ advToggle.checked=!advToggle.checked; advToggle.dispatchEvent(new Event('change')); });
+    btnHide.addEventListener('click', ()=>{ hideToggle.checked=!hideToggle.checked; hideToggle.dispatchEvent(new Event('change')); });
 
     // Audio
     function updateAudioUI(){ audioBtn.classList.toggle('active', audioOn); document.getElementById('focusAudioBtn').classList.toggle('active', audioOn); }
@@ -595,7 +595,7 @@
     audioBtn.addEventListener('click', toggleAudio); document.getElementById('focusAudioBtn').addEventListener('click', toggleAudio);
 
     function updateAlphaUI(){ document.getElementById('focusAlphaBtn').classList.toggle('active', alphaToggle.checked); document.getElementById('focusAlphaBtn').textContent = 'ABC'; }
-    document.getElementById('focusAlphaBtn').addEventListener('click', ()=>{ alphaToggle.checked=!alphaToggle.checked; updateAlphaUI(); });
+    document.getElementById('focusAlphaBtn').addEventListener('click', ()=>{ alphaToggle.checked=!alphaToggle.checked; updateAlphaUI(); updateToggleButtons(); });
 
     // Global PC shortcuts
     document.addEventListener('keydown', e=>{ if(document.activeElement===p1Search) return; if(e.key==='Enter'){ e.preventDefault(); newDifferentLetterPhrase(); } if(e.key==='ArrowRight'){ e.preventDefault(); newPhraseAlpha(+1); } if(e.key==='ArrowLeft'){ e.preventDefault(); newPhraseAlpha(-1); } });
@@ -610,13 +610,30 @@
     // ======= Definitions logic =============================================
     function defForWord(w){ const s=(w||'').toLowerCase(); if(chemDefs[s]) return chemDefs[s]; if(animalDefs[s]) return animalDefs[s]; if(emotionList.includes(s)) return `a feeling of being ${s}.`; if(movementList.includes(s)) return `movement described as “${s}”.`; if(extraList.includes(s)) return `a descriptive quality: ${s}.`; return `a word meaning “${s}”.`; }
 
-    function updateDefs(){ defWordLbl.textContent = current.word; defWordTxt.textContent = defForWord(current.word); defAnimalLbl.textContent = current.animal; defAnimalTxt.textContent = defForWord(current.animal); defNameLbl.textContent = current.name; defNameTxt.textContent = 'a personal name.'; /* do not force show here; stageDefs manages visibility */ }
+    function updateDefs(){ defWordLbl.textContent = current.word; defWordTxt.textContent = defForWord(current.word); defAnimalLbl.textContent = current.animal; defAnimalTxt.textContent = defForWord(current.animal); defNameLbl.textContent = current.name; defNameTxt.textContent = 'a personal name.'; }
 
-    function stageDefs(){ [d2,d3].forEach(t=> clearTimeout(t)); const cards = Array.from(document.querySelectorAll('.defCard')); if(!cards.length) return; // start with just word
-      cards[0].style.display='block'; if(cards[1]) cards[1].style.display='none'; if(cards[2]) cards[2].style.display='none'; const showAnimal = chkAnimal.checked; const showName = chkName.checked; if(showAnimal){ d2 = setTimeout(()=>{ if(cards[1]) cards[1].style.display='block'; }, wordDelay*1000); } if(showName){ const mul = showAnimal ? 2 : 1; d3 = setTimeout(()=>{ if(cards[2]) cards[2].style.display='block'; }, mul*wordDelay*1000); } }
+    function showAllDefs(){ const cards = Array.from(document.querySelectorAll('.defCard')); cards.forEach((c,i)=>{ c.style.display = (i===0 || (i===1 && chkAnimal.checked) || (i===2 && chkName.checked)) ? 'block' : (i===0?'block':'none'); }); }
+
+    let defsSeq = 0;
+    function startDefsSequence(){
+      [d2,d3].forEach(t=> clearTimeout(t)); defsSeq++; const mySeq = defsSeq;
+      const cards = Array.from(document.querySelectorAll('.defCard'));
+      if(!cards.length){ return; }
+      const showAnimal = chkAnimal.checked; const showName = chkName.checked;
+      // If Delay OFF or cadence too short to reveal all stages before next phrase, show everything at once.
+      const requiredStages = (showAnimal?1:0) + (showName?1:0);
+      const revealWindow = segSec; // first→first cadence
+      const totalNeeded = (delayToggle.checked ? requiredStages * wordDelay : 0);
+      if(!delayToggle.checked || totalNeeded >= revealWindow){ updateDefs(); showAllDefs(); return; }
+      // Stage reveal reliably
+      updateDefs();
+      cards[0].style.display='block'; if(cards[1]) cards[1].style.display='none'; if(cards[2]) cards[2].style.display='none';
+      if(showAnimal){ d2 = setTimeout(()=>{ if(defsSeq!==mySeq) return; if(cards[1]) cards[1].style.display='block'; }, wordDelay*1000); }
+      if(showName){ const mul = showAnimal ? 2 : 1; d3 = setTimeout(()=>{ if(defsSeq!==mySeq) return; if(cards[2]) cards[2].style.display='block'; }, mul*wordDelay*1000); }
+    }
 
     // Boot
-    function boot(){ fillGrids(); updateAudioUI(); updateAlphaUI(); render('breathing', { keepAnimal:true, keepName:true }); updatePlayButtons(); scheduleNext(); }
+    function boot(){ fillGrids(); updateAudioUI(); updateAlphaUI(); updateToggleButtons(); render('breathing', { keepAnimal:true, keepName:true }); updatePlayButtons(); scheduleNext(); }
     boot();
   </script>
 </body>
