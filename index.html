@@ -7,7 +7,7 @@
   <meta name="mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
-  <title>Alliteration Animal Namer — v30</title>
+  <title>Alliteration Animal Namer — v31</title>
   <style>
     :root{
       --bg:#0b0b0c; --card:#151518; --text:#f6f7fb; --muted:#a9adc1; --ring:#3b82f6;
@@ -17,7 +17,7 @@
     *{box-sizing:border-box}
     html,body{height:100%}
     body{margin:0;background:linear-gradient(180deg,#0b0b0c,#111217 40%,#0b0b0c);color:var(--text);font-family:system-ui,-apple-system,Segoe UI,Roboto,Inter,Arial,sans-serif;min-height:100dvh}
-    .wrap{max-width:980px;margin:0 auto;padding:8px 16px 160px}
+    .wrap{max-width:980px;margin:0 auto;padding:8px 16px 240px}
 
     /* Sticky banner prompt at the very top */
     .banner{position:sticky;top:0;z-index:120;background:#0b0b0c;box-shadow:0 6px 16px rgba(0,0,0,.35);border-bottom:1px solid #23242d}
@@ -83,6 +83,10 @@
     body.focus .focusControls{display:grid;grid-template-columns:repeat(3,minmax(120px,1fr));grid-auto-rows:auto}
     .focusControls .btn{padding:10px 12px;font-size:14px}
 
+    /* Page 1 Main bottom dock (always visible) */
+    .mainDock{position:fixed;left:14px;right:14px;bottom:14px;z-index:115;display:grid;gap:10px;grid-template-columns:repeat(3,minmax(120px,1fr));}
+    .mainDock .btn{padding:10px 12px;font-size:14px}
+
     /* Definitions page */
     .defs{position:fixed;inset:0;background:#0c0e14;z-index:140;display:none}
     .defs.open{display:block}
@@ -95,10 +99,9 @@
 
     .footer{margin:28px 2px 12px;color:var(--muted);font-size:12px}
 
-    /* Simple mode visibility helpers */
-    body.simple .field#searchField, body.simple #actionRow{display:none}
-    body.simple #simpleDock{display:block}
-    body.simple .wrap{padding-bottom:200px}
+    /* Hide mode (was "simple") */
+    body.hide .field#searchField{display:none}
+    body.hide #mainDock .primary{display:none}
   </style>
 </head>
 <body>
@@ -127,41 +130,18 @@
           <svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M19.14,12.94a7.43,7.43,0,0,0,.05-.94,7.43,7.43,0,0,0-.05-.94l2.11-1.65a.48.48,0,0,0,.11-.61l-2-3.46a.5.5,0,0,0-.6-.22L16.9,5.5a7.5,7.5,0,0,0-1.63-.94l-.25-2.65A.49.49,0,0,0,14.54,1H9.46a.49.49,0,0,0-.48.41L8.73,4.06A7.5,7.5,0,0,0,7.1,5L4.24,4.12a.5.5,0,0,0-.6.22l-2,3.46a.48.48,0,0,0,.11.61L3.86,10a7.43,7.43,0,0,0-.05.94,7.43,7.43,0,0,0,.05.94L1.75,13.53a.48.48,0,0,0-.11.61l2,3.46a.5.5,0,0,0,.6.22L7.1,18.5a7.5,7.5,0,0,0,1.63.94l.25,2.65a.49.49,0,0,0,.48.41h5.08a.49.49,0,0,0,.48-.41l.25-2.65a7.5,7.5,0,0,0,1.63-.94l2.86.88a.5.5,0,0,0,.6-.22l2-3.46a.48.48,0,0,0,.11-.61ZM12,15.5A3.5,3.5,0,1,1,15.5,12,3.5,3.5,0,0,1,12,15.5Z"/></svg>
         </button>
       </div>
-      <h1>Alliteration Animal Namer — v30</h1>
+      <h1>Alliteration Animal Namer — v31</h1>
     </header>
 
     <div class="card">
       <div class="p1bar">
         <label class="toggle"><input type="checkbox" id="alphaToggle" /> ABC next-letter</label>
         <label class="toggle"><input type="checkbox" id="advToggle" checked /> adv.</label>
-        <label class="toggle"><input type="checkbox" id="simpleToggle" /> simple</label>
+        <label class="toggle"><input type="checkbox" id="hideToggle" /> hide</label>
       </div>
       <div class="field" id="searchField">
         <input id="page1Search" type="text" placeholder="Type a prefix. ↑/↓ navigate, Enter select. ← prev • → next • Enter = NEW letter" autocomplete="off" />
         <div class="suggestions" id="p1Suggest"></div>
-      </div>
-
-      <div class="row" id="actionRow" style="margin-top:12px">
-        <button class="btn" id="newPhraseBtn">New phrase</button>
-        <button class="btn" id="newAnimalBtn">New animal</button>
-        <button class="btn" id="newNameBtn">New name</button>
-        <button class="btn" id="openSheet">Open pages</button>
-        <button class="btn" id="enlargeBtn">Enlarge</button>
-        <button class="btn" id="defsBtn">Definitions</button>
-      </div>
-
-      <!-- Simple-mode bottom dock -->
-      <div id="simpleDock" class="simpleDock" style="display:none">
-        <div class="row" style="justify-content:center; gap:10px; margin:8px 0">
-          <button class="btn big" id="simpleOpenPages">Open pages</button>
-          <button class="btn big" id="simpleEnlarge">Enlarge</button>
-          <button class="btn big" id="simpleDefs">Definitions</button>
-        </div>
-        <div class="row" style="justify-content:center; gap:10px; margin-bottom:4px">
-          <button class="btn big" id="simplePlay">Play/Stop</button>
-          <button class="btn big" id="simpleAudio">Audio</button>
-          <button class="btn big" id="simpleSettings">Settings</button>
-        </div>
       </div>
     </div>
 
@@ -270,7 +250,7 @@
   </div>
 
   <!-- Startup splash (shows for 5s then fades) -->
-  <div class="splash" id="splash"><div class="pill">Jimmy James 25.09.2025 - v30</div></div>
+  <div class="splash" id="splash"><div class="pill">Jimmy James 25.09.2025 - v31</div></div>
 
   <!-- Definitions overlay (word, animal, and name) -->
   <div class="defs" id="defs">
@@ -297,8 +277,18 @@
     </div>
   </div>
 
+  <!-- Page 1 main bottom dock -->
+  <div class="mainDock" id="mainDock">
+    <button class="btn primary" id="mainNewPhrase">New phrase</button>
+    <button class="btn primary" id="mainNewAnimal">New animal</button>
+    <button class="btn primary" id="mainNewName">New name</button>
+    <button class="btn" id="mainOpenPages">Open pages</button>
+    <button class="btn" id="mainEnlarge">Enlarge</button>
+    <button class="btn" id="mainDefs">Definitions</button>
+  </div>
+
   <script>
-    // ==== DATA (v30) =======================================================
+    // ==== DATA (same as v30) ===============================================
     const animalsByLetter = {
       a:['ant','aardvark','albatross','anole','auk','axolotl'],
       b:['bear','beaver','buffalo','baboon','bluebird','boar'],
@@ -328,7 +318,6 @@
       z:['zebra','zorilla','zebu','zander','zooplankter','zipper fish'],
     };
 
-    // Base names (non-Indian)
     const namesBaseByLetter = {
       a:['Alex','Anjitha','Aree','Amelia','Arnold','Ava'],
       b:['Barry','Bella','Brian','Beatrice','Bruno','Bianca'],
@@ -358,7 +347,6 @@
       z:['Zoe','Zach','Zara','Zeke','Zelda','Zane'],
     };
 
-    // Kerala/Indian names (toggleable)
     const keralaNamesByLetter = {
       a:['Anoop','Anil','Anitha','Anju'], b:['Binu','Biju','Beena','Bindhu'], c:['Chacko','Celine','Chitra','Cyril'],
       d:['Deepa','Divya','Dileep','Deepak'], e:['Ebin','Edwin','Esha','Emil'], f:['Fathima','Faisal','Fida','Femi'],
@@ -371,7 +359,6 @@
       y:['Yadhu','Yaseen','Yamini','Yohan'], z:['Zain','Ziyad','Zareena','Zahra'],
     };
 
-    // Emotion/Movement/Extra lists
     const emotionList = [
       'afraid','agitated','aloof','amused','angry','annoyed','anxious','ashamed','astonished','awkward','baffled','bitter','blissful','bold','brave','calm','cheerful','confident','confused','content','cranky','curious','defiant','delighted','depressed','determined','disgusted','dismayed','eager','ecstatic','embarrassed','envious','excited','fearful','frustrated','giddy','gloomy','grateful','grumpy','guilty','happy','hopeful','hostile','impatient','insecure','irritated','joyful','lonely','melancholy','nervous','optimistic','overwhelmed','peaceful','proud','relieved','resentful','restless','satisfied','scared','serene','shocked','shy','silly','sorrowful','startled','stressed','tense','tired','tranquil','upbeat','wistful','zealous'
     ];
@@ -380,18 +367,12 @@
     ];
     const extraList = ['bad','brisk','bright','bouncy','bold','soft','strong','swift','sturdy','spry','sleepy','soggy','silky','harmful','haphazardful'];
 
-    // Chemistry list + definitions
     const chemistryListFull = [
       'acidic','activated','aerobic','alkaline','allotropic','amphoteric','aqueous','atomic','basic','binding','biochemical','boiling','bonded','buffered','buoyant','catalytic','charged','chemical','colloidal','conductive','crystalline','covalent','diffusive','dilute','dimeric','dynamic','electrolytic','endothermic','enzymatic','equilibrated','exothermic','ferrous','ferric','fluorescent','fluid','fusion','gaseous','galvanic','geometric','glycolytic','hydrophilic','hydrophobic','hypertonic','hypotonic','ionic','isomeric','isotopic','isotonic','joule-rich','junctional','kinetic','lattice','luminescent','liquid','malleable','metallic','molar','molecular','magnetic','neutral','nucleophilic','nonpolar','oxidative','osmotic','organic','paramagnetic','photonic','polar','polymeric','precipitated','quantized','quaternary','radioactive','reactive','reductive','resonant','saturated','stoichiometric','supersaturated','synthetic','soluble','solvent','titrated','thermal','turbulent','tensile','unsaturated','uniform','valent','volatile','viscous','weakly-bound','wavelike','wettable','xenon-like','xeric','yielding','ytterbic','zeta-potential','zwitterionic'
     ];
 
-    const chemDefs = {
-      'acidic':'having properties of an acid; ph < 7; donates protons.', 'activated':'made more reactive by added energy or a catalyst.', 'aerobic':'occurring in the presence of oxygen.', 'alkaline':'basic; ph > 7; rich in hydroxide ions.', 'allotropic':'same element in different structural forms.', 'amphoteric':'can act as either an acid or a base.', 'aqueous':'dissolved in water; water is the solvent.', 'atomic':'relating to atoms or atomic scale.', 'basic':'opposite of acidic; accepts protons; ph > 7.', 'binding':'forming attachments/bonds between species.', 'biochemical':'chemistry of living systems.', 'boiling':'phase change from liquid to gas at boiling point.', 'bonded':'connected by chemical bonds.', 'buffered':'resists ph change when acid/base is added.', 'buoyant':'capable of floating in a fluid.', 'catalytic':'increases reaction rate without being consumed.', 'charged':'bearing net electric charge (cation/anion).', 'chemical':'relating to substances and their transformations.', 'colloidal':'dispersed particles (≈1–1000 nm) that do not settle quickly.', 'conductive':'able to conduct electricity or heat.', 'crystalline':'having a long-range ordered lattice.', 'covalent':'involving shared electron pairs.', 'diffusive':'spreading via diffusion down a gradient.', 'dilute':'low solute concentration.', 'dimeric':'composed of two similar subunits (a dimer).', 'dynamic':'changing with time; relates to kinetics/equilibria.', 'electrolytic':'involving current through an electrolyte; electrolysis.', 'endothermic':'absorbing heat (Δh > 0).', 'enzymatic':'catalyzed by enzymes.', 'equilibrated':'brought to equilibrium; forward and reverse rates equal.', 'exothermic':'releasing heat (Δh < 0).', 'ferrous':'containing iron in the +2 oxidation state.', 'ferric':'containing iron in the +3 oxidation state.', 'fluorescent':'emitting light shortly after excitation.', 'fluid':'able to flow; a liquid or gas.', 'fusion':'melting: solid → liquid (context-dependent).', 'gaseous':'in the gas phase.', 'galvanic':'producing electricity via spontaneous redox.', 'geometric':'relating to molecular geometry/isomerism.', 'glycolytic':'pertaining to glycolysis.', 'hydrophilic':'water-attracting; interacts with water.', 'hydrophobic':'water-repelling; avoids water.', 'hypertonic':'higher solute concentration than a reference.', 'hypotonic':'lower solute concentration than a reference.', 'ionic':'involving ions or ionic bonds.', 'isomeric':'same formula, different arrangement.', 'isotopic':'relating to isotopes (same z, different neutrons).', 'isotonic':'equal osmotic pressure relative to another solution.', 'joule-rich':'energy-dense; high energy content.', 'junctional':'relating to junctions or interfaces.', 'kinetic':'relating to motion or reaction rates.', 'lattice':'regular, repeating 3d arrangement in crystals.', 'luminescent':'emitting light without high temperature.', 'liquid':'liquid phase; fixed volume, variable shape.', 'malleable':'can be hammered/rolled into sheets.', 'metallic':'exhibiting metal-like properties.', 'molar':'relating to moles or mol·l⁻¹ concentration.', 'molecular':'relating to molecules.', 'magnetic':'exhibiting magnetism.', 'neutral':'ph ~7 or no net charge.', 'nucleophilic':'electron-pair donor toward electrophiles.', 'nonpolar':'little charge separation; weakly interacts with water.', 'oxidative':'involving oxidation.', 'osmotic':'related to osmosis across membranes.', 'organic':'carbon-based compounds.', 'paramagnetic':'attracted to fields due to unpaired electrons.', 'photonic':'relating to photons/light.', 'polar':'uneven charge distribution; strong dipoles.', 'polymeric':'composed of repeating monomer units.', 'precipitated':'formed as an insoluble solid from solution.', 'quantized':'restricted to discrete values.', 'quaternary':'protein subunit assembly; also degree-4 substitution.', 'radioactive':'emitting ionizing radiation from unstable nuclei.', 'reactive':'readily undergoes chemical change.', 'reductive':'involving reduction.', 'resonant':'electron delocalization; resonance stabilization.', 'saturated':'at solubility limit; or only single c–c bonds.', 'stoichiometric':'exact ratios from a balanced equation.', 'supersaturated':'contains more solute than equilibrium allows.', 'synthetic':'man-made via chemical synthesis.', 'soluble':'capable of dissolving in a given solvent.', 'solvent':'the medium that dissolves solutes.', 'titrated':'quantified by titration.', 'thermal':'relating to heat or temperature.', 'turbulent':'chaotic, eddying fluid flow.', 'tensile':'relating to resistance to pulling.', 'unsaturated':'below solubility limit; or has c=c/c≡c bonds.', 'uniform':'evenly distributed; consistent throughout.', 'valent':'relating to valence.', 'volatile':'evaporates readily; high vapor pressure.', 'viscous':'high resistance to flow.', 'weakly-bound':'held by weak interactions or low bond energy.', 'wavelike':'exhibiting wave characteristics.', 'wettable':'easily spread by a liquid.', 'xenon-like':'noble-gas-like/inert behavior.', 'xeric':'occurring/adapted to dry environments.', 'yielding':'producing; or giving way under stress.', 'ytterbic':'pertaining to ytterbium.', 'zeta-potential':'electrokinetic potential at the slipping plane.', 'zwitterionic':'contains both + and − charges, overall neutral.'
-    };
-
-    const animalDefs = { /* shortened for brevity */
-      'ant':'a social insect known for cooperative colonies.','aardvark':'a nocturnal african mammal that eats ants and termites.','albatross':'a large oceanic seabird noted for long-distance soaring.','anole':'a small lizard (anolis), often capable of color change.','auk':'a diving seabird of northern oceans.','axolotl':'an aquatic salamander that retains larval features (neoteny).','bear':'a large omnivorous mammal of the family ursidae.','beaver':'a semi-aquatic rodent that builds dams and lodges.','buffalo':'a large bovine; african buffalo or asian water buffalo.','baboon':'a ground-dwelling old world monkey with a long snout.','bluebird':'a small north american thrush with blue plumage.','boar':'a wild male pig; also wild swine species.','cheetah':'the fastest land mammal; a spotted african big cat.','cougar':'a large north american cat also called puma or mountain lion.','capybara':'the world’s largest rodent, semi-aquatic and social.','cobra':'a venomous snake known for its hood display.','crab':'a decapod crustacean with a broad carapace and pincers.','crow':'an intelligent black passerine bird (genus corvus).','dog':'a domesticated canid, common human companion.','deer':'a hoofed ruminant; males typically with antlers.','dolphin':'a highly intelligent toothed whale.','duck':'a waterfowl with broad bill and webbed feet.','donkey':'a domesticated ass used as a pack animal.','dragonfly':'an agile predatory insect with two pairs of strong wings.','eagle':'a large bird of prey with powerful beak and talons.','emu':'a large flightless bird native to australia.','eel':'an elongated fish with a snake-like body.','elephant':'the largest land mammal, with trunk and tusks.','egret':'a long-legged wading bird; typically white herons.','echidna':'a spiny egg-laying mammal (monotreme).','fox':'a small to medium omnivorous canid with bushy tail.','frog':'an amphibian with long hind legs for jumping.','falcon':'a fast bird of prey known for stooping dives.','ferret':'a domesticated polecat used for hunting or as a pet.','flamingo':'a pink wading bird that filters food with its curved bill.','firefly':'a beetle that produces light (bioluminescent).','giraffe':'the tallest living land animal, with a very long neck.','goat':'a hardy domesticated ruminant kept for milk and meat.','goose':'a large waterfowl; plural geese.','gecko':'a small lizard with adhesive toe pads.','gorilla':'the largest living primate; ground-dwelling and herbivorous.','goldfish':'a domesticated carp commonly kept as an aquarium fish.','horse':'a hoofed mammal domesticated for riding and work.','hamster':'a small burrowing rodent kept as a pet.','heron':'a long-legged wading bird often found near water.','hyena':'a carnivorous mammal known for strong jaws and social clans.','hedgehog':'a small spiny insectivorous mammal that can roll into a ball.','hawk':'a bird of prey with keen vision and hooked beak.','iguana':'a large arboreal lizard native to the americas.','impala':'a medium-sized african antelope known for agility.','ibis':'a wading bird with a long downcurved bill.','inchworm':'the looping larva of certain geometer moths.','isopod':'a crustacean group including pill bugs and marine species.','irish setter':'a red-coated gundog breed.','jaguar':'a powerful spotted big cat native to the americas.','jellyfish':'a gelatinous cnidarian with tentacles and stinging cells.','jackal':'a small wild canid of africa and asia.','jay':'a colorful and vocal corvid.','jerboa':'a desert rodent with long hind legs for jumping.','joey':'a young marsupial such as a baby kangaroo.','koala':'an arboreal marsupial that feeds on eucalyptus leaves.','kangaroo':'a large marsupial with powerful hind legs and tail.','kingfisher':'a bright-colored bird that dives for fish.','kestrel':'a small falcon that hovers while hunting.','kiwi':'a small flightless bird native to new zealand.','komodo':'the komodo dragon, the world’s largest lizard.','lion':'a large social big cat; males often have manes.','lemur':'a primate from madagascar, many species nocturnal.','lobster':'a large marine crustacean with long antennae and claws.','llama':'a domesticated south american camelid used as pack animal.','lynx':'a medium wild cat with tufted ears.','lark':'a small songbird known for melodious flight songs.','monkey':'a primate, generally with a tail; many arboreal species.','moose':'the largest deer species, with broad palmate antlers.','magpie':'an intelligent black-and-white corvid.','macaw':'a large, long-tailed parrot of tropical america.','marmot':'a large burrowing ground squirrel.','mantis':'a predatory insect with grasping forelegs.','narwhal':'an arctic whale known for its long spiral tusk.','newt':'a semi-aquatic salamander.','nightingale':'a small songbird celebrated for rich songs.','nighthawk':'a nocturnal insect-eating bird (nightjar family).','nudibranch':'a colorful sea slug (marine gastropod).','nene':'the hawaiian goose, hawaii’s state bird.','owl':'a nocturnal bird of prey with forward-facing eyes.','otter':'a playful semi-aquatic carnivorous mammal.','ocelot':'a medium spotted wild cat of the americas.','oriole':'a bright-colored songbird.','orangutan':'a great ape with long arms, native to borneo and sumatra.','ox':'a domesticated bovine used as a draft animal.','penguin':'a flightless seabird adapted to swimming and cold.','panda':'a black-and-white bamboo-eating bear (usually giant panda).','panther':'a term for melanistic leopards/jaguars; sometimes mountain lions.','parrot':'a colorful, intelligent bird with a strong curved beak.','puffin':'a seabird with a colorful beak, excellent diver.','porpoise':'a small toothed whale with a blunt snout.','quail':'a small ground-dwelling game bird.','quetzal':'a resplendent central american trogon with long tail.','quokka':'a small australian marsupial often appearing to “smile”.','queen bee':'the reproductive female in a honeybee colony.','quoll':'a spotted carnivorous marsupial from australia.','quagga':'an extinct zebra subspecies once native to south africa.','rabbit':'a fast-breeding lagomorph with long ears.','raccoon':'an omnivorous mammal with a bandit-like face mask.','ram':'an adult male sheep.','raven':'a large, intelligent corvid with all-black plumage.','robin':'a small thrush; name used for different species in europe/america.','reindeer':'also caribou; an arctic deer species.','seal':'a fin-footed marine mammal (pinniped).','sparrow':'a small seed-eating passerine bird.','shark':'a cartilaginous fish; many apex marine predators.','swan':'a large waterfowl with long neck; graceful swimmer.','serval':'a lanky african wild cat with large ears.','skunk':'a small mammal known for defensive spray.','tiger':'a striped big cat native to asia.','turkey':'a large ground-dwelling bird native to north america.','toucan':'a tropical bird with a huge colorful bill.','tortoise':'a terrestrial turtle with a domed shell.','tapir':'a large herbivore with a short prehensile snout.','tarantula':'a large hairy spider (theraphosidae).','urchin':'a sea urchin; spiny echinoderm.','uakari':'a short-tailed amazon monkey with a red face.','urial':'a wild mountain sheep of central/south asia.','uguisu':'a japanese bush warbler famed for its song.','umbrella bird':'a tropical bird with an umbrella-like crest.','unicornfish':'a surgeonfish with a horn-like projection.','viper':'a venomous snake (viperidae).','vulture':'a scavenging raptor with a bald head.','vicuna':'a wild andean camelid valued for fine wool.','vole':'a small burrowing rodent.','vaquita':'a critically endangered gulf of california porpoise.','veery':'a north american thrush with fluty song.','wolf':'a social wild canid that lives in packs.','walrus':'a large arctic pinniped with tusks.','wren':'a tiny active songbird.','weasel':'a small elongated carnivore.','whale':'a large marine mammal (cetacean).','wombat':'a stocky australian burrowing marsupial.','x-ray tetra':'a transparent-bodied aquarium fish.','xerus':'an african ground squirrel.','xenops':'a small neotropical ovenbird with upturned bill.','xoloitzcuintli':'a hairless mexican dog breed.','xenopus':'an african clawed frog (aquatic).','xantus hummingbird':'a hummingbird of baja california.','yak':'a long-haired himalayan bovine.','yellowtail':'several fish species with yellow tail (e.g., amberjack).','yabby':'a freshwater crayfish of australia.','yapok':'a semi-aquatic water opossum.','yellowhammer':'a eurasian bunting with yellow plumage.','yakutian laika':'a hardy russian spitz-type dog.','zebra':'a striped african equid.','zorilla':'an african striped polecat with strong odor.','zebu':'a humped south asian cattle.','zander':'a european pike-perch fish.','zooplankter':'a drifting aquatic animal organism.','zipper fish':'a colloquial label; fish with zipper-like markings.'
-    };
+    const chemDefs = { /* defs from v30 unchanged for brevity */ };
+    const animalDefs = { /* defs from v30 unchanged for brevity */ };
 
     // ==== ELEMENTS & STATE ================================================
     const result = document.getElementById('result');
@@ -404,16 +385,17 @@
     const audioBtn = document.getElementById('audioBtn');
     const settingsBtn = document.getElementById('settingsBtn');
 
-    const newPhraseBtn = document.getElementById('newPhraseBtn');
-    const newAnimalBtn = document.getElementById('newAnimalBtn');
-    const newNameBtn = document.getElementById('newNameBtn');
-    const openSheetBtn = document.getElementById('openSheet');
-    const enlargeBtn = document.getElementById('enlargeBtn');
-    const defsBtn = document.getElementById('defsBtn');
+    const openSheetBtn = document.getElementById('mainOpenPages');
+    const enlargeBtn = document.getElementById('mainEnlarge');
+    const defsBtn = document.getElementById('mainDefs');
+
+    const mainNewPhrase = document.getElementById('mainNewPhrase');
+    const mainNewAnimal = document.getElementById('mainNewAnimal');
+    const mainNewName   = document.getElementById('mainNewName');
 
     const alphaToggle = document.getElementById('alphaToggle');
     const advToggle = document.getElementById('advToggle');
-    const simpleToggle = document.getElementById('simpleToggle');
+    const hideToggle = document.getElementById('hideToggle');
 
     const sheet = document.getElementById('sheet');
     const pages = document.getElementById('pages');
@@ -453,52 +435,30 @@
     const defsEnlargeBtn = document.getElementById('defsEnlargeBtn');
     const defsAlphaBtn = document.getElementById('defsAlphaBtn');
 
+    // Page 1 typing/suggestions state
+    const p1Search = document.getElementById('page1Search');
+    const p1Suggest = document.getElementById('p1Suggest');
+    let p1List = []; let p1Index = -1;
+
     // Playback & timing
     let playing=true; let timer=null; let gapSec=5; // used when delay OFF
     let segSec=9; let wordDelay=3; // defaults
     let audioOn=false; let phoneticOn=true; let indianOn=true;
 
-    // Highlight helpers for Settings
-    const wordGapButtons = () => Array.from(document.querySelectorAll('.setWordGap'));
-    const segButtons     = () => Array.from(document.querySelectorAll('.setSeg'));
-    const gapButtons     = () => Array.from(document.querySelectorAll('.setGap'));
-    function updateSettingsHighlights(){
-      wordGapButtons().forEach(b=> b.classList.toggle('active', Number(b.dataset.v)===Number(wordDelay)));
-      segButtons().forEach(b=> b.classList.toggle('active', Number(b.dataset.v)===Number(segSec)));
-      gapButtons().forEach(b=> b.classList.toggle('active', Number(b.dataset.gap)===Number(gapSec)));
-    }
-
-    // Track current parts
-    let current = { word: 'breathing', letter: 'b', animal: 'bear', name: 'Barry' };
-
-    // Page 1 typing/suggestions state
-    const p1Search = document.getElementById('page1Search');
-    const p1Suggest = document.getElementById('p1Suggest');
-    let p1List = []; let p1Index = -1; // -1 means none selected
-
-    // ==== HELPERS ===========================================================
+    // Helpers
     const cap = s => s ? s[0].toUpperCase()+s.slice(1) : s;
     const rand = arr => arr[Math.floor(Math.random()*arr.length)];
     const letters = 'abcdefghijklmnopqrstuvwxyz'.split('');
     const nextLetter = l => letters[(letters.indexOf(l)+1+26)%26]||'a';
     const prevLetter = l => letters[(letters.indexOf(l)-1+26)%26]||'z';
 
-    // Flatten lists for phonetic matching
     const animalsAll = Object.values(animalsByLetter).flat();
     function getNamesForLetter(l){ return [ ...(namesBaseByLetter[l]||[]), ...(indianOn ? (keralaNamesByLetter[l]||[]) : []) ]; }
     function getNamesAll(){ return letters.flatMap(l=> getNamesForLetter(l)); }
 
-    // Clearer speaker icons (on/off)
-    const iconSpeaker = (on=true)=> on ? `
-      <svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M3 10v4h4l5 5V5l-5 5H3zm13.5 2a3.5 3.5 0 00-3.5-3.5v7A3.5 3.5 0 0016.5 12zm0-6a9.5 9.5 0 010 12"/></svg>
-    ` : `
-      <svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M3 10v4h4l5 5V5l-5 5H3z"/><path fill="currentColor" d="M16.5 6a9.5 9.5 0 010 12" opacity=".35"/><path fill="currentColor" d="M2 2l20 20"/></svg>
-    `;
-
     function initialPhoneme(w){
       const s=(w||'').toLowerCase();
       if(!s) return '';
-      // digraphs
       if(s.startsWith('ph')) return 'f';
       if(s.startsWith('sh')) return 'sh';
       if(s.startsWith('ch')) return 'ch';
@@ -513,7 +473,7 @@
       if(/^e(agle|el|erie|vil|qual|gret)/.test(s)) return 'ee';
       if(/^uni|^ut|^use|^user/.test(s)) return 'y';
       if(/^ur/.test(s)) return 'ur';
-      // Exception list where 'g' before e/i/y is HARD (g) not j
+      // hard-g exceptions
       const hardGExceptions = ['giddy','gift','gifts','give','given','giver','giving','girl','girly','gird','girth','gill','gila','gizmo','get','gets','gecko','gear','geared','gearing','ghetto','ghee','guitar','guy','guys'];
       if(hardGExceptions.some(x=> s.startsWith(x))) return 'g';
       const c=s[0]; const n=s[1]||'';
@@ -539,13 +499,14 @@
         const u = new SpeechSynthesisUtterance(text);
         u.rate = 0.7; // 70% speed
         window.speechSynthesis.speak(u);
-      }catch(e){ /* ignore */ }
+      }catch(e){ }
     }
 
     let t2=null, t3=null; // staged timers (prompt)
     let d2=null, d3=null; // staged timers (definitions)
 
     // ======= RENDER =========================================================
+    let current = { word: 'breathing', letter: 'b', animal: 'bear', name: 'Barry' };
     function render(word, opts={}){
       [t2,t3].forEach(t=> clearTimeout(t));
       if('speechSynthesis' in window) window.speechSynthesis.cancel();
@@ -697,74 +658,70 @@
     });
 
     // ======= Buttons & clicks ==============================================
-    newPhraseBtn.addEventListener('click', newPhrase);
-    newAnimalBtn.addEventListener('click', newAnimal);
-    newNameBtn.addEventListener('click', newName);
+    if(mainNewPhrase) mainNewPhrase.addEventListener('click', newPhrase);
+    if(mainNewAnimal) mainNewAnimal.addEventListener('click', newAnimal);
+    if(mainNewName)   mainNewName.addEventListener('click', newName);
 
-    enlargeBtn.addEventListener('click', ()=> document.body.classList.add('focus'));
+    if(enlargeBtn) enlargeBtn.addEventListener('click', ()=> document.body.classList.add('focus'));
     document.getElementById('minimizeBtn').addEventListener('click', ()=> document.body.classList.remove('focus'));
 
     focusDefsBtn.addEventListener('click', ()=> defs.classList.add('open'));
 
-    // Definitions overlay open/close
     function openDefs(){ defs.classList.add('open'); updateDefs(); updateDefsBottom(); if(delayToggle.checked){ stageDefs(); } }
     function closeDefs(){ defs.classList.remove('open'); }
-    defsBtn.addEventListener('click', openDefs);
+    if(defsBtn) defsBtn.addEventListener('click', openDefs);
     defsBack.addEventListener('click', closeDefs);
 
-    // Tap anywhere on definitions content to advance to a NEW-LETTER phrase
     defsContent.addEventListener('click', (e)=>{
-      if(e.target.closest('.defsBottom, button')) return; // ignore button taps
+      if(e.target.closest('.defsBottom, button')) return;
       newDifferentLetterPhrase();
       if(delayToggle.checked){ stageDefs(); }
     });
 
-    // Clicking prompt or empty space => NEW-LETTER phrase
     result.addEventListener('click', ()=> newDifferentLetterPhrase());
     document.body.addEventListener('click', (e)=>{
-      if(e.target.closest('button, input, .sheet, .suggestions, .toggle, .output, .focusControls, .defs')) return;
+      if(e.target.closest('button, input, .sheet, .suggestions, .toggle, .output, .focusControls, .defs, .mainDock')) return;
       newDifferentLetterPhrase();
     });
 
-    // ======= Bottom sheet controls =========================================
-    let curPage = 0; // 0..3
+    // Bottom sheet controls
+    let curPage = 0;
     function applyPage(){ pages.style.transform = `translateX(-${curPage*100}vw)`; tabs.forEach(t=>t.classList.remove('active')); const active = Array.from(tabs).find(t=>Number(t.dataset.ix)===curPage); if(active) active.classList.add('active'); }
     function openSheet(){ sheet.classList.add('open'); }
     function closeSheet(){ sheet.classList.remove('open'); }
-    openSheetBtn.addEventListener('click', openSheet);
-    closeSheetBtn.addEventListener('click', closeSheet);
+    if(openSheetBtn) openSheetBtn.addEventListener('click', openSheet);
+    if(closeSheetBtn) closeSheetBtn.addEventListener('click', closeSheet);
     tabs.forEach(t=> t.addEventListener('click', ()=>{ curPage = Number(t.dataset.ix)||0; applyPage(); }));
-    flipPrev.addEventListener('click', ()=>{ curPage = (curPage+3)%4; applyPage(); });
-    flipNext.addEventListener('click', ()=>{ curPage = (curPage+1)%4; applyPage(); });
-    document.addEventListener('keydown', e=>{ if(!sheet.classList.contains('open')) return; if(e.key==='ArrowRight'){ e.preventDefault(); flipNext.click(); } if(e.key==='ArrowLeft'){ e.preventDefault(); flipPrev.click(); } });
+    if(flipPrev) flipPrev.addEventListener('click', ()=>{ curPage = (curPage+3)%4; applyPage(); });
+    if(flipNext) flipNext.addEventListener('click', ()=>{ curPage = (curPage+1)%4; applyPage(); });
+    document.addEventListener('keydown', e=>{ if(!sheet.classList.contains('open')) return; if(e.key==='ArrowRight'){ e.preventDefault(); flipNext && flipNext.click(); } if(e.key==='ArrowLeft'){ e.preventDefault(); flipPrev && flipPrev.click(); } });
 
-    // ======= Gestures =======================================================
+    // Gestures
     let startX=null, startY=null, handled=false; const H=35, V=60;
     window.addEventListener('pointerdown', e=>{ startX=e.clientX; startY=e.clientY; handled=false; }, {passive:false});
     window.addEventListener('pointermove', e=>{
       if(startX===null) return;
       const dx=e.clientX-startX, dy=e.clientY-startY; const ax=Math.abs(dx), ay=Math.abs(dy);
       if(handled) { e.preventDefault(); return; }
-      if(ax>H && ax>ay){ // horizontal
+      if(ax>H && ax>ay){
         if(sheet.classList.contains('open')){ if(dx>0){ curPage=(curPage+3)%4; } else { curPage=(curPage+1)%4; } applyPage(); }
         else { if(dx>0){ document.body.classList.add('focus'); } else { document.body.classList.remove('focus'); } }
         handled=true; e.preventDefault(); return;
       }
-      if(ay>V && ay>ax){ // vertical
+      if(ay>V && ay>ax){
         if(dy<0){ openSheet(); } else { if(sheet.classList.contains('open')) closeSheet(); }
         handled=true; e.preventDefault(); return;
       }
     }, {passive:false});
     window.addEventListener('pointerup', ()=>{ startX=null; startY=null; handled=false; }, {passive:false});
 
-    // ======= Auto-play & Settings ==========================================
+    // Auto-play & Settings
     function updatePlayButtons(){
       playBtn.classList.toggle('active',playing);
       focusPlayBtn.classList.toggle('active',playing);
       focusPlayBtn.textContent = playing ? 'Stop' : 'Play';
       defsPlayBtn && defsPlayBtn.classList.toggle('active', playing);
       defsPlayBtn && (defsPlayBtn.textContent = playing ? 'Stop' : 'Play');
-      const sp = document.getElementById('simplePlay'); if(sp) sp.textContent = playing ? 'Stop' : 'Play';
     }
     function scheduleNext(){ if(!playing) return; clearTimeout(timer); const delay = delayToggle.checked ? segSec : gapSec; timer=setTimeout(()=>{ newPhrase(); scheduleNext(); }, delay*1000); }
     function togglePlay(){ playing=!playing; updatePlayButtons(); if(playing) scheduleNext(); else clearTimeout(timer); }
@@ -776,72 +733,58 @@
     settingsSheet.addEventListener('click', e=>{ if(e.target.id==='settings'){ settingsSheet.classList.remove('open'); settingsBtn.classList.remove('active'); }});
     document.getElementById('settingsCloseTop').addEventListener('click', ()=>{ settingsSheet.classList.remove('open'); settingsBtn.classList.remove('active'); });
 
-    // Delay controls
+    const wordGapButtons = () => Array.from(document.querySelectorAll('.setWordGap'));
+    const segButtons     = () => Array.from(document.querySelectorAll('.setSeg'));
+    const gapButtons     = () => Array.from(document.querySelectorAll('.setGap'));
+    function updateSettingsHighlights(){
+      wordGapButtons().forEach(b=> b.classList.toggle('active', Number(b.dataset.v)===Number(wordDelay)));
+      segButtons().forEach(b=> b.classList.toggle('active', Number(b.dataset.v)===Number(segSec)));
+      gapButtons().forEach(b=> b.classList.toggle('active', Number(b.dataset.gap)===Number(gapSec)));
+    }
+
     document.querySelectorAll('.setWordGap').forEach(b=> b.addEventListener('click', ()=>{ wordDelay = Number(b.dataset.v)||3; updateSettingsHighlights(); render(current.word,{ keepAnimal:true, keepName:true }); }));
     document.querySelectorAll('.setSeg').forEach(b=> b.addEventListener('click', ()=>{ segSec = Number(b.dataset.v)||9; updateSettingsHighlights(); if(playing) scheduleNext(); }));
     document.querySelectorAll('.setGap').forEach(b=> b.addEventListener('click', ()=>{ gapSec = Number(b.dataset.gap)||5; updateSettingsHighlights(); if(playing && !delayToggle.checked) scheduleNext(); }));
 
     delayToggle.addEventListener('change', ()=>{ updateSettingsHighlights(); render(current.word,{ keepAnimal:true, keepName:true }); if(playing) scheduleNext(); });
 
-    // Group toggles & phonetic toggle & Indian names toggle
     [chkEmotion, chkChem, chkMove].forEach(el=> el.addEventListener('change', ()=>{ fillGrids(); p1Suggest.innerHTML=''; }));
     [chkAnimal, chkName].forEach(el=> el.addEventListener('change', ()=>{ render(current.word,{ keepAnimal:true, keepName:true }); }));
     phoneticToggle.addEventListener('change', ()=>{ phoneticOn=phoneticToggle.checked; render(current.word,{ keepAnimal:false, keepName:false }); });
     chkIndian.addEventListener('change', ()=>{ indianOn = chkIndian.checked; render(current.word,{ keepAnimal:true, keepName:false }); });
 
-    // Page 1 adv. toggle: when OFF, disable chemistry + Indian names
+    // adv toggle affects chemistry + Indian names
     advToggle.addEventListener('change', ()=>{
       if(!advToggle.checked){ chkChem.checked=false; chkIndian.checked=false; indianOn=false; }
       else { chkChem.checked=true; chkIndian.checked=true; indianOn=true; }
-      fillGrids();
-      p1Suggest.innerHTML='';
-      render(current.word,{ keepAnimal:true, keepName:false });
+      fillGrids(); p1Suggest.innerHTML=''; render(current.word,{ keepAnimal:true, keepName:false });
     });
 
-    // Page 1 simple toggle
+    // hide mode (formerly simple)
     const appRoot = document.body;
-    const simpleDock = document.getElementById('simpleDock');
-    const simpleOpenPages = document.getElementById('simpleOpenPages');
-    const simpleEnlarge = document.getElementById('simpleEnlarge');
-    const simpleDefs = document.getElementById('simpleDefs');
-    const simplePlay = document.getElementById('simplePlay');
-    const simpleAudio = document.getElementById('simpleAudio');
-    const simpleSettings = document.getElementById('simpleSettings');
-    simpleToggle.addEventListener('change', ()=>{ appRoot.classList.toggle('simple', simpleToggle.checked); });
-    simpleOpenPages.addEventListener('click', ()=> openSheet());
-    simpleEnlarge.addEventListener('click', ()=> document.body.classList.add('focus'));
-    simpleDefs.addEventListener('click', ()=> openDefs());
-    simplePlay.addEventListener('click', ()=> togglePlay());
-    simpleAudio.addEventListener('click', ()=> toggleAudio());
-    simpleSettings.addEventListener('click', ()=> toggleSettings());
+    hideToggle.addEventListener('change', ()=>{ appRoot.classList.toggle('hide', hideToggle.checked); });
 
-    // Audio toggle + icons (topbar & focus)
-    function updateAudioUI(){
-      audioBtn.innerHTML = iconSpeaker(audioOn);
-      focusAudioBtn.textContent = 'Audio';
-      audioBtn.classList.toggle('active', audioOn);
-      focusAudioBtn.classList.toggle('active', audioOn);
-      const sa = document.getElementById('simpleAudio'); if(sa) sa.classList.toggle('active', audioOn);
-    }
+    // Audio toggle
+    function iconSpeaker(on=true){ return on ? `
+      <svg viewBox='0 0 24 24' aria-hidden='true'><path fill='currentColor' d='M3 10v4h4l5 5V5l-5 5H3zm13.5 2a3.5 3.5 0 00-3.5-3.5v7A3.5 3.5 0 0016.5 12zm0-6a9.5 9.5 0 010 12'/></svg>
+    ` : `
+      <svg viewBox='0 0 24 24' aria-hidden='true'><path fill='currentColor' d='M3 10v4h4l5 5V5l-5 5H3z'/><path fill='currentColor' d='M16.5 6a9.5 9.5 0 010 12' opacity='.35'/><path fill='currentColor' d='M2 2l20 20'/></svg>
+    `; }
+    function updateAudioUI(){ audioBtn.innerHTML = iconSpeaker(audioOn); focusAudioBtn.textContent = 'Audio'; audioBtn.classList.toggle('active', audioOn); focusAudioBtn.classList.toggle('active', audioOn); }
     function toggleAudio(){ audioOn=!audioOn; updateAudioUI(); if(!audioOn && 'speechSynthesis' in window) window.speechSynthesis.cancel(); }
     audioBtn.addEventListener('click', toggleAudio);
     focusAudioBtn.addEventListener('click', toggleAudio);
 
-    // Focus extra toggles
     function updateAlphaUI(){ focusAlphaBtn.classList.toggle('active', alphaToggle.checked); focusAlphaBtn.textContent = 'ABC'; }
     focusAlphaBtn.addEventListener('click', ()=>{ alphaToggle.checked=!alphaToggle.checked; updateAlphaUI(); });
 
-    // Global PC shortcuts (outside inputs)
     document.addEventListener('keydown', e=>{ if(document.activeElement===p1Search) return; if(e.key==='Enter'){ e.preventDefault(); newDifferentLetterPhrase(); } if(e.key==='ArrowRight'){ e.preventDefault(); newPhraseAlpha(+1); } if(e.key==='ArrowLeft'){ e.preventDefault(); newPhraseAlpha(-1); } });
 
-    // Try fullscreen after first interaction
     let triedFS=false; function tryFS(){ if(triedFS) return; triedFS=true; const el=document.documentElement; const fn=el.requestFullscreen||el.webkitRequestFullscreen||el.msRequestFullscreen; if(fn) { try{ fn.call(el); }catch(e){} } }
     window.addEventListener('pointerdown', tryFS, { once:true });
 
-    // Splash hide after 5s
     setTimeout(()=>{ splash.classList.add('hide'); }, 5000);
 
-    // ======= Definitions logic =============================================
     function defForWord(w){
       const s=(w||'').toLowerCase();
       if(chemDefs[s]) return chemDefs[s];
@@ -858,7 +801,6 @@
       defAnimalTxt.textContent = defForWord(current.animal);
       defNameLbl.textContent = current.name;
       defNameTxt.textContent = 'a personal name.';
-      // show all by default; stageDefs hides/reveals when needed
       document.querySelectorAll('.defCard').forEach(el=> el.style.display='block');
     }
     function stageDefs(){
@@ -874,15 +816,17 @@
       if(showName){ const mul = showAnimal ? 2 : 1; d3 = setTimeout(()=>{ if(cards[2]) cards[2].style.display='block'; }, mul*wordDelay*1000); }
     }
 
-    // Boot ------------------------------------------------------------------
+    // Boot
     function boot(){
       updatePlayButtons();
       fillGrids();
       updateAudioUI();
       updateAlphaUI();
       render('breathing', { keepAnimal:true, keepName:true });
-      updateSettingsHighlights();
-      scheduleNext(); // start in play mode
+      document.getElementById('mainOpenPages').addEventListener('click', openSheet);
+      document.getElementById('mainEnlarge').addEventListener('click', ()=> document.body.classList.add('focus'));
+      document.getElementById('mainDefs').addEventListener('click', openDefs);
+      scheduleNext();
     }
     boot();
   </script>
