@@ -1,160 +1,840 @@
-// Short, plain animal definitions
-const animalDefs = {
-  'ant':'a small social insect that lives in colonies.',
-  'aardvark':'a nocturnal african mammal that eats ants and termites.',
-  'albatross':'a large oceanic seabird with long narrow wings.',
-  'anole':'a small arboreal lizard known for color changes.',
-  'auk':'a diving seabird of northern oceans.',
-  'axolotl':'an aquatic salamander that retains larval features.',
-  'bear':'a large omnivorous mammal (family ursidae).',
-  'beaver':'a large rodent known for building dams.',
-  'buffalo':'a large bovine; often refers to african or asian species.',
-  'baboon':'a large ground-dwelling monkey with a doglike face.',
-  'bluebird':'a small thrush with blue plumage.',
-  'boar':'a wild pig, especially an adult male.',
-  'cheetah':'the fastest land mammal, a spotted big cat.',
-  'cougar':'a large north american wild cat (mountain lion).',
-  'capybara':'the world’s largest rodent, semi-aquatic.',
-  'cobra':'a venomous snake able to flare a hood.',
-  'crab':'a crustacean with a broad shell and pincers.',
-  'crow':'a highly intelligent black corvid.',
-  'dog':'a domesticated canid kept as a companion.',
-  'deer':'a hoofed ruminant with antlers in males.',
-  'dolphin':'an intelligent social toothed whale.',
-  'duck':'a waterfowl with a broad bill and webbed feet.',
-  'donkey':'a hardy equid related to the horse.',
-  'dragonfly':'a fast-flying insect with two pairs of wings.',
-  'eagle':'a large powerful bird of prey.',
-  'emu':'a tall flightless bird from australia.',
-  'eel':'a long snake-like fish.',
-  'elephant':'the largest land mammal with a trunk.',
-  'egret':'a long-legged heron with white plumage.',
-  'echidna':'an egg-laying spiny mammal from australia.',
-  'fox':'a small canid with a bushy tail and sharp muzzle.',
-  'frog':'a tailless amphibian known for jumping.',
-  'falcon':'a swift bird of prey with pointed wings.',
-  'ferret':'a domesticated polecat used for hunting or pets.',
-  'flamingo':'a pink wading bird with a bent bill.',
-  'firefly':'a beetle that produces light.',
-  'giraffe':'the tallest land animal with a long neck.',
-  'goat':'a hardy domesticated ruminant with horns.',
-  'goose':'a large waterfowl related to ducks and swans.',
-  'gecko':'a small nocturnal lizard with adhesive toes.',
-  'gorilla':'the largest living primate.',
-  'goldfish':'a domesticated ornamental carp.',
-  'horse':'a large hoofed mammal used for riding.',
-  'hamster':'a small burrowing rodent often kept as a pet.',
-  'heron':'a long-legged wading bird.',
-  'hyena':'a scavenging carnivore with a strong jaw.',
-  'hedgehog':'a small mammal covered in spines.',
-  'hawk':'a keen-eyed bird of prey.',
-  'iguana':'a large arboreal lizard from the americas.',
-  'impala':'an african antelope known for leaping.',
-  'ibis':'a wading bird with a long curved bill.',
-  'inchworm':'a geometer moth larva that moves in loops.',
-  'isopod':'a crustacean with a segmented body (pillbugs etc.).',
-  'irish setter':'a gundog breed with red coat.',
-  'jaguar':'a powerful spotted big cat of the americas.',
-  'jellyfish':'a gelatinous drifting sea animal with tentacles.',
-  'jackal':'a medium-sized wild dog of africa and asia.',
-  'jay':'a colorful noisy corvid.',
-  'jerboa':'a desert rodent with very long hind legs.',
-  'joey':'a young marsupial, especially a kangaroo.',
-  'koala':'a tree-dwelling australian marsupial.',
-  'kangaroo':'a large hopping marsupial of australia.',
-  'kingfisher':'a bright bird that dives for fish.',
-  'kestrel':'a small hovering falcon.',
-  'kiwi':'a flightless nocturnal bird from new zealand.',
-  'komodo':'the komodo dragon, the largest lizard.',
-  'lion':'a large social big cat of africa and india.',
-  'lemur':'a primate native to madagascar.',
-  'lobster':'a large marine crustacean with claws.',
-  'llama':'a domesticated south american camelid.',
-  'lynx':'a short-tailed wild cat with ear tufts.',
-  'lark':'a songbird known for melodious flight.',
-  'monkey':'a primate with a tail, agile and social.',
-  'moose':'the largest deer with broad antlers.',
-  'magpie':'a black-and-white corvid known for mimicry.',
-  'macaw':'a large colorful parrot.',
-  'marmot':'a large burrowing ground squirrel.',
-  'mantis':'a predatory insect with raptorial forelegs.',
-  'narwhal':'an arctic whale with a long spiral tusk.',
-  'newt':'a small semi-aquatic salamander.',
-  'nightingale':'a small bird famed for its song.',
-  'nighthawk':'a nocturnal insect-eating bird.',
-  'nudibranch':'a colorful sea slug.',
-  'nene':'the hawaiian goose, a rare species.',
-  'owl':'a nocturnal bird of prey with forward-facing eyes.',
-  'otter':'a playful semi-aquatic carnivore.',
-  'ocelot':'a medium-sized spotted wild cat.',
-  'oriole':'a yellow-black songbird.',
-  'orangutan':'a large tree-dwelling great ape.',
-  'ox':'a domesticated bovine used for draft.',
-  'penguin':'a flightless southern hemisphere seabird.',
-  'panda':'a black-and-white bamboo-eating bear.',
-  'panther':'a big cat; often a black leopard or jaguar.',
-  'parrot':'a bright, intelligent talking bird.',
-  'puffin':'a seabird with a colorful beak.',
-  'porpoise':'a small toothed whale related to dolphins.',
-  'quail':'a small game bird.',
-  'quetzal':'a brilliant green trogon of central america.',
-  'quokka':'a small smiling wallaby from australia.',
-  'queen bee':'the reproductive female in a bee colony.',
-  'quoll':'a spotted marsupial carnivore from australia.',
-  'quagga':'an extinct south african zebra variety.',
-  'rabbit':'a fast-breeding burrowing lagomorph.',
-  'raccoon':'a clever nocturnal mammal with masked face.',
-  'ram':'an adult male sheep.',
-  'raven':'a large intelligent corvid.',
-  'robin':'a small insect-eating songbird.',
-  'reindeer':'a northern deer, also called caribou.',
-  'seal':'a fin-footed marine mammal (pinniped).',
-  'sparrow':'a small brownish songbird.',
-  'shark':'a cartilaginous predatory fish.',
-  'swan':'a large graceful waterfowl with a long neck.',
-  'serval':'a slender long-legged african wild cat.',
-  'skunk':'a small mammal known for its strong spray.',
-  'tiger':'a large striped big cat.',
-  'turkey':'a large ground bird native to america.',
-  'toucan':'a tropical bird with a huge colorful bill.',
-  'tortoise':'a land-dwelling turtle.',
-  'tapir':'a pig-like rainforest mammal with a short trunk.',
-  'tarantula':'a large hairy spider.',
-  'urchin':'a spiny echinoderm.',
-  'uakari':'a short-tailed amazonian monkey with a red face.',
-  'urial':'a wild mountain sheep of central/south asia.',
-  'uguisu':'a japanese bush warbler.',
-  'umbrella bird':'a tropical bird with a crest like an umbrella.',
-  'unicornfish':'a reef fish with a horn-like projection.',
-  'viper':'a venomous snake with hinged fangs.',
-  'vulture':'a scavenging bird of prey.',
-  'vicuna':'a wild south american camelid.',
-  'vole':'a small mouse-like rodent.',
-  'vaquita':'a critically endangered small porpoise.',
-  'veery':'a woodland thrush with a fluting song.',
-  'wolf':'a social wild canid.',
-  'walrus':'a large arctic pinniped with tusks.',
-  'wren':'a tiny active songbird with an upturned tail.',
-  'weasel':'a slender carnivorous mammal.',
-  'whale':'a large fully aquatic mammal.',
-  'wombat':'a stout burrowing marsupial.',
-  'x-ray tetra':'a transparent small tropical fish.',
-  'xerus':'an african ground squirrel.',
-  'xenops':'a small south american forest bird.',
-  'xoloitzcuintli':'a hairless dog breed from mexico.',
-  'xenopus':'an african clawed frog.',
-  'xantus hummingbird':'a hummingbird of baja california.',
-  'yak':'a shaggy long-haired bovine of high asia.',
-  'yellowtail':'a name for several yellow-tailed fishes.',
-  'yabby':'an australian freshwater crayfish.',
-  'yapok':'the water opossum, a semi-aquatic marsupial.',
-  'yellowhammer':'a bright yellow bunting.',
-  'yakutian laika':'a hardy sled dog breed from siberia.',
-  'zebra':'a striped african equid.',
-  'zorilla':'the striped polecat, a skunk-like mammal.',
-  'zebu':'a humped south asian cattle breed.',
-  'zander':'a large european pike-perch.',
-  'zooplankter':'a small drifting aquatic animal.',
-  'zipper fish':'a whimsical name for a fish with zipper-like markings.'
-};
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
+  <meta name="theme-color" content="#0b0b0c" />
+  <meta name="mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <title>Alliteration Animal Namer — v41</title>
+  <style>
+    :root{ --bg:#0b0b0c; --card:#151518; --text:#f6f7fb; --muted:#a9adc1; --ring:#3b82f6; --red:#ef4444; --green:#10b981; --blue:#3b82f6; --play:#16a34a; --playGlow:#22c55e; }
+    *{box-sizing:border-box}
+    html,body{height:100%}
+    body{margin:0;background:linear-gradient(180deg,#0b0b0c,#111217 40%,#0b0b0c);color:var(--text);font-family:system-ui,-apple-system,Segoe UI,Roboto,Inter,Arial,sans-serif;min-height:100dvh}
+    .wrap{max-width:980px;margin:0 auto;padding:8px 16px 340px}
 
+    /* Prompt banner (~30% height) */
+    .banner{position:sticky;top:0;z-index:120;background:#0b0b0c;box-shadow:0 6px 16px rgba(0,0,0,.35);border-bottom:1px solid #23242d}
+    .banner .output{margin:8px 0 0;padding:18px 12px;border-radius:12px;background:#0f1117;border:1px solid #2a2e3d;font-size:clamp(56px,9vw,120px);line-height:1.12;cursor:pointer;user-select:none;min-height:30vh;white-space:normal;word-break:keep-all}
+    .output .emo,.output .animal,.output .name{margin-right:.25em}
+    .emo{color:var(--red);font-weight:900;text-transform:none}
+    .animal{color:var(--green);font-weight:900}
+    .name{color:var(--blue);font-weight:900}
+
+    .btn{appearance:none;border:1px solid #2a2f3d;background:#121420;color:#fff;padding:12px 16px;border-radius:12px;font-weight:800;cursor:pointer;transition:background .2s,border-color .2s,box-shadow .2s}
+    .btn.small{padding:8px 10px;font-size:12px}
+    .btn:active{transform:translateY(1px)}
+    .btn.active{background:linear-gradient(135deg,var(--play),var(--playGlow));border-color:transparent;box-shadow:0 0 0 3px rgba(34,197,94,.25)}
+
+    /* Word list sheet */
+    .sheet{position:fixed;left:0;right:0;bottom:-100%;background:#0f1117;border-top-left-radius:16px;border-top-right-radius:16px;border:1px solid #262a36;box-shadow:0 -20px 30px rgba(0,0,0,.45);transition:bottom .25s ease;z-index:110}
+    .sheet.open{bottom:0}
+    .sheet .handle{width:54px;height:6px;background:#2a2f3d;border-radius:10px;margin:10px auto}
+    .sheet .tabs{display:flex;gap:8px;justify-content:center;margin:8px 0;flex-wrap:wrap}
+    .tab{padding:6px 10px;border-radius:999px;border:1px solid #2a2f3d;background:#15171f;color:#fff;font-weight:700;cursor:pointer}
+    .navFlip{display:flex;gap:8px;justify-content:center;margin:0 0 8px}
+    .pages{display:flex;transition:transform .25s ease}
+    .page{min-width:100vw;max-width:100vw;padding:12px}
+    .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(120px,1fr));gap:10px;max-height:46vh;overflow:auto;padding-right:4px}
+
+    /* Hide bottom dock when sheet is open */
+    body.sheetOpen .bottomArea{ display:none !important; }
+
+    /* SETTINGS — separate page only */
+    .settingsPage{display:none;position:fixed;inset:0;background:#0f1117;z-index:200;overflow:auto}
+    .settingsPage.open{display:block}
+
+    /* Splash */
+    .splash{position:fixed;left:0;right:0;bottom:12px;display:flex;justify-content:center;z-index:300;transition:opacity .6s ease, transform .6s ease}
+    .splash .pill{background:#151518;border:1px solid #2a2e3d;color:#a9adc1;padding:10px 14px;border-radius:999px;box-shadow:0 8px 20px rgba(0,0,0,.45)}
+    .splash.hide{opacity:0;pointer-events:none;transform:translateY(10px)}
+
+    /* Focus (enlarged) */
+    body.focus .sheet, body.focus .footer, body.focus .bottomArea{ display:none !important; }
+    body.focus .banner{ box-shadow:none; border-bottom:none; }
+    body.focus .banner .output{ font-size:clamp(64px,12vw,160px); padding:28px 16px; }
+    body.focus .emo, body.focus .animal, body.focus .name{ display:block; text-align:left; }
+    @media (orientation:landscape){ body.focus .emo, body.focus .animal, body.focus .name{ display:inline; } }
+
+    .focusControls{position:fixed;left:14px;right:14px;bottom:14px;z-index:210;display:none;gap:10px}
+    body.focus .focusControls{display:grid;grid-template-columns:repeat(3,minmax(120px,1fr));grid-auto-rows:auto}
+    .focusControls .btn{padding:10px 12px;font-size:14px}
+
+    /* Bottom area */
+    .bottomArea{position:fixed;left:14px;right:14px;bottom:14px;z-index:115;display:grid;gap:10px}
+    .searchFixed{position:relative}
+    .searchFixed input{width:100%;padding:14px 16px;border-radius:14px;border:1px solid #272a36;background:#0f1117;color:var(--text);font-size:18px;outline:none;transition:border .18s, box-shadow .18s}
+    .searchFixed input:focus{border-color:var(--ring);box-shadow:0 0 0 4px rgba(59,130,246,.25)}
+    .suggestions{position:relative;margin-top:8px}
+    .suggestions ul{position:absolute;z-index:40;list-style:none;margin:0;padding:6px;background:#0f1117;border:1px solid #262a36;border-radius:12px;width:100%;max-height:260px;overflow:auto;box-shadow:0 20px 30px rgba(0,0,0,.35)}
+    .suggestions li{padding:10px 12px;border-radius:10px;cursor:pointer}
+    .suggestions li[aria-selected="true"], .suggestions li:hover{background:#1a1f2b}
+
+    .mainDock{display:grid;gap:10px;grid-template-columns:repeat(3,minmax(120px,1fr))}
+    .mainDock .btn{padding:10px 12px;font-size:14px}
+    .brand{color:#a9adc1;text-align:center;font-size:12px}
+
+    /* Definitions page */
+    .defs{position:fixed;inset:0;background:#0c0e14;z-index:220;display:none}
+    .defs.open{display:block}
+    .defsContent{padding:12px 16px 120px;display:grid;gap:16px}
+    .defCard{background:#10131b;border:1px solid #262a36;border-radius:16px;padding:18px}
+    .defCard .label{font-weight:900;margin-bottom:6px;font-size:32px}
+    .defCard .def{color:#c9cedd;font-size:16px;line-height:1.45;text-transform:lowercase}
+    .defsBottom{position:fixed;left:0;right:0;bottom:0;background:#0f1117;border-top:1px solid #262a36;padding:10px 12px;display:flex;gap:10px;justify-content:center;flex-wrap:wrap}
+
+    /* Hide mode */
+    body.hide #searchField{display:none}
+    body.hide #mainDock .primary{display:none}
+
+    /* Middle tap zone for next phrase */
+    .tapZone{min-height:34vh}
+  </style>
+</head>
+<body>
+  <div class="wrap" id="appArea">
+    <div class="banner">
+      <div class="output" id="result" title="Tap/click for NEW phrase (Enter on PC)">Your phrase will appear here…</div>
+    </div>
+
+    <!-- Tap zone (empty middle space) -->
+    <div class="tapZone" id="tapZone" title="Tap to advance"></div>
+
+    <div class="focusControls" id="focusControls">
+      <button class="btn" id="focusPlayBtn">Stop</button>
+      <button class="btn" id="focusAudioBtn">Audio</button>
+      <button class="btn active" id="focusAlphaBtn">ABC</button>
+      <button class="btn" id="focusDefsBtn">Defs</button>
+      <button class="btn" id="minimizeBtn">Back</button>
+    </div>
+
+  </div>
+
+  <!-- Word list pages -->
+  <div class="sheet" id="sheet">
+    <div class="handle"></div>
+    <div class="tabs">
+      <button class="tab" data-ix="0">A–E</button>
+      <button class="tab" data-ix="1">F–J</button>
+      <button class="tab" data-ix="2">K–O</button>
+      <button class="tab" data-ix="3">P–Z</button>
+      <button class="tab" id="closeSheet">Close</button>
+    </div>
+    <div class="navFlip">
+      <button class="btn small" id="flipPrev">‹ Prev</button>
+      <button class="btn small" id="flipNext">Next ›</button>
+    </div>
+    <div class="pages" id="pages">
+      <div class="page"><div class="grid" id="grid12"></div></div>
+      <div class="page"><div class="grid" id="gridFJ"></div></div>
+      <div class="page"><div class="grid" id="gridKO"></div></div>
+      <div class="page"><div class="grid" id="gridPZ"></div></div>
+    </div>
+  </div>
+
+  <!-- SETTINGS (separate page) -->
+  <div class="settingsPage" id="settingsPage">
+    <div style="display:flex;align-items:center;justify-content:space-between;padding:12px 16px;position:sticky;top:0;background:#0f1117;z-index:5;border-bottom:1px solid #262a36">
+      <button class="btn small" id="settingsCloseTop">Close</button>
+      <strong style="color:#a9adc1">Settings</strong>
+      <span></span>
+    </div>
+    <div style="padding:12px 16px;display:grid;gap:16px">
+      <section>
+        <h3 style="margin:0 0 8px">Show groups</h3>
+        <div class="row" style="display:flex;gap:8px;flex-wrap:wrap">
+          <button class="btn small tog" id="tEmo">emo.</button>
+          <button class="btn small tog" id="tMove">move.</button>
+          <button class="btn small tog" id="tChem">chem.</button>
+          <button class="btn small tog" id="tAnimal">animal</button>
+          <button class="btn small tog" id="tName">name</button>
+          <button class="btn small tog" id="tIndian">indian</button>
+          <button class="btn small tog" id="tPhon">phonetic</button>
+        </div>
+      </section>
+
+      <section>
+        <h3 style="margin:0 0 8px">Delay function</h3>
+        <div class="row" style="color:#a9adc1">Toggle and set timings below.</div>
+        <div class="row" style="display:flex;gap:8px;flex-wrap:wrap;margin-top:8px">
+          <button class="btn small setWordGap" data-v="1">1s between words</button>
+          <button class="btn small setWordGap" data-v="2">2s</button>
+          <button class="btn small setWordGap" data-v="3">3s</button>
+          <button class="btn small setWordGap" data-v="4">4s</button>
+          <button class="btn small setWordGap" data-v="5">5s</button>
+          <button class="btn small setWordGap" data-v="6">6s</button>
+        </div>
+        <div class="row" style="display:flex;gap:8px;flex-wrap:wrap;margin-top:8px">
+          <button class="btn small setSeg" data-v="2">2s first→first</button>
+          <button class="btn small setSeg" data-v="3">3s</button>
+          <button class="btn small setSeg" data-v="6">6s</button>
+          <button class="btn small setSeg" data-v="9">9s</button>
+          <button class="btn small setSeg" data-v="12">12s</button>
+          <button class="btn small setSeg" data-v="15">15s</button>
+          <button class="btn small setSeg" data-v="18">18s</button>
+          <button class="btn small setSeg" data-v="20">20s</button>
+          <button class="btn small setSeg" data-v="30">30s</button>
+          <button class="btn small setSeg" data-v="40">40s</button>
+        </div>
+        <div style="margin-top:8px;display:flex;gap:8px;align-items:center">
+          <label class="btn small" style="background:#1a1f2b;border-color:#2a2f3d"><input type="checkbox" id="delayToggle" checked style="margin-right:6px"/> enable delay</label>
+        </div>
+      </section>
+
+      <section>
+        <h3 style="margin:0 0 8px">Time between prompts (Delay off)</h3>
+        <div class="row" style="display:flex;gap:8px;flex-wrap:wrap">
+          <button class="btn small setGap" data-gap="3">3s</button>
+          <button class="btn small setGap" data-gap="5">5s</button>
+          <button class="btn small setGap" data-gap="10">10s</button>
+          <button class="btn small setGap" data-gap="15">15s</button>
+          <button class="btn small setGap" data-gap="20">20s</button>
+          <button class="btn small setGap" data-gap="30">30s</button>
+          <button class="btn small setGap" data-gap="40">40s</button>
+          <button class="btn small setGap" data-gap="50">50s</button>
+        </div>
+    </div>
+    <div style="position:sticky;bottom:0;background:#0f1117;border-top:1px solid #262a36;padding:10px 12px;display:flex;justify-content:center">
+      <button class="btn" id="settingsCloseBottom">Close</button>
+    </div>
+  </div>
+
+  <!-- Splash -->
+  <div class="splash" id="splash"><div class="pill">Jimmy James 25.09.2025 - v41</div></div>
+
+  <!-- Definitions overlay -->
+  <div class="defs" id="defs">
+    <div class="defsContent" id="defsContent">
+      <div class="defCard">
+        <div class="label emo" id="defWordLbl">word</div>
+        <div class="def" id="defWordTxt">definition here…</div>
+      </div>
+      <div class="defCard">
+        <div class="label animal" id="defAnimalLbl">animal</div>
+        <div class="def" id="defAnimalTxt">definition here…</div>
+      </div>
+      <div class="defCard">
+        <div class="label name" id="defNameLbl">name</div>
+        <div class="def" id="defNameTxt">a personal name.</div>
+      </div>
+    </div>
+    <div class="defsBottom">
+      <button class="btn" id="defsBack">← Back</button>
+      <button class="btn" id="defsPlayBtn">Play</button>
+      <button class="btn" id="defsEnlargeBtn">Enlarge</button>
+      <button class="btn active" id="defsAlphaBtn">ABC</button>
+    </div>
+  </div>
+
+  <!-- Bottom controls -->
+  <div class="bottomArea" id="bottomArea">
+    <div class="searchFixed" id="searchField">
+      <input id="page1Search" type="text" placeholder="Type a prefix. ↑/↓ navigate, Enter select. ← prev • → next • Enter = NEW phrase" autocomplete="off" />
+      <div class="suggestions" id="p1Suggest"></div>
+    </div>
+    <div class="mainDock" id="mainDock">
+      <button class="btn" id="playBtn">Play</button>
+      <button class="btn" id="audioBtn">Audio</button>
+      <button class="btn" id="settingsBtn">Settings</button>
+
+      <button class="btn primary" id="mainNewPhrase">New phrase</button>
+      <button class="btn primary" id="mainNewAnimal">New animal</button>
+      <button class="btn primary" id="mainNewName">New name</button>
+
+      <button class="btn" id="mainOpenPages">Open pages</button>
+      <button class="btn" id="mainEnlarge">Enlarge</button>
+      <button class="btn" id="mainDefs">Definitions</button>
+
+      <button class="btn active" id="btnABC">ABC</button>
+      <button class="btn active" id="btnAdv">adv.</button>
+      <button class="btn" id="btnHide">hide</button>
+    </div>
+    <div class="brand">Alliteration Animal Namer — v41</div>
+  </div>
+
+  <script>
+    // ==== DATA ====
+    const animalsByLetter = {
+      a:['ant','aardvark','albatross','anole','auk','axolotl'],
+      b:['bear','beaver','buffalo','baboon','bluebird','boar'],
+      c:['cheetah','cougar','capybara','cobra','crab','crow'],
+      d:['dog','deer','dolphin','duck','donkey','dragonfly'],
+      e:['eagle','emu','eel','elephant','egret','echidna'],
+      f:['fox','frog','falcon','ferret','flamingo','firefly'],
+      g:['giraffe','goat','goose','gecko','gorilla','goldfish'],
+      h:['horse','hamster','heron','hyena','hedgehog','hawk'],
+      i:['iguana','impala','ibis','inchworm','isopod','irish setter'],
+      j:['jaguar','jellyfish','jackal','jay','jerboa','joey'],
+      k:['koala','kangaroo','kingfisher','kestrel','kiwi','komodo'],
+      l:['lion','lemur','lobster','llama','lynx','lark'],
+      m:['monkey','moose','magpie','macaw','marmot','mantis'],
+      n:['narwhal','newt','nightingale','nighthawk','nudibranch','nene'],
+      o:['owl','otter','ocelot','oriole','orangutan','ox'],
+      p:['penguin','panda','panther','parrot','puffin','porpoise'],
+      q:['quail','quetzal','quokka','queen bee','quoll','quagga'],
+      r:['rabbit','raccoon','ram','raven','robin','reindeer'],
+      s:['seal','sparrow','shark','swan','serval','skunk'],
+      t:['tiger','turkey','toucan','tortoise','tapir','tarantula'],
+      u:['urchin','uakari','urial','uguisu','umbrella bird','unicornfish'],
+      v:['viper','vulture','vicuna','vole','vaquita','veery'],
+      w:['wolf','walrus','wren','weasel','whale','wombat'],
+      x:['x-ray tetra','xerus','xenops','xoloitzcuintli','xenopus','xantus hummingbird'],
+      y:['yak','yellowtail','yabby','yapok','yellowhammer','yakutian laika'],
+      z:['zebra','zorilla','zebu','zander','zooplankter','zipper fish'],
+    };
+
+    const namesBaseByLetter = {
+      a:['Alex','Anjitha','Aree','Amelia','Arnold','Ava','Amanda','Arthur'],
+      b:['Barry','Bella','Brian','Beatrice','Bruno','Bianca','Barathy','Burt'],
+      c:['Charlie','Claire','Carlos','Caroline','Cynthia','Cedric'],
+      d:['Daisy','Daniel','Derek','Delilah','Diego','Daphne','Doreen'],
+      e:['Ella','Edward','Eve','Elijah','Emilia','Ethan','Eric','Elisabeth'],
+      f:['Felix','Fiona','Frank','Faith','Freya','Floyd'],
+      g:['George','Geetha','Grace','Gabriel','Gavin','Giselle','Gordon'],
+      h:['Hank','Hannah','Harry','Hazel','Helen','Hugo'],
+      i:['Isla','Isaac','India','Ivan','Ivy','Ines'],
+      j:['Jasper','Julie','Jordan','June','Jonah','James','Jim','Jimmy','Julie'],
+      k:['Katie','Kevin','Kira','Khalid','Kyle','Kara','Kristine'],
+      l:['Leo','Luna','Liam','Layla','Logan','Lorenzo'],
+      m:['Max','Mia','Mason','Maya','Miles','Maggie','Maria'],
+      n:['Nora','Noah','Naomi','Nelson','Natalie','Nate','Natassia'],
+      o:['Oliver','Olivia','Oscar','Opal','Owen','Orla','Omar'],
+      p:['Piper','Paul','Penelope','Phoebe','Peter','Pravin','Paul'],
+      q:['Quinn','Quentin','Queen','Quincy','Quiana','Quade'],
+      r:['Ruby','Ryan','Rachel','Rafael','Riley','Remi','Rosa','Rosemary','Robert'],
+      s:['Sally','Sam','Santiago','Sophia','Sarachandra','Simon','Shabana','Shayla','Sarah','Suzanne'],
+      t:['Tony','Tina','Thomas','Talia','Trevor','Tracy','Tenaya','Thea'],
+      u:['Uma','Ulysses','Ursula','Ugne','Ulric','Umi'],
+      v:['Violet','Victor','Vanessa','Valentina','Vikram','Vince'],
+      w:['Wendy','Will','Willow','Wesley','Wanda','Winston'],
+      x:['Xavier','Xena','Ximena','Xander','Xia','Xaviera'],
+      y:['Yara','Yosef','Yasmin','Yuki','Yolanda','Yuri'],
+      z:['Zoe','Zach','Zara','Zeke','Zelda','Zane'],
+    };
+
+    const keralaNamesByLetter = { a:['Anoop','Anil','Anitha','Anju'], b:['Binu','Biju','Beena','Bindhu'], c:['Chacko','Celine','Chitra','Cyril'], d:['Deepa','Divya','Dileep','Deepak'], e:['Ebin','Edwin','Esha','Emil'], f:['Fathima','Faisal','Fida','Femi'], g:['Gireesh','Geetha','Goutham','Greeshma'], h:['Hari','Harish','Hema','Haritha'], i:['Indu','Indira','Ijas','Irfan'], j:['Jithin','Jisha','Jincy','Jobin'], k:['Kiran','Kavya','Keerthi','Karthik'], l:['Lijo','Liji','Laya','Lekha'], m:['Manu','Manoj','Meera','Midhun'], n:['Nisha','Nithin','Nithya','Neha'], o:['Omana','Oommen','Ouseph','Oviya'], p:['Praveen','Pranav','Priya','Poornima'], q:['Qadir','Qamar','Qais','Qadira'], r:['Ramesh','Rajesh','Reshma','Riya'], s:['Sajith','Shaji','Sreya','Sruthi'], t:['Thomas','Thomson','Thara','Tina'], u:['Unni','Unnikrishnan','Usha','Uma'], v:['Vijay','Vinod','Vidya','Veena'], w:['Wilson','William','Warren','Winnie'], x:['Xavier','Xavi','Xaviera','Xyla'], y:['Yadhu','Yaseen','Yamini','Yohan'], z:['Zain','Ziyad','Zareena','Zahra'] };
+
+    const emotionList = ['afraid','agitated','aloof','amused','angry','annoyed','anxious','ashamed','astonished','awkward','baffled','bitter','blissful','bold','brave','calm','cheerful','confident','confused','content','cranky','curious','defiant','delighted','depressed','determined','disgusted','dismayed','eager','ecstatic','embarrassed','envious','excited','fearful','frustrated','gloomy','grateful','grumpy','guilty','happy','hopeful','hostile','impatient','insecure','irritated','joyful','lonely','melancholy','nervous','optimistic','overwhelmed','peaceful','proud','relieved','resentful','restless','satisfied','scared','serene','shocked','shy','silly','sorrowful','startled','stressed','tense','tired','tranquil','upbeat','wistful','zealous'];
+    const movementList = ['arching','basking','bending','bouncy','bounding','breathing','bursting','crawling','choppy','contracting','circling','coiling','creeping','darting','dragging','drooping','expanding','fast','floating','flowing','fluttering','galloping','gliding','hopping','heavy','jerky','leaping','light','lunging','marching','pirouetting','pulsing','quivering','rigid','rolling','rocking','sprinting','sauntering','shuffling','skipping','slithering','spiraling','staggering','stomping','striding','swaying','swinging','tilting','tiptoeing','trembling','twisting','undulating','vibrating','wobbling','zigzagging'];
+    const extraList = ['bad','brisk','bright','bouncy','bold','soft','strong','swift','sturdy','spry','sleepy','soggy','silky','harmful','haphazardful'];
+
+    // Chemistry definitions (keywords used as first word)
+    const chemDefs = {
+      'acidic':'having properties of an acid; ph < 7; donates protons.',
+      'activated':'made reactive/energized for faster reaction.',
+      'aerobic':'requiring oxygen.',
+      'alkaline':'basic; ph > 7; rich in hydroxide ions.',
+      'allotropic':'existing in multiple structural forms (same element).',
+      'amphoteric':'can act as either an acid or a base.',
+      'aqueous':'dissolved in water.',
+      'atomic':'relating to atoms or their properties.',
+      'basic':'alkaline; accepts protons.',
+      'binding':'capable of attaching via chemical interaction.',
+      'biochemical':'occurring in living organisms.',
+      'boiling':'vaporizing throughout the liquid at its boiling point.',
+      'bonded':'joined by chemical bonds.',
+      'buffered':'resists ph change on addition of acid/base.',
+      'buoyant':'able to float due to lower density.',
+      'catalytic':'increases reaction rate without being consumed.',
+      'charged':'having net electric charge.',
+      'chemical':'pertaining to substances and reactions.',
+      'colloidal':'containing particles dispersed 1–1000 nm.',
+      'conductive':'able to conduct electricity or heat.',
+      'crystalline':'ordered repeating lattice.',
+      'covalent':'bonding via shared electron pairs.',
+      'diffusive':'spreading from high to low concentration.',
+      'dilute':'low solute concentration.',
+      'dimeric':'existing as a two-unit complex.',
+      'dynamic':'changing with time; in motion or equilibrium.',
+      'electrolytic':'involving ion conduction or electrolysis.',
+      'endothermic':'absorbing heat.',
+      'enzymatic':'catalyzed by enzymes.',
+      'equilibrated':'at balance; forward = reverse rates.',
+      'exothermic':'releasing heat.',
+      'ferrous':'containing iron(II).',
+      'ferric':'containing iron(III).',
+      'fluorescent':'emitting light after excitation.',
+      'fluid':'able to flow; liquid or gas.',
+      'fusion':'joining of nuclei or merging of phases.',
+      'gaseous':'existing as a gas.',
+      'galvanic':'producing current via spontaneous reaction.',
+      'geometric':'related to molecular shape/arrangement.',
+      'glycolytic':'pertaining to glycolysis.',
+      'hydrophilic':'water-attracting.',
+      'hydrophobic':'water-repelling.',
+      'hypertonic':'higher osmotic pressure vs reference.',
+      'hypotonic':'lower osmotic pressure vs reference.',
+      'ionic':'involving ions or ionic bonds.',
+      'isomeric':'same formula, different arrangement.',
+      'isotopic':'relating to isotopes.',
+      'isotonic':'equal osmotic pressure.',
+      'joule-rich':'energetically favorable/high energy transfer.',
+      'junctional':'occurring at an interface or junction.',
+      'kinetic':'relating to motion or reaction rates.',
+      'lattice':'arranged in a regular three‑dimensional grid.',
+      'luminescent':'emitting light not from heat.',
+      'liquid':'incompressible fluid with fixed volume.',
+      'malleable':'can be shaped by hammering/rolling.',
+      'metallic':'having properties of metals (conductive, lustrous).',
+      'molar':'per mole or relating to concentration (M).',
+      'molecular':'relating to molecules.',
+      'magnetic':'exhibiting magnetism.',
+      'neutral':'ph ~7 or no net charge.',
+      'nucleophilic':'electron‑pair donating tendency.',
+      'nonpolar':'little charge separation.',
+      'oxidative':'involving oxidation (electron loss).',
+      'osmotic':'relating to solvent flow across membranes.',
+      'organic':'carbon-based.',
+      'paramagnetic':'weakly attracted to a magnetic field.',
+      'photonic':'involving photons/light.',
+      'polar':'uneven charge distribution.',
+      'polymeric':'made of many repeating units.',
+      'precipitated':'fallen out of solution as a solid.',
+      'quantized':'restricted to discrete values.',
+      'quaternary':'involving four components or 4° structure.',
+      'radioactive':'emitting ionizing radiation.',
+      'reactive':'readily undergoes chemical change.',
+      'reductive':'involving reduction (electron gain).',
+      'resonant':'exhibiting resonance; enhanced response at a natural frequency; in chemistry, delocalization of electrons across a structure.',
+      'saturated':'at solubility limit or only single C–C bonds.',
+      'stoichiometric':'in exact reactant/product ratios by formula.',
+      'supersaturated':'holding more solute than equilibrium.',
+      'synthetic':'man‑made; produced by synthesis.',
+      'soluble':'capable of dissolving.',
+      'solvent':'medium that dissolves solutes.',
+      'thermal':'relating to heat/temperature effects.',
+      'turbulent':'chaotic, eddy‑rich fluid flow.',
+      'tensile':'relating to stretching forces.',
+      'unsaturated':'below solubility limit or contains double/triple bonds.',
+      'uniform':'evenly distributed; consistent throughout.',
+      'valent':'relating to combining capacity (valence).',
+      'volatile':'evaporates readily.',
+      'viscous':'resistant to flow (thick).',
+      'weakly-bound':'held together by weak interactions.',
+      'wavelike':'propagating as waves.',
+      'wettable':'surface can be covered by a liquid.',
+      'xenon-like':'resembling xenon in properties.',
+      'xeric':'very dry conditions.',
+      'yielding':'giving way under force; compliant.',
+      'ytterbic':'containing ytterbium.',
+      'zeta-potential':'electrokinetic potential at slipping plane.',
+      'zwitterionic':'bearing both positive and negative charges.'
+    };
+
+    // Animal definitions
+    const animalDefs = {
+      'ant':'a small social insect that lives in colonies.',
+      'aardvark':'a nocturnal african mammal that eats ants and termites.',
+      'albatross':'a large oceanic seabird with long narrow wings.',
+      'anole':'a small arboreal lizard known for color changes.',
+      'auk':'a diving seabird of northern oceans.',
+      'axolotl':'an aquatic salamander that retains larval features.',
+      'bear':'a large omnivorous mammal (family ursidae).',
+      'beaver':'a large rodent known for building dams.',
+      'buffalo':'a large bovine; often refers to african or asian species.',
+      'baboon':'a large ground‑dwelling monkey with a doglike face.',
+      'bluebird':'a small thrush with blue plumage.',
+      'boar':'a wild pig, especially an adult male.',
+      'cheetah':'the fastest land mammal, a spotted big cat.',
+      'cougar':'a large north american wild cat (mountain lion).',
+      'capybara':'the world’s largest rodent, semi‑aquatic.',
+      'cobra':'a venomous snake able to flare a hood.',
+      'crab':'a crustacean with a broad shell and pincers.',
+      'crow':'a highly intelligent black corvid.',
+      'dog':'a domesticated canid kept as a companion.',
+      'deer':'a hoofed ruminant with antlers in males.',
+      'dolphin':'an intelligent social toothed whale.',
+      'duck':'a waterfowl with a broad bill and webbed feet.',
+      'donkey':'a hardy equid related to the horse.',
+      'dragonfly':'a fast‑flying insect with two pairs of wings.',
+      'eagle':'a large powerful bird of prey.',
+      'emu':'a tall flightless bird from australia.',
+      'eel':'a long snake‑like fish.',
+      'elephant':'the largest land mammal with a trunk.',
+      'egret':'a long‑legged heron with white plumage.',
+      'echidna':'an egg‑laying spiny mammal from australia.',
+      'fox':'a small canid with a bushy tail and sharp muzzle.',
+      'frog':'a tailless amphibian known for jumping.',
+      'falcon':'a swift bird of prey with pointed wings.',
+      'ferret':'a domesticated polecat used for hunting or pets.',
+      'flamingo':'a pink wading bird with a bent bill.',
+      'firefly':'a beetle that produces light.',
+      'giraffe':'the tallest land animal with a long neck.',
+      'goat':'a hardy domesticated ruminant with horns.',
+      'goose':'a large waterfowl related to ducks and swans.',
+      'gecko':'a small nocturnal lizard with adhesive toes.',
+      'gorilla':'the largest living primate.',
+      'goldfish':'a domesticated ornamental carp.',
+      'horse':'a large hoofed mammal used for riding.',
+      'hamster':'a small burrowing rodent often kept as a pet.',
+      'heron':'a long‑legged wading bird.',
+      'hyena':'a scavenging carnivore with a strong jaw.',
+      'hedgehog':'a small mammal covered in spines.',
+      'hawk':'a keen‑eyed bird of prey.',
+      'iguana':'a large arboreal lizard from the americas.',
+      'impala':'an african antelope known for leaping.',
+      'ibis':'a wading bird with a long curved bill.',
+      'inchworm':'a geometer moth larva that moves in loops.',
+      'isopod':'a crustacean with a segmented body (pillbugs etc.).',
+      'irish setter':'a gundog breed with red coat.',
+      'jaguar':'a powerful spotted big cat of the americas.',
+      'jellyfish':'a gelatinous drifting sea animal with tentacles.',
+      'jackal':'a medium‑sized wild dog of africa and asia.',
+      'jay':'a colorful noisy corvid.',
+      'jerboa':'a desert rodent with very long hind legs.',
+      'joey':'a young marsupial, especially a kangaroo.',
+      'koala':'a tree‑dwelling australian marsupial.',
+      'kangaroo':'a large hopping marsupial of australia.',
+      'kingfisher':'a bright bird that dives for fish.',
+      'kestrel':'a small hovering falcon.',
+      'kiwi':'a flightless nocturnal bird from new zealand.',
+      'komodo':'the komodo dragon, the largest lizard.',
+      'lion':'a large social big cat of africa and india.',
+      'lemur':'a primate native to madagascar.',
+      'lobster':'a large marine crustacean with claws.',
+      'llama':'a domesticated south american camelid.',
+      'lynx':'a short‑tailed wild cat with ear tufts.',
+      'lark':'a songbird known for melodious flight.',
+      'monkey':'a primate with a tail, agile and social.',
+      'moose':'the largest deer with broad antlers.',
+      'magpie':'a black‑and‑white corvid known for mimicry.',
+      'macaw':'a large colorful parrot.',
+      'marmot':'a large burrowing ground squirrel.',
+      'mantis':'a predatory insect with raptorial forelegs.',
+      'narwhal':'an arctic whale with a long spiral tusk.',
+      'newt':'a small semi‑aquatic salamander.',
+      'nightingale':'a small bird famed for its song.',
+      'nighthawk':'a nocturnal insect‑eating bird.',
+      'nudibranch':'a colorful sea slug.',
+      'nene':'the hawaiian goose, a rare species.',
+      'owl':'a nocturnal bird of prey with forward‑facing eyes.',
+      'otter':'a playful semi‑aquatic carnivore.',
+      'ocelot':'a medium‑sized spotted wild cat.',
+      'oriole':'a yellow‑black songbird.',
+      'orangutan':'a large tree‑dwelling great ape.',
+      'ox':'a domesticated bovine used for draft.',
+      'penguin':'a flightless southern hemisphere seabird.',
+      'panda':'a black‑and‑white bamboo‑eating bear.',
+      'panther':'a big cat; often a black leopard or jaguar.',
+      'parrot':'a bright, intelligent talking bird.',
+      'puffin':'a seabird with a colorful beak.',
+      'porpoise':'a small toothed whale related to dolphins.',
+      'quail':'a small game bird.',
+      'quetzal':'a brilliant green trogon of central america.',
+      'quokka':'a small smiling wallaby from australia.',
+      'queen bee':'the reproductive female in a bee colony.',
+      'quoll':'a spotted marsupial carnivore from australia.',
+      'quagga':'an extinct south african zebra variety.',
+      'rabbit':'a fast‑breeding burrowing lagomorph.',
+      'raccoon':'a clever nocturnal mammal with masked face.',
+      'ram':'an adult male sheep.',
+      'raven':'a large intelligent corvid.',
+      'robin':'a small insect‑eating songbird.',
+      'reindeer':'a northern deer, also called caribou.',
+      'seal':'a fin‑footed marine mammal (pinniped).',
+      'sparrow':'a small brownish songbird.',
+      'shark':'a cartilaginous predatory fish.',
+      'swan':'a large graceful waterfowl with a long neck.',
+      'serval':'a slender long‑legged african wild cat.',
+      'skunk':'a small mammal known for its strong spray.',
+      'tiger':'a large striped big cat.',
+      'turkey':'a large ground bird native to america.',
+      'toucan':'a tropical bird with a huge colorful bill.',
+      'tortoise':'a land‑dwelling turtle.',
+      'tapir':'a pig‑like rainforest mammal with a short trunk.',
+      'tarantula':'a large hairy spider.',
+      'urchin':'a spiny echinoderm.',
+      'uakari':'a short‑tailed amazonian monkey with a red face.',
+      'urial':'a wild mountain sheep of central/south asia.',
+      'uguisu':'a japanese bush warbler.',
+      'umbrella bird':'a tropical bird with a crest like an umbrella.',
+      'unicornfish':'a reef fish with a horn‑like projection.',
+      'viper':'a venomous snake with hinged fangs.',
+      'vulture':'a scavenging bird of prey.',
+      'vicuna':'a wild south american camelid.',
+      'vole':'a small mouse‑like rodent.',
+      'vaquita':'a critically endangered small porpoise.',
+      'veery':'a woodland thrush with a fluting song.',
+      'wolf':'a social wild canid.',
+      'walrus':'a large arctic pinniped with tusks.',
+      'wren':'a tiny active songbird with an upturned tail.',
+      'weasel':'a slender carnivorous mammal.',
+      'whale':'a large fully aquatic mammal.',
+      'wombat':'a stout burrowing marsupial.',
+      'x-ray tetra':'a transparent small tropical fish.',
+      'xerus':'an african ground squirrel.',
+      'xenops':'a small south american forest bird.',
+      'xoloitzcuintli':'a hairless dog breed from mexico.',
+      'xenopus':'an african clawed frog.',
+      'xantus hummingbird':'a hummingbird of baja california.',
+      'yak':'a shaggy long‑haired bovine of high asia.',
+      'yellowtail':'a name for several yellow‑tailed fishes.',
+      'yabby':'an australian freshwater crayfish.',
+      'yapok':'the water opossum, a semi‑aquatic marsupial.',
+      'yellowhammer':'a bright yellow bunting.',
+      'yakutian laika':'a hardy sled dog breed from siberia.',
+      'zebra':'a striped african equid.',
+      'zorilla':'the striped polecat, a skunk‑like mammal.',
+      'zebu':'a humped south asian cattle breed.',
+      'zander':'a large european pike‑perch.',
+      'zooplankter':'a small drifting aquatic animal.',
+      'zipper fish':'a whimsical name for a fish with zipper‑like markings.'
+    };
+
+    // ===== Elements
+    const result = document.getElementById('result');
+
+    // Bottom controls
+    const playBtn = document.getElementById('playBtn');
+    const audioBtn = document.getElementById('audioBtn');
+    const settingsBtn = document.getElementById('settingsBtn');
+
+    const openSheetBtn = document.getElementById('mainOpenPages');
+    const enlargeBtn = document.getElementById('mainEnlarge');
+    const defsBtn = document.getElementById('mainDefs');
+
+    const mainNewPhrase = document.getElementById('mainNewPhrase');
+    const mainNewAnimal = document.getElementById('mainNewAnimal');
+    const mainNewName   = document.getElementById('mainNewName');
+
+    const sheet = document.getElementById('sheet');
+    const pages = document.getElementById('pages');
+    const tabs = document.querySelectorAll('.tab[data-ix]');
+    const closeSheetBtn = document.getElementById('closeSheet');
+    const flipPrev = document.getElementById('flipPrev');
+    const flipNext = document.getElementById('flipNext');
+
+    const grid12 = document.getElementById('grid12');
+    const gridFJ = document.getElementById('gridFJ');
+    const gridKO = document.getElementById('gridKO');
+    const gridPZ = document.getElementById('gridPZ');
+
+    // Settings page
+    const settingsPage = document.getElementById('settingsPage');
+    const settingsCloseTop = document.getElementById('settingsCloseTop');
+    const settingsCloseBottom = document.getElementById('settingsCloseBottom');
+    const tEmo=document.getElementById('tEmo');
+    const tMove=document.getElementById('tMove');
+    const tChem=document.getElementById('tChem');
+    const tAnimal=document.getElementById('tAnimal');
+    const tName=document.getElementById('tName');
+    const tIndian=document.getElementById('tIndian');
+    const tPhon=document.getElementById('tPhon');
+
+    // Definitions elements
+    const defs = document.getElementById('defs');
+    const defsBack = document.getElementById('defsBack');
+    const defWordLbl = document.getElementById('defWordLbl');
+    const defWordTxt = document.getElementById('defWordTxt');
+    const defAnimalLbl = document.getElementById('defAnimalLbl');
+    const defAnimalTxt = document.getElementById('defAnimalTxt');
+    const defNameLbl = document.getElementById('defNameLbl');
+    const defNameTxt = document.getElementById('defNameTxt');
+    const defsPlayBtn = document.getElementById('defsPlayBtn');
+    const defsEnlargeBtn = document.getElementById('defsEnlargeBtn');
+    const defsAlphaBtn = document.getElementById('defsAlphaBtn');
+
+    // Search & suggestions
+    const p1Search = document.getElementById('page1Search');
+    const p1Suggest = document.getElementById('p1Suggest');
+    let p1List=[]; let p1Index=-1;
+
+    // Playback state
+    let playing=true; let timer=null; let gapSec=5; // for delay OFF
+    let segSec=9; let wordDelay=3; // defaults
+    function refreshTimeHighlights(){
+      document.querySelectorAll('.setWordGap')
+        .forEach(b=> b.classList.toggle('active', Number(b.dataset.v)===wordDelay));
+      document.querySelectorAll('.setSeg')
+        .forEach(b=> b.classList.toggle('active', Number(b.dataset.v)===segSec));
+      document.querySelectorAll('.setGap')
+        .forEach(b=> b.classList.toggle('active', Number(b.dataset.gap)===gapSec));
+    }
+    let audioOn=false; let phoneticOn=true; let indianOn=true; let alphaNext=true; let advOn=true;
+
+    // Helpers
+    const cap = s => s ? s[0].toUpperCase()+s.slice(1) : s;
+    const rand = arr => arr[Math.floor(Math.random()*arr.length)];
+    const letters = 'abcdefghijklmnopqrstuvwxyz'.split('');
+    const nextLetter = l => letters[(letters.indexOf(l)+1+26)%26]||'a';
+    const prevLetter = l => letters[(letters.indexOf(l)-1+26)%26]||'z';
+
+    const animalsAll = Object.values(animalsByLetter).flat();
+    function getNamesForLetter(l){ return [ ...(namesBaseByLetter[l]||[]), ...(indianOn ? (keralaNamesByLetter[l]||[]) : []) ]; }
+    function getNamesAll(){ return letters.flatMap(l=> getNamesForLetter(l)); }
+
+    function initialPhoneme(w){
+      const s=(w||'').toLowerCase(); if(!s) return '';
+      if(s.startsWith('ph')) return 'f'; if(s.startsWith('sh')) return 'sh'; if(s.startsWith('ch')) return 'ch'; if(s.startsWith('th')) return 'th';
+      if(s.startsWith('kn')||s.startsWith('gn')||s.startsWith('pn')) return 'n'; if(s.startsWith('wr')) return 'r'; if(s.startsWith('wh')) return 'w';
+      if(s.startsWith('ps')) return 's'; if(s.startsWith('qu')) return 'k'; if(s.startsWith('eye')) return 'eye';
+      if(/^i(sland|sle|phone|pad|pod|watch)/.test(s)) return 'eye';
+      if(/^e(agle|el|erie|vil|qual|gret)/.test(s)) return 'ee';
+      if(/^uni|^ut|^use|^user/.test(s)) return 'y'; if(/^ur/.test(s)) return 'ur';
+      const hardGExceptions = ['giddy','gift','give','girl','gecko','gear','ghetto','ghee','guitar','guy'];
+      if(hardGExceptions.some(x=> s.startsWith(x))) return 'g';
+      const c=s[0]; const n=s[1]||''; if(c==='c') return 'eiy'.includes(n) ? 's' : 'k'; if(c==='g') return 'eiy'.includes(n) ? 'j' : 'g'; if(c==='x') return 'z'; if(c==='q') return 'k';
+      return c;
+    }
+
+    // UI state toggles from Settings page
+    let showEmo=true, showMove=true, showChem=true, showAnimal=true, showName=true;
+
+    function chemList(){ return Object.keys(chemDefs); }
+
+    function getActiveFirstWordList(){
+      let arr=[]; if(showEmo) arr=arr.concat(emotionList,extraList); if(showMove) arr=arr.concat(movementList); if(showChem) arr=arr.concat(chemList()); if(!arr.length) arr=emotionList.slice(); return Array.from(new Set(arr)).sort((a,b)=>a.localeCompare(b));
+    }
+
+    function speak(text){ try{ if(!audioOn || !('speechSynthesis' in window)) return; const u=new SpeechSynthesisUtterance(text); u.rate=0.7; speechSynthesis.speak(u);}catch(e){} }
+
+    let t2=null, t3=null;
+
+    // ===== Render prompt
+    let current = { word:'breathing', letter:'b', animal:'bear', name:'Barry' };
+    function render(word, opts={}){
+      [t2,t3].forEach(clearTimeout); if('speechSynthesis' in window) speechSynthesis.cancel();
+      const wRaw = (word||current.word); const w = wRaw.toLowerCase(); const firstLetter = w[0]||current.letter||'a'; const phon = initialPhoneme(w);
+
+      if(!opts.keepAnimal){ let pool = phoneticOn ? animalsAll.filter(a=> initialPhoneme(a)===phon) : (animalsByLetter[firstLetter]||[]); if(!pool.length) pool = animalsByLetter[firstLetter]||[]; let choice = rand(pool); if(choice===current.animal && pool.length>1) choice = pool[(pool.indexOf(choice)+1)%pool.length]; current.animal = choice; }
+      if(!opts.keepName){ let byLetter = getNamesForLetter(firstLetter); let pool = phoneticOn ? getNamesAll().filter(n=> initialPhoneme(n)===phon) : byLetter; if(!pool.length) pool = byLetter; let choice = cap(rand(pool)); if(choice===current.name && pool.length>1) choice = cap(pool[(pool.indexOf(choice)+1)%pool.length]); current.name = choice; }
+
+      current.word = w; current.letter = firstLetter;
+
+      const showA = showAnimal; const showN = showName;
+      if(delayToggleEl.checked){
+        result.innerHTML = `<span class="emo">${w}</span>`; speak(w);
+        if(showA){ t2=setTimeout(()=>{ result.innerHTML = `<span class=\"emo\">${w}</span> <span class=\"animal\">${current.animal}</span>`; speak(current.animal); }, wordDelay*1000); }
+        if(showN){ const mul = showA?2:1; t3=setTimeout(()=>{ result.innerHTML = `<span class=\"emo\">${w}</span>${showA?` <span class=\"animal\">${current.animal}</span>`:''} <span class=\"name\">${current.name}</span>`; speak(current.name); }, mul*wordDelay*1000); }
+      } else {
+        result.innerHTML = `<span class=\"emo\">${w}</span>${showA?` <span class=\"animal\">${current.animal}</span>`:''}${showN?` <span class=\"name\">${current.name}</span>`:''}`;
+        speak(`${w} ${showA?current.animal:''} ${showN?current.name:''}`.trim());
+      }
+
+      if(defs.classList.contains('open')) updateDefs();
+    }
+
+    // ===== Phrase selection
+    function pickWordForLetter(l){ const active=getActiveFirstWordList(); const list=active.filter(w=>w.startsWith(l)); return list.length?rand(list):null; }
+    function newPhraseAlpha(step=1){ let l=current.letter||'a'; l = step>0? nextLetter(l) : prevLetter(l); let w=pickWordForLetter(l); if(!w){ for(let i=0;i<26;i++){ l = step>0? nextLetter(l) : prevLetter(l); w=pickWordForLetter(l); if(w) break; } } render(w||rand(getActiveFirstWordList()),{keepAnimal:false,keepName:false}); }
+    function newDifferentLetterPhrase(){ const active=getActiveFirstWordList(); const cur=current.letter||'a'; let w=null; let l=nextLetter(cur); for(let i=0;i<26;i++){ w=pickWordForLetter(l); if(w) break; l=nextLetter(l);} if(!w){ const pool=active.filter(x=> (x[0]||'')!==cur); w=pool.length?rand(pool):rand(active);} render(w,{keepAnimal:false,keepName:false}); }
+    function nextByMode(){ if(alphaNext) newPhraseAlpha(+1); else newDifferentLetterPhrase(); }
+    const newPhrase = ()=> nextByMode();
+    const newAnimal = ()=> render(current.word,{keepName:true});
+    const newName   = ()=> render(current.word,{keepAnimal=true});
+
+    // ===== Pages (lists)
+    function groupIdxForWord(w){ const f=w[0].toLowerCase(); if(f<'f') return 0; if(f<'k') return 1; if(f<'p') return 2; return 3; }
+    function makeWordBtn(word){ const b=document.createElement('button'); b.className='btn small'; b.dataset.word=word; b.textContent=word[0].toUpperCase()+word.slice(1); return b; }
+    function fillGrids(){ const active=getActiveFirstWordList(); [grid12,gridFJ,gridKO,gridPZ].forEach(g=>g.innerHTML=''); active.forEach(w=>{ const ix=groupIdxForWord(w); ([grid12,gridFJ,gridKO,gridPZ][ix]).appendChild(makeWordBtn(w)); }); }
+    function onGridClick(e){ const b=e.target.closest('button.btn'); if(!b) return; render(b.dataset.word,{keepAnimal:false,keepName:false}); closeSheet(); }
+    grid12.addEventListener('click',onGridClick); gridFJ.addEventListener('click',onGridClick); gridKO.addEventListener('click',onGridClick); gridPZ.addEventListener('click',onGridClick);
+
+    // ===== Search/suggest on page 1
+    function p1RenderSuggest(list,q){ p1Suggest.innerHTML=''; if(!list.length) { p1Index=-1; return; } const ul=document.createElement('ul'); list.slice(0,50).forEach((w,i)=>{ const li=document.createElement('li'); const first=q.length; const label=w[0].toUpperCase()+w.slice(1); li.innerHTML = `<strong>${label.slice(0,first)}</strong>${label.slice(first)}`; li.setAttribute('role','option'); li.setAttribute('aria-selected', String(i===p1Index)); li.addEventListener('mouseenter',()=>{ p1Index=i; updateP1Highlight(); }); li.addEventListener('click',()=>{ p1Index=i; chooseP1Index(); }); ul.appendChild(li); }); p1Suggest.appendChild(ul); }
+    function updateP1Highlight(){ const items=p1Suggest.querySelectorAll('li'); items.forEach((li,i)=> li.setAttribute('aria-selected', String(i===p1Index))); }
+    function chooseP1Index(){ if(p1Index<0||p1Index>=p1List.length) return; const word=p1List[p1Index]; p1Suggest.innerHTML=''; p1Search.value=''; render(word,{keepAnimal:false,keepName:false}); }
+    p1Search.addEventListener('input', e=>{ const q=e.target.value.trim().toLowerCase(); if(!q){ p1Suggest.innerHTML=''; return; } const newLetter=q[0]; if(newLetter!==current.letter){ render(q,{keepAnimal:false,keepName:false}); } else { render(q,{keepAnimal:true,keepName:true}); } const active=getActiveFirstWordList(); p1List=active.filter(w=>w.startsWith(q)); p1Index=p1List.length?0:-1; p1RenderSuggest(p1List,q); });
+    p1Search.addEventListener('keydown', e=>{ const key=e.key; if(key==='ArrowDown'){ e.preventDefault(); if(!p1List.length) return; p1Index=(p1Index+1)%p1List.length; updateP1Highlight(); return; } if(key==='ArrowUp'){ e.preventDefault(); if(!p1List.length) return; p1Index=(p1Index-1+p1List.length)%p1List.length; updateP1Highlight(); return; } if(key==='Enter'){ e.preventDefault(); if(p1List.length && p1Index>=0){ chooseP1Index(); } else { nextByMode(); } return; } if(key==='ArrowRight'){ e.preventDefault(); newPhraseAlpha(+1); return; } if(key==='ArrowLeft'){ e.preventDefault(); newPhraseAlpha(-1); return; } });
+
+    // ===== Tap middle empty area or prompt to advance
+    const tapZone = document.getElementById('tapZone');
+    tapZone.addEventListener('click', ()=> nextByMode());
+    result.addEventListener('click', ()=>{ if(document.body.classList.contains('focus')){ document.body.classList.remove('focus'); } else { nextByMode(); } });
+
+    // ===== Buttons
+    document.getElementById('mainNewPhrase').addEventListener('click',newPhrase);
+    document.getElementById('mainNewAnimal').addEventListener('click',newAnimal);
+    document.getElementById('mainNewName').addEventListener('click',newName);
+    enlargeBtn.addEventListener('click', ()=> document.body.classList.add('focus'));
+    document.getElementById('minimizeBtn').addEventListener('click', ()=> document.body.classList.remove('focus'));
+    document.getElementById('focusDefsBtn').addEventListener('click', ()=> defs.classList.add('open'));
+
+    function openDefs(){ defs.classList.add('open'); updateDefs(); }
+    function closeDefs(){ defs.classList.remove('open'); }
+    defsBtn.addEventListener('click', openDefs); defsBack.addEventListener('click', closeDefs);
+    defs.addEventListener('click', (e)=>{ if(e.target.closest('.defsBottom,button')) return; nextByMode(); updateDefs(); });
+
+    // Alpha (ABC) toggle
+    const btnABC = document.getElementById('btnABC');
+    const focusAlphaBtn = document.getElementById('focusAlphaBtn');
+    function updateAlphaUI(){ btnABC.classList.toggle('active', alphaNext); focusAlphaBtn.classList.toggle('active', alphaNext); defsAlphaBtn.classList.toggle('active', alphaNext); }
+    function toggleAlpha(){ alphaNext=!alphaNext; updateAlphaUI(); }
+    btnABC.addEventListener('click', toggleAlpha);
+    focusAlphaBtn.addEventListener('click', toggleAlpha);
+    defsAlphaBtn.addEventListener('click', toggleAlpha);
+
+    // Adv toggle (turns chem + Indian names on/off together)
+    const btnAdv = document.getElementById('btnAdv');
+    function applyAdv(){ btnAdv.classList.toggle('active', advOn); showChem = advOn; indianOn = advOn; fillGrids(); refreshTogs(); render(current.word,{keepAnimal:false,keepName:false}); }
+    btnAdv.addEventListener('click', ()=>{ advOn=!advOn; applyAdv(); });
+
+    // Hide toggle
+    document.getElementById('btnHide').addEventListener('click', ()=> document.body.classList.toggle('hide'));
+
+    // Bottom sheet
+    let curPage=0; function applyPage(){ pages.style.transform=`translateX(-${curPage*100}vw)`; }
+    function openSheet(){ document.body.classList.add('sheetOpen'); sheet.classList.add('open'); }
+    function closeSheet(){ sheet.classList.remove('open'); document.body.classList.remove('sheetOpen'); }
+    openSheetBtn.addEventListener('click', openSheet); closeSheetBtn.addEventListener('click', closeSheet);
+    document.querySelectorAll('.tab[data-ix]').forEach(t=> t.addEventListener('click',()=>{ curPage=Number(t.dataset.ix)||0; applyPage(); }));
+    flipPrev.addEventListener('click', ()=>{ curPage=(curPage+3)%4; applyPage(); });
+    flipNext.addEventListener('click', ()=>{ curPage=(curPage+1)%4; applyPage(); });
+
+    // Gestures
+    let startX=null,startY=null,handled=false; const H=35,V=60;
+    window.addEventListener('pointerdown', e=>{ startX=e.clientX; startY=e.clientY; handled=false; }, {passive:false});
+    window.addEventListener('pointermove', e=>{ if(startX===null) return; const dx=e.clientX-startX, dy=e.clientY-startY; const ax=Math.abs(dx), ay=Math.abs(dy); if(handled){ e.preventDefault(); return; } if(ax>H && ax>ay){ if(sheet.classList.contains('open')){ curPage = dx>0 ? (curPage+3)%4 : (curPage+1)%4; applyPage(); } else { if(dx>0){ document.body.classList.add('focus'); } else { document.body.classList.remove('focus'); } } handled=true; e.preventDefault(); return; } if(ay>V && ay>ax){ if(dy<0){ openSheet(); } else { if(sheet.classList.contains('open')) closeSheet(); } handled=true; e.preventDefault(); return; } }, {passive:false});
+    window.addEventListener('pointerup', ()=>{ startX=null; startY=null; handled=false; }, {passive:false});
+
+    // Auto-play
+    function updatePlayButtons(){ playBtn.classList.toggle('active',playing); document.getElementById('focusPlayBtn').classList.toggle('active',playing); document.getElementById('focusPlayBtn').textContent = playing ? 'Stop' : 'Play'; defsPlayBtn && defsPlayBtn.classList.toggle('active', playing); defsPlayBtn && (defsPlayBtn.textContent = playing ? 'Stop' : 'Play'); }
+    function scheduleNext(){ if(!playing) return; clearTimeout(timer); const delay = delayToggleEl.checked ? segSec : gapSec; timer=setTimeout(()=>{ nextByMode(); scheduleNext(); }, delay*1000); }
+    function togglePlay(){ playing=!playing; updatePlayButtons(); if(playing) scheduleNext(); else clearTimeout(timer); }
+    playBtn.addEventListener('click', togglePlay); document.getElementById('focusPlayBtn').addEventListener('click', togglePlay); defsPlayBtn.addEventListener('click', togglePlay);
+
+    // Settings
+    function openSettings(){ settingsPage.classList.add('open'); }
+    function closeSettings(){ settingsPage.classList.remove('open'); }
+    settingsBtn.addEventListener('click', openSettings); settingsCloseTop.addEventListener('click', closeSettings); settingsCloseBottom.addEventListener('click', closeSettings);
+
+    // Delay + cadence controls (settings page only)
+    const delayToggleEl = document.getElementById('delayToggle');
+    document.querySelectorAll('.setWordGap').forEach(b=> b.addEventListener('click', ()=>{ wordDelay=Number(b.dataset.v)||3; refreshTimeHighlights(); render(current.word,{keepAnimal:true,keepName:true}); updateDefs(); }));
+    document.querySelectorAll('.setSeg').forEach(b=> b.addEventListener('click', ()=>{ segSec=Number(b.dataset.v)||9; refreshTimeHighlights(); if(playing) scheduleNext(); }));
+    document.querySelectorAll('.setGap').forEach(b=> b.addEventListener('click', ()=>{ gapSec=Number(b.dataset.gap)||5; refreshTimeHighlights(); if(playing && !delayToggleEl.checked) scheduleNext(); }));
+
+    // Group toggles
+    function syncTog(btn, state){ btn.classList.toggle('active', state); }
+    function refreshTogs(){ syncTog(tEmo,showEmo); syncTog(tMove,showMove); syncTog(tChem,showChem); syncTog(tAnimal,showAnimal); syncTog(tName,showName); syncTog(tIndian,indianOn); syncTog(tPhon,phoneticOn);}    
+    tEmo.addEventListener('click',()=>{ showEmo=!showEmo; fillGrids(); refreshTogs(); });
+    tMove.addEventListener('click',()=>{ showMove=!showMove; fillGrids(); refreshTogs(); });
+    tChem.addEventListener('click',()=>{ showChem=!showChem; fillGrids(); refreshTogs(); });
+    tAnimal.addEventListener('click',()=>{ showAnimal=!showAnimal; render(current.word,{keepAnimal:true,keepName:true}); refreshTogs(); });
+    tName.addEventListener('click',()=>{ showName=!showName; render(current.word,{keepAnimal:true,keepName:true}); refreshTogs(); });
+    tIndian.addEventListener('click',()=>{ indianOn=!indianOn; render(current.word,{keepAnimal:true,keepName:false}); refreshTogs(); });
+    tPhon.addEventListener('click',()=>{ phoneticOn=!phoneticOn; render(current.word,{keepAnimal:false,keepName:false}); refreshTogs(); });
+
+    // Audio
+    function updateAudioUI(){ audioBtn.classList.toggle('active', audioOn); document.getElementById('focusAudioBtn').classList.toggle('active', audioOn); }
+    function toggleAudio(){ audioOn=!audioOn; updateAudioUI(); if(!audioOn && 'speechSynthesis' in window) speechSynthesis.cancel(); }
+    audioBtn.addEventListener('click', toggleAudio); document.getElementById('focusAudioBtn').addEventListener('click', toggleAudio);
+
+    // Shortcuts
+    document.addEventListener('keydown', e=>{ if(document.activeElement===p1Search) return; if(e.key==='Enter'){ e.preventDefault(); nextByMode(); } if(e.key==='ArrowRight'){ e.preventDefault(); newPhraseAlpha(+1); } if(e.key==='ArrowLeft'){ e.preventDefault(); newPhraseAlpha(-1); } });
+
+    // Splash hide
+    setTimeout(()=>{ document.getElementById('splash').classList.add('hide'); }, 2500);
+
+    // Definitions helpers
+    function defForWord(w){ const s=(w||'').toLowerCase(); if(chemDefs[s]) return chemDefs[s]; if(animalDefs[s]) return animalDefs[s]; if(emotionList.includes(s)) return `a feeling of being ${s}.`; if(movementList.includes(s)) return `movement described as “${s}”.`; if(extraList.includes(s)) return `a descriptive quality: ${s}.`; return `a word meaning “${s}”.`; }
+    function updateDefs(){ defWordLbl.textContent=current.word; defWordTxt.textContent=defForWord(current.word); defAnimalLbl.textContent=current.animal; defAnimalTxt.textContent=defForWord(current.animal); defNameLbl.textContent=current.name; defNameTxt.textContent='a personal name.'; }
+
+    // Boot
+    function boot(){ fillGrids(); render('breathing',{keepAnimal:true,keepName:true}); updatePlayButtons(); updateAlphaUI(); scheduleNext(); refreshTogs(); refreshTimeHighlights(); applyAdv(); }
+    boot();
+  </script>
+</body>
+</html>
