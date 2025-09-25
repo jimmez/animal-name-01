@@ -7,7 +7,7 @@
   <meta name="mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
-  <title>Alliteration Animal Namer — v27</title>
+  <title>Alliteration Animal Namer — v28</title>
   <style>
     :root{
       --bg:#0b0b0c; --card:#151518; --text:#f6f7fb; --muted:#a9adc1; --ring:#3b82f6;
@@ -36,7 +36,7 @@
     .btn.small{padding:8px 10px;font-size:12px}
     .btn.big{padding:16px 20px;font-size:16px;border-radius:16px}
     .btn.icon{padding:10px 12px;display:inline-flex;align-items:center;justify-content:center;gap:6px}
-    .btn.icon svg{width:18px;height:18px;display:block}
+    .btn.icon svg{width:20px;height:20px;display:block}
     .btn:active{transform:translateY(1px)}
     .btn.active{background:linear-gradient(135deg,var(--play),var(--playGlow));border-color:transparent;box-shadow:0 0 0 3px rgba(34,197,94,.25)}
 
@@ -78,9 +78,9 @@
     body.focus .emo, body.focus .animal, body.focus .name{ display:block; text-align:left; }
     @media (orientation:landscape){ body.focus .emo, body.focus .animal, body.focus .name{ display:inline; text-align:left; } body.focus .banner .output{ text-align:left; } }
 
-    /* Focus controls overlay: bottom-left, big buttons */
-    .focusControls{position:fixed;bottom:14px;left:14px;z-index:130;display:none;gap:10px}
-    body.focus .focusControls{display:flex}
+    /* Focus controls overlay: bottom with 2 rows of large buttons */
+    .focusControls{position:fixed;left:14px;right:14px;bottom:14px;z-index:130;display:none;gap:12px}
+    body.focus .focusControls{display:grid;grid-template-columns:repeat(3,minmax(140px,1fr));grid-auto-rows:auto}
 
     /* Definitions page */
     .defs{position:fixed;inset:0;background:#0c0e14;z-index:140;display:none}
@@ -90,7 +90,7 @@
     .defCard{background:#10131b;border:1px solid #262a36;border-radius:16px;padding:18px}
     .defCard .label{font-weight:900;margin-bottom:6px;font-size:32px}
     .defCard .def{color:#c9cedd;font-size:16px;line-height:1.45;text-transform:lowercase}
-    .defsBottom{position:fixed;left:0;right:0;bottom:0;background:#0f1117;border-top:1px solid #262a36;padding:10px 12px;display:flex;gap:10px;justify-content:center}
+    .defsBottom{position:fixed;left:0;right:0;bottom:0;background:#0f1117;border-top:1px solid #262a36;padding:10px 12px;display:flex;gap:10px;justify-content:center;flex-wrap:wrap}
 
     .footer{margin:28px 2px 12px;color:var(--muted);font-size:12px}
   </style>
@@ -102,9 +102,12 @@
       <div class="output" id="result" title="Tap/click for NEW letter phrase (Enter on PC)">Your phrase will appear here…</div>
     </div>
 
-    <!-- Focus-mode overlay controls (Play first, then Minimize) -->
+    <!-- Focus-mode overlay controls (two rows of big buttons) -->
     <div class="focusControls" id="focusControls">
-      <button class="btn big" id="focusPlayBtn" title="Play / Stop">Play</button>
+      <button class="btn big" id="focusPlayBtn" title="Play / Stop"></button>
+      <button class="btn big" id="focusAudioBtn" title="Audio on/off"></button>
+      <button class="btn big" id="focusAlphaBtn" title="Toggle ABC next"></button>
+      <button class="btn big" id="focusDefsBtn" title="Open definitions">Definitions</button>
       <button class="btn big" id="minimizeBtn" title="Exit enlarged view">Minimize</button>
     </div>
 
@@ -113,14 +116,12 @@
         <button class="btn icon play" id="playBtn" title="Play / Stop" aria-label="Play">
           <svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M8 5v14l11-7z"/></svg>
         </button>
-        <button class="btn icon" id="audioBtn" title="Audio on/off" aria-label="Audio">
-          <svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M3 10v4h4l5 5V5L7 10H3zm13 2a4 4 0 00-4-4v8a4 4 0 004-4zm0-6a10 10 0 010 12V6z"/></svg>
-        </button>
+        <button class="btn icon" id="audioBtn" title="Audio on/off" aria-label="Audio"></button>
         <button class="btn icon" id="settingsBtn" title="Settings" aria-label="Settings">
           <svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M19.14,12.94a7.43,7.43,0,0,0,.05-.94,7.43,7.43,0,0,0-.05-.94l2.11-1.65a.48.48,0,0,0,.11-.61l-2-3.46a.5.5,0,0,0-.6-.22L16.9,5.5a7.5,7.5,0,0,0-1.63-.94l-.25-2.65A.49.49,0,0,0,14.54,1H9.46a.49.49,0,0,0-.48.41L8.73,4.06A7.5,7.5,0,0,0,7.1,5L4.24,4.12a.5.5,0,0,0-.6.22l-2,3.46a.48.48,0,0,0,.11.61L3.86,10a7.43,7.43,0,0,0-.05.94,7.43,7.43,0,0,0,.05.94L1.75,13.53a.48.48,0,0,0-.11.61l2,3.46a.5.5,0,0,0,.6.22L7.1,18.5a7.5,7.5,0,0,0,1.63.94l.25,2.65a.49.49,0,0,0,.48.41h5.08a.49.49,0,0,0,.48-.41l.25-2.65a7.5,7.5,0,0,0,1.63-.94l2.86.88a.5.5,0,0,0,.6-.22l2-3.46a.48.48,0,0,0-.11-.61ZM12,15.5A3.5,3.5,0,1,1,15.5,12,3.5,3.5,0,0,1,12,15.5Z"/></svg>
         </button>
       </div>
-      <h1>Alliteration Animal Namer — v27</h1>
+      <h1>Alliteration Animal Namer — v28</h1>
     </header>
 
     <div class="card">
@@ -239,7 +240,7 @@
   </div>
 
   <!-- Startup splash (shows for 5s then fades) -->
-  <div class="splash" id="splash"><div class="pill">Jimmy James 25.09.2025 - v27</div></div>
+  <div class="splash" id="splash"><div class="pill">Jimmy James 25.09.2025 - v28</div></div>
 
   <!-- Definitions overlay (word, animal, and name) -->
   <div class="defs" id="defs">
@@ -267,7 +268,7 @@
   </div>
 
   <script>
-    // ==== DATA (v27) =======================================================
+    // ==== DATA (same as v27, trimmed for brevity in this comment) ==========
     const animalsByLetter = {
       a:['ant','aardvark','albatross','anole','auk','axolotl'],
       b:['bear','beaver','buffalo','baboon','bluebird','boar'],
@@ -356,13 +357,12 @@
       'acidic','activated','aerobic','alkaline','allotropic','amphoteric','aqueous','atomic','basic','binding','biochemical','boiling','bonded','buffered','buoyant','catalytic','charged','chemical','colloidal','conductive','crystalline','covalent','diffusive','dilute','dimeric','dynamic','electrolytic','endothermic','enzymatic','equilibrated','exothermic','ferrous','ferric','fluorescent','fluid','fusion','gaseous','galvanic','geometric','glycolytic','hydrophilic','hydrophobic','hypertonic','hypotonic','ionic','isomeric','isotopic','isotonic','joule-rich','junctional','kinetic','lattice','luminescent','liquid','malleable','metallic','molar','molecular','magnetic','neutral','nucleophilic','nonpolar','oxidative','osmotic','organic','paramagnetic','photonic','polar','polymeric','precipitated','quantized','quaternary','radioactive','reactive','reductive','resonant','saturated','stoichiometric','supersaturated','synthetic','soluble','solvent','titrated','thermal','turbulent','tensile','unsaturated','uniform','valent','volatile','viscous','weakly-bound','wavelike','wettable','xenon-like','xeric','yielding','ytterbic','zeta-potential','zwitterionic'
     ];
 
-    const chemDefs = {
+    const chemDefs = { /* (same as v27) */
       'acidic':'having properties of an acid; ph < 7; donates protons.', 'activated':'made more reactive by added energy or a catalyst.', 'aerobic':'occurring in the presence of oxygen.', 'alkaline':'basic; ph > 7; rich in hydroxide ions.', 'allotropic':'same element in different structural forms.', 'amphoteric':'can act as either an acid or a base.', 'aqueous':'dissolved in water; water is the solvent.', 'atomic':'relating to atoms or atomic scale.', 'basic':'opposite of acidic; accepts protons; ph > 7.', 'binding':'forming attachments/bonds between species.', 'biochemical':'chemistry of living systems.', 'boiling':'phase change from liquid to gas at boiling point.', 'bonded':'connected by chemical bonds.', 'buffered':'resists ph change when acid/base is added.', 'buoyant':'capable of floating in a fluid.', 'catalytic':'increases reaction rate without being consumed.', 'charged':'bearing net electric charge (cation/anion).', 'chemical':'relating to substances and their transformations.', 'colloidal':'dispersed particles (≈1–1000 nm) that do not settle quickly.', 'conductive':'able to conduct electricity or heat.', 'crystalline':'having a long-range ordered lattice.', 'covalent':'involving shared electron pairs.', 'diffusive':'spreading via diffusion down a gradient.', 'dilute':'low solute concentration.', 'dimeric':'composed of two similar subunits (a dimer).', 'dynamic':'changing with time; relates to kinetics/equilibria.', 'electrolytic':'involving current through an electrolyte; electrolysis.', 'endothermic':'absorbing heat (Δh > 0).', 'enzymatic':'catalyzed by enzymes.', 'equilibrated':'brought to equilibrium; forward and reverse rates equal.', 'exothermic':'releasing heat (Δh < 0).', 'ferrous':'containing iron in the +2 oxidation state.', 'ferric':'containing iron in the +3 oxidation state.', 'fluorescent':'emitting light shortly after excitation.', 'fluid':'able to flow; a liquid or gas.', 'fusion':'melting: solid → liquid (context-dependent).', 'gaseous':'in the gas phase.', 'galvanic':'producing electricity via spontaneous redox.', 'geometric':'relating to molecular geometry/isomerism.', 'glycolytic':'pertaining to glycolysis.', 'hydrophilic':'water-attracting; interacts with water.', 'hydrophobic':'water-repelling; avoids water.', 'hypertonic':'higher solute concentration than a reference.', 'hypotonic':'lower solute concentration than a reference.', 'ionic':'involving ions or ionic bonds.', 'isomeric':'same formula, different arrangement.', 'isotopic':'relating to isotopes (same z, different neutrons).', 'isotonic':'equal osmotic pressure relative to another solution.', 'joule-rich':'energy-dense; high energy content.', 'junctional':'relating to junctions or interfaces.', 'kinetic':'relating to motion or reaction rates.', 'lattice':'regular, repeating 3d arrangement in crystals.', 'luminescent':'emitting light without high temperature.', 'liquid':'liquid phase; fixed volume, variable shape.', 'malleable':'can be hammered/rolled into sheets.', 'metallic':'exhibiting metal-like properties.', 'molar':'relating to moles or mol·l⁻¹ concentration.', 'molecular':'relating to molecules.', 'magnetic':'exhibiting magnetism.', 'neutral':'ph ~7 or no net charge.', 'nucleophilic':'electron-pair donor toward electrophiles.', 'nonpolar':'little charge separation; weakly interacts with water.', 'oxidative':'involving oxidation.', 'osmotic':'related to osmosis across membranes.', 'organic':'carbon-based compounds.', 'paramagnetic':'attracted to fields due to unpaired electrons.', 'photonic':'relating to photons/light.', 'polar':'uneven charge distribution; strong dipoles.', 'polymeric':'composed of repeating monomer units.', 'precipitated':'formed as an insoluble solid from solution.', 'quantized':'restricted to discrete values.', 'quaternary':'protein subunit assembly; also degree-4 substitution.', 'radioactive':'emitting ionizing radiation from unstable nuclei.', 'reactive':'readily undergoes chemical change.', 'reductive':'involving reduction.', 'resonant':'electron delocalization; resonance stabilization.', 'saturated':'at solubility limit; or only single c–c bonds.', 'stoichiometric':'exact ratios from a balanced equation.', 'supersaturated':'contains more solute than equilibrium allows.', 'synthetic':'man-made via chemical synthesis.', 'soluble':'capable of dissolving in a given solvent.', 'solvent':'the medium that dissolves solutes.', 'titrated':'quantified by titration.', 'thermal':'relating to heat or temperature.', 'turbulent':'chaotic, eddying fluid flow.', 'tensile':'relating to resistance to pulling.', 'unsaturated':'below solubility limit; or has c=c/c≡c bonds.', 'uniform':'evenly distributed; consistent throughout.', 'valent':'relating to valence.', 'volatile':'evaporates readily; high vapor pressure.', 'viscous':'high resistance to flow.', 'weakly-bound':'held by weak interactions or low bond energy.', 'wavelike':'exhibiting wave characteristics.', 'wettable':'easily spread by a liquid.', 'xenon-like':'noble-gas-like/inert behavior.', 'xeric':'occurring/adapted to dry environments.', 'yielding':'producing; or giving way under stress.', 'ytterbic':'pertaining to ytterbium.', 'zeta-potential':'electrokinetic potential at the slipping plane.', 'zwitterionic':'contains both + and − charges, overall neutral.'
     };
 
-    // Animal definitions
-    const animalDefs = {
-      'ant':'a social insect known for cooperative colonies.', 'aardvark':'a nocturnal african mammal that eats ants and termites.', 'albatross':'a large oceanic seabird noted for long-distance soaring.', 'anole':'a small lizard (anolis), often capable of color change.', 'auk':'a diving seabird of northern oceans.', 'axolotl':'an aquatic salamander that retains larval features (neoteny).', 'bear':'a large omnivorous mammal of the family ursidae.', 'beaver':'a semi-aquatic rodent that builds dams and lodges.', 'buffalo':'a large bovine; african buffalo or asian water buffalo.', 'baboon':'a ground-dwelling old world monkey with a long snout.', 'bluebird':'a small north american thrush with blue plumage.', 'boar':'a wild male pig; also wild swine species.', 'cheetah':'the fastest land mammal; a spotted african big cat.', 'cougar':'a large north american cat also called puma or mountain lion.', 'capybara':'the world’s largest rodent, semi-aquatic and social.', 'cobra':'a venomous snake known for its hood display.', 'crab':'a decapod crustacean with a broad carapace and pincers.', 'crow':'an intelligent black passerine bird (genus corvus).', 'dog':'a domesticated canid, common human companion.', 'deer':'a hoofed ruminant; males typically with antlers.', 'dolphin':'a highly intelligent toothed whale.', 'duck':'a waterfowl with broad bill and webbed feet.', 'donkey':'a domesticated ass used as a pack animal.', 'dragonfly':'an agile predatory insect with two pairs of strong wings.', 'eagle':'a large bird of prey with powerful beak and talons.', 'emu':'a large flightless bird native to australia.', 'eel':'an elongated fish with a snake-like body.', 'elephant':'the largest land mammal, with trunk and tusks.', 'egret':'a long-legged wading bird; typically white herons.', 'echidna':'a spiny egg-laying mammal (monotreme).', 'fox':'a small to medium omnivorous canid with bushy tail.', 'frog':'an amphibian with long hind legs for jumping.', 'falcon':'a fast bird of prey known for stooping dives.', 'ferret':'a domesticated polecat used for hunting or as a pet.', 'flamingo':'a pink wading bird that filters food with its curved bill.', 'firefly':'a beetle that produces light (bioluminescent).', 'giraffe':'the tallest living land animal, with a very long neck.', 'goat':'a hardy domesticated ruminant kept for milk and meat.', 'goose':'a large waterfowl; plural geese.', 'gecko':'a small lizard with adhesive toe pads.', 'gorilla':'the largest living primate; ground-dwelling and herbivorous.', 'goldfish':'a domesticated carp commonly kept as an aquarium fish.', 'horse':'a hoofed mammal domesticated for riding and work.', 'hamster':'a small burrowing rodent kept as a pet.', 'heron':'a long-legged wading bird often found near water.', 'hyena':'a carnivorous mammal known for strong jaws and social clans.', 'hedgehog':'a small spiny insectivorous mammal that can roll into a ball.', 'hawk':'a bird of prey with keen vision and hooked beak.', 'iguana':'a large arboreal lizard native to the americas.', 'impala':'a medium-sized african antelope known for agility.', 'ibis':'a wading bird with a long downcurved bill.', 'inchworm':'the looping larva of certain geometer moths.', 'isopod':'a crustacean group including pill bugs and marine species.', 'irish setter':'a red-coated gundog breed.', 'jaguar':'a powerful spotted big cat native to the americas.', 'jellyfish':'a gelatinous cnidarian with tentacles and stinging cells.', 'jackal':'a small wild canid of africa and asia.', 'jay':'a colorful and vocal corvid.', 'jerboa':'a desert rodent with long hind legs for jumping.', 'joey':'a young marsupial such as a baby kangaroo.', 'koala':'an arboreal marsupial that feeds on eucalyptus leaves.', 'kangaroo':'a large marsupial with powerful hind legs and tail.', 'kingfisher':'a bright-colored bird that dives for fish.', 'kestrel':'a small falcon that hovers while hunting.', 'kiwi':'a small flightless bird native to new zealand.', 'komodo':'the komodo dragon, the world’s largest lizard.', 'lion':'a large social big cat; males often have manes.', 'lemur':'a primate from madagascar, many species nocturnal.', 'lobster':'a large marine crustacean with long antennae and claws.', 'llama':'a domesticated south american camelid used as pack animal.', 'lynx':'a medium wild cat with tufted ears.', 'lark':'a small songbird known for melodious flight songs.', 'monkey':'a primate, generally with a tail; many arboreal species.', 'moose':'the largest deer species, with broad palmate antlers.', 'magpie':'an intelligent black-and-white corvid.', 'macaw':'a large, long-tailed parrot of tropical america.', 'marmot':'a large burrowing ground squirrel.', 'mantis':'a predatory insect with grasping forelegs.', 'narwhal':'an arctic whale known for its long spiral tusk.', 'newt':'a semi-aquatic salamander.', 'nightingale':'a small songbird celebrated for rich songs.', 'nighthawk':'a nocturnal insect-eating bird (nightjar family).', 'nudibranch':'a colorful sea slug (marine gastropod).', 'nene':'the hawaiian goose, hawaii’s state bird.', 'owl':'a nocturnal bird of prey with forward-facing eyes.', 'otter':'a playful semi-aquatic carnivorous mammal.', 'ocelot':'a medium spotted wild cat of the americas.', 'oriole':'a bright-colored songbird.', 'orangutan':'a great ape with long arms, native to borneo and sumatra.', 'ox':'a domesticated bovine used as a draft animal.', 'penguin':'a flightless seabird adapted to swimming and cold.', 'panda':'a black-and-white bamboo-eating bear (usually giant panda).', 'panther':'a term for melanistic leopards/jaguars; sometimes mountain lions.', 'parrot':'a colorful, intelligent bird with a strong curved beak.', 'puffin':'a seabird with a colorful beak, excellent diver.', 'porpoise':'a small toothed whale with a blunt snout.', 'quail':'a small ground-dwelling game bird.', 'quetzal':'a resplendent central american trogon with long tail.', 'quokka':'a small australian marsupial often appearing to “smile”.', 'queen bee':'the reproductive female in a honeybee colony.', 'quoll':'a spotted carnivorous marsupial from australia.', 'quagga':'an extinct zebra subspecies once native to south africa.', 'rabbit':'a fast-breeding lagomorph with long ears.', 'raccoon':'an omnivorous mammal with a bandit-like face mask.', 'ram':'an adult male sheep.', 'raven':'a large, intelligent corvid with all-black plumage.', 'robin':'a small thrush; name used for different species in europe/america.', 'reindeer':'also caribou; an arctic deer species.', 'seal':'a fin-footed marine mammal (pinniped).', 'sparrow':'a small seed-eating passerine bird.', 'shark':'a cartilaginous fish; many apex marine predators.', 'swan':'a large waterfowl with long neck; graceful swimmer.', 'serval':'a lanky african wild cat with large ears.', 'skunk':'a small mammal known for defensive spray.', 'tiger':'a striped big cat native to asia.', 'turkey':'a large ground-dwelling bird native to north america.', 'toucan':'a tropical bird with a huge colorful bill.', 'tortoise':'a terrestrial turtle with a domed shell.', 'tapir':'a large herbivore with a short prehensile snout.', 'tarantula':'a large hairy spider (theraphosidae).', 'urchin':'a sea urchin; spiny echinoderm.', 'uakari':'a short-tailed amazon monkey with a red face.', 'urial':'a wild mountain sheep of central/south asia.', 'uguisu':'a japanese bush warbler famed for its song.', 'umbrella bird':'a tropical bird with an umbrella-like crest.', 'unicornfish':'a surgeonfish with a horn-like projection.', 'viper':'a venomous snake (viperidae).', 'vulture':'a scavenging raptor with a bald head.', 'vicuna':'a wild andean camelid valued for fine wool.', 'vole':'a small burrowing rodent.', 'vaquita':'a critically endangered gulf of california porpoise.', 'veery':'a north american thrush with fluty song.', 'wolf':'a social wild canid that lives in packs.', 'walrus':'a large arctic pinniped with tusks.', 'wren':'a tiny active songbird.', 'weasel':'a small elongated carnivore.', 'whale':'a large marine mammal (cetacean).', 'wombat':'a stocky australian burrowing marsupial.', 'x-ray tetra':'a transparent-bodied aquarium fish.', 'xerus':'an african ground squirrel.', 'xenops':'a small neotropical ovenbird with upturned bill.', 'xoloitzcuintli':'a hairless mexican dog breed.', 'xenopus':'an african clawed frog (aquatic).', 'xantus hummingbird':'a hummingbird of baja california.', 'yak':'a long-haired himalayan bovine.', 'yellowtail':'several fish species with yellow tail (e.g., amberjack).', 'yabby':'a freshwater crayfish of australia.', 'yapok':'a semi-aquatic water opossum.', 'yellowhammer':'a eurasian bunting with yellow plumage.', 'yakutian laika':'a hardy russian spitz-type dog.', 'zebra':'a striped african equid.', 'zorilla':'an african striped polecat with strong odor.', 'zebu':'a humped south asian cattle.', 'zander':'a european pike-perch fish.', 'zooplankter':'a drifting aquatic animal organism.', 'zipper fish':'a colloquial label; fish with zipper-like markings.'
+    const animalDefs = { /* same as v27; omitted here for brevity */
+      'ant':'a social insect known for cooperative colonies.','aardvark':'a nocturnal african mammal that eats ants and termites.','albatross':'a large oceanic seabird noted for long-distance soaring.','anole':'a small lizard (anolis), often capable of color change.','auk':'a diving seabird of northern oceans.','axolotl':'an aquatic salamander that retains larval features (neoteny).','bear':'a large omnivorous mammal of the family ursidae.','beaver':'a semi-aquatic rodent that builds dams and lodges.','buffalo':'a large bovine; african buffalo or asian water buffalo.','baboon':'a ground-dwelling old world monkey with a long snout.','bluebird':'a small north american thrush with blue plumage.','boar':'a wild male pig; also wild swine species.','cheetah':'the fastest land mammal; a spotted african big cat.','cougar':'a large north american cat also called puma or mountain lion.','capybara':'the world’s largest rodent, semi-aquatic and social.','cobra':'a venomous snake known for its hood display.','crab':'a decapod crustacean with a broad carapace and pincers.','crow':'an intelligent black passerine bird (genus corvus).','dog':'a domesticated canid, common human companion.','deer':'a hoofed ruminant; males typically with antlers.','dolphin':'a highly intelligent toothed whale.','duck':'a waterfowl with broad bill and webbed feet.','donkey':'a domesticated ass used as a pack animal.','dragonfly':'an agile predatory insect with two pairs of strong wings.','eagle':'a large bird of prey with powerful beak and talons.','emu':'a large flightless bird native to australia.','eel':'an elongated fish with a snake-like body.','elephant':'the largest land mammal, with trunk and tusks.','egret':'a long-legged wading bird; typically white herons.','echidna':'a spiny egg-laying mammal (monotreme).','fox':'a small to medium omnivorous canid with bushy tail.','frog':'an amphibian with long hind legs for jumping.','falcon':'a fast bird of prey known for stooping dives.','ferret':'a domesticated polecat used for hunting or as a pet.','flamingo':'a pink wading bird that filters food with its curved bill.','firefly':'a beetle that produces light (bioluminescent).','giraffe':'the tallest living land animal, with a very long neck.','goat':'a hardy domesticated ruminant kept for milk and meat.','goose':'a large waterfowl; plural geese.','gecko':'a small lizard with adhesive toe pads.','gorilla':'the largest living primate; ground-dwelling and herbivorous.','goldfish':'a domesticated carp commonly kept as an aquarium fish.','horse':'a hoofed mammal domesticated for riding and work.','hamster':'a small burrowing rodent kept as a pet.','heron':'a long-legged wading bird often found near water.','hyena':'a carnivorous mammal known for strong jaws and social clans.','hedgehog':'a small spiny insectivorous mammal that can roll into a ball.','hawk':'a bird of prey with keen vision and hooked beak.','iguana':'a large arboreal lizard native to the americas.','impala':'a medium-sized african antelope known for agility.','ibis':'a wading bird with a long downcurved bill.','inchworm':'the looping larva of certain geometer moths.','isopod':'a crustacean group including pill bugs and marine species.','irish setter':'a red-coated gundog breed.','jaguar':'a powerful spotted big cat native to the americas.','jellyfish':'a gelatinous cnidarian with tentacles and stinging cells.','jackal':'a small wild canid of africa and asia.','jay':'a colorful and vocal corvid.','jerboa':'a desert rodent with long hind legs for jumping.','joey':'a young marsupial such as a baby kangaroo.','koala':'an arboreal marsupial that feeds on eucalyptus leaves.','kangaroo':'a large marsupial with powerful hind legs and tail.','kingfisher':'a bright-colored bird that dives for fish.','kestrel':'a small falcon that hovers while hunting.','kiwi':'a small flightless bird native to new zealand.','komodo':'the komodo dragon, the world’s largest lizard.','lion':'a large social big cat; males often have manes.','lemur':'a primate from madagascar, many species nocturnal.','lobster':'a large marine crustacean with long antennae and claws.','llama':'a domesticated south american camelid used as pack animal.','lynx':'a medium wild cat with tufted ears.','lark':'a small songbird known for melodious flight songs.','monkey':'a primate, generally with a tail; many arboreal species.','moose':'the largest deer species, with broad palmate antlers.','magpie':'an intelligent black-and-white corvid.','macaw':'a large, long-tailed parrot of tropical america.','marmot':'a large burrowing ground squirrel.','mantis':'a predatory insect with grasping forelegs.','narwhal':'an arctic whale known for its long spiral tusk.','newt':'a semi-aquatic salamander.','nightingale':'a small songbird celebrated for rich songs.','nighthawk':'a nocturnal insect-eating bird (nightjar family).','nudibranch':'a colorful sea slug (marine gastropod).','nene':'the hawaiian goose, hawaii’s state bird.','owl':'a nocturnal bird of prey with forward-facing eyes.','otter':'a playful semi-aquatic carnivorous mammal.','ocelot':'a medium spotted wild cat of the americas.','oriole':'a bright-colored songbird.','orangutan':'a great ape with long arms, native to borneo and sumatra.','ox':'a domesticated bovine used as a draft animal.','penguin':'a flightless seabird adapted to swimming and cold.','panda':'a black-and-white bamboo-eating bear (usually giant panda).','panther':'a term for melanistic leopards/jaguars; sometimes mountain lions.','parrot':'a colorful, intelligent bird with a strong curved beak.','puffin':'a seabird with a colorful beak, excellent diver.','porpoise':'a small toothed whale with a blunt snout.','quail':'a small ground-dwelling game bird.','quetzal':'a resplendent central american trogon with long tail.','quokka':'a small australian marsupial often appearing to “smile”.','queen bee':'the reproductive female in a honeybee colony.','quoll':'a spotted carnivorous marsupial from australia.','quagga':'an extinct zebra subspecies once native to south africa.','rabbit':'a fast-breeding lagomorph with long ears.','raccoon':'an omnivorous mammal with a bandit-like face mask.','ram':'an adult male sheep.','raven':'a large, intelligent corvid with all-black plumage.','robin':'a small thrush; name used for different species in europe/america.','reindeer':'also caribou; an arctic deer species.','seal':'a fin-footed marine mammal (pinniped).','sparrow':'a small seed-eating passerine bird.','shark':'a cartilaginous fish; many apex marine predators.','swan':'a large waterfowl with long neck; graceful swimmer.','serval':'a lanky african wild cat with large ears.','skunk':'a small mammal known for defensive spray.','tiger':'a striped big cat native to asia.','turkey':'a large ground-dwelling bird native to north america.','toucan':'a tropical bird with a huge colorful bill.','tortoise':'a terrestrial turtle with a domed shell.','tapir':'a large herbivore with a short prehensile snout.','tarantula':'a large hairy spider (theraphosidae).','urchin':'a sea urchin; spiny echinoderm.','uakari':'a short-tailed amazon monkey with a red face.','urial':'a wild mountain sheep of central/south asia.','uguisu':'a japanese bush warbler famed for its song.','umbrella bird':'a tropical bird with an umbrella-like crest.','unicornfish':'a surgeonfish with a horn-like projection.','viper':'a venomous snake (viperidae).','vulture':'a scavenging raptor with a bald head.','vicuna':'a wild andean camelid valued for fine wool.','vole':'a small burrowing rodent.','vaquita':'a critically endangered gulf of california porpoise.','veery':'a north american thrush with fluty song.','wolf':'a social wild canid that lives in packs.','walrus':'a large arctic pinniped with tusks.','wren':'a tiny active songbird.','weasel':'a small elongated carnivore.','whale':'a large marine mammal (cetacean).','wombat':'a stocky australian burrowing marsupial.','x-ray tetra':'a transparent-bodied aquarium fish.','xerus':'an african ground squirrel.','xenops':'a small neotropical ovenbird with upturned bill.','xoloitzcuintli':'a hairless mexican dog breed.','xenopus':'an african clawed frog (aquatic).','xantus hummingbird':'a hummingbird of baja california.','yak':'a long-haired himalayan bovine.','yellowtail':'several fish species with yellow tail (e.g., amberjack).','yabby':'a freshwater crayfish of australia.','yapok':'a semi-aquatic water opossum.','yellowhammer':'a eurasian bunting with yellow plumage.','yakutian laika':'a hardy russian spitz-type dog.','zebra':'a striped african equid.','zorilla':'an african striped polecat with strong odor.','zebu':'a humped south asian cattle.','zander':'a european pike-perch fish.','zooplankter':'a drifting aquatic animal organism.','zipper fish':'a colloquial label; fish with zipper-like markings.'
     };
 
     // ==== ELEMENTS & STATE ================================================
@@ -370,6 +370,9 @@
 
     const playBtn = document.getElementById('playBtn');
     const focusPlayBtn = document.getElementById('focusPlayBtn');
+    const focusAudioBtn = document.getElementById('focusAudioBtn');
+    const focusAlphaBtn = document.getElementById('focusAlphaBtn');
+    const focusDefsBtn = document.getElementById('focusDefsBtn');
     const audioBtn = document.getElementById('audioBtn');
     const settingsBtn = document.getElementById('settingsBtn');
 
@@ -421,7 +424,7 @@
 
     // Playback & timing
     let playing=true; let timer=null; let gapSec=5; // used when delay OFF
-    let segSec=9; let wordDelay=3; // defaults (v27 keeps v19 defaults)
+    let segSec=9; let wordDelay=3; // defaults (v19/v27)
     let audioOn=false; let phoneticOn=true;
 
     // Highlight helpers for Settings
@@ -453,10 +456,16 @@
     const animalsAll = Object.values(animalsByLetter).flat();
     const namesAll = Object.values(namesByLetter).flat();
 
+    // Clearer speaker icons (on/off)
+    const iconSpeaker = (on=true)=> on ? `
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M3 10v4h4l5 5V5l-5 5H3zm13.5 2a3.5 3.5 0 00-3.5-3.5v7A3.5 3.5 0 0016.5 12zm0-6a9.5 9.5 0 010 12"/></svg>
+    ` : `
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M3 10v4h4l5 5V5l-5 5H3z"/><path fill="currentColor" d="M16.5 6a9.5 9.5 0 010 12" opacity=".35"/><path fill="currentColor" d="M2 2l20 20"/></svg>
+    `;
+
     function initialPhoneme(w){
       const s=(w||'').toLowerCase();
       if(!s) return '';
-      // clusters
       if(s.startsWith('ph')) return 'f';
       if(s.startsWith('sh')) return 'sh';
       if(s.startsWith('ch')) return 'ch';
@@ -465,15 +474,12 @@
       if(s.startsWith('wr')) return 'r';
       if(s.startsWith('wh')) return 'w';
       if(s.startsWith('ps')) return 's';
-      if(s.startsWith('qu')) return 'k'; // treat qu ≈ k
-      // tricky vowels: "ee" vs "eye" groupings
+      if(s.startsWith('qu')) return 'k';
       if(s.startsWith('eye')) return 'eye';
-      if(/^i(sland|sle|phone|pad|pod|watch)/.test(s)) return 'eye'; // island/isle/iphone etc.
-      if(/^e(agle|el|erie|vil|qual|gret)/.test(s)) return 'ee'; // eagle, eel, eerie, evil, equal, egret
-      // u-starts
-      if(/^uni|^ut|^use|^user/.test(s)) return 'y'; // uniform etc → y
-      if(/^ur/.test(s)) return 'ur'; // urchin/ursula
-      // single-letter rules
+      if(/^i(sland|sle|phone|pad|pod|watch)/.test(s)) return 'eye';
+      if(/^e(agle|el|erie|vil|qual|gret)/.test(s)) return 'ee';
+      if(/^uni|^ut|^use|^user/.test(s)) return 'y';
+      if(/^ur/.test(s)) return 'ur';
       const c=s[0]; const n=s[1]||'';
       if(c==='c') return 'eiy'.includes(n) ? 's' : 'k';
       if(c==='g') return 'eiy'.includes(n) ? 'j' : 'g';
@@ -504,7 +510,6 @@
 
     // ======= RENDER =========================================================
     function render(word, opts={}){
-      // stop any pending staged timeouts and speech
       [t2,t3].forEach(t=> clearTimeout(t));
       if('speechSynthesis' in window) window.speechSynthesis.cancel();
 
@@ -513,10 +518,9 @@
       const firstLetter = w[0]||current.letter||'a';
       const phon = initialPhoneme(w);
 
-      // choose animal & name by phoneme or by letter
       if(!opts.keepAnimal){
         let pool = phoneticOn ? animalsAll.filter(a=> initialPhoneme(a)===phon) : (animalsByLetter[firstLetter]||[]);
-        if(!pool.length) pool = animalsByLetter[firstLetter]||[]; // fallback
+        if(!pool.length) pool = animalsByLetter[firstLetter]||[];
         let choice = rand(pool);
         if(choice===current.animal && pool.length>1){ choice = pool[(pool.indexOf(choice)+1)%pool.length]; }
         current.animal = choice;
@@ -535,7 +539,6 @@
       const showName = chkName.checked;
 
       if(delayToggle.checked){
-        // staged reveal
         result.innerHTML = `<span class="emo">${w}</span>`;
         speak(w);
         if(showAnimal){
@@ -554,7 +557,6 @@
           }, mul*wordDelay*1000);
         }
       } else {
-        // instant full phrase
         const html = `<span class=\"emo\">${w}</span>${showAnimal?` <span class=\"animal\">${current.animal}</span>`:''}${showName?` <span class=\"name\">${current.name}</span>`:''}`;
         result.innerHTML = html;
         speak(`${w} ${showAnimal?current.animal:''} ${showName?current.name:''}`.trim());
@@ -578,7 +580,6 @@
       const cur = current.letter || 'a';
       let w = null;
       if(alphaToggle.checked){
-        // deterministic next available letter
         let l = nextLetter(cur);
         for(let i=0;i<26;i++){
           w = pickWordForLetter(l);
@@ -586,7 +587,6 @@
           l = nextLetter(l);
         }
       } else {
-        // random from letters != current
         const pool = active.filter(x=> (x[0]||'') !== cur);
         w = pool.length ? rand(pool) : rand(active);
       }
@@ -664,6 +664,8 @@
     enlargeBtn.addEventListener('click', ()=> document.body.classList.add('focus'));
     document.getElementById('minimizeBtn').addEventListener('click', ()=> document.body.classList.remove('focus'));
 
+    focusDefsBtn.addEventListener('click', ()=> defs.classList.add('open'));
+
     // Definitions overlay open/close
     function openDefs(){ defs.classList.add('open'); updateDefs(); updateDefsBottom(); }
     function closeDefs(){ defs.classList.remove('open'); }
@@ -715,7 +717,13 @@
     window.addEventListener('pointerup', ()=>{ startX=null; startY=null; handled=false; }, {passive:false});
 
     // ======= Auto-play & Settings ==========================================
-    function updatePlayButtons(){ playBtn.classList.toggle('active',playing); focusPlayBtn.classList.toggle('active',playing); focusPlayBtn.textContent = playing ? 'Stop' : 'Play'; defsPlayBtn && defsPlayBtn.classList.toggle('active', playing); defsPlayBtn && (defsPlayBtn.textContent = playing ? 'Stop' : 'Play'); }
+    function updatePlayButtons(){
+      playBtn.classList.toggle('active',playing);
+      focusPlayBtn.classList.toggle('active',playing);
+      focusPlayBtn.innerHTML = playing ? 'Stop' : 'Play';
+      defsPlayBtn && defsPlayBtn.classList.toggle('active', playing);
+      defsPlayBtn && (defsPlayBtn.textContent = playing ? 'Stop' : 'Play');
+    }
     function scheduleNext(){ if(!playing) return; clearTimeout(timer); const delay = delayToggle.checked ? segSec : gapSec; timer=setTimeout(()=>{ newPhrase(); scheduleNext(); }, delay*1000); }
     function togglePlay(){ playing=!playing; updatePlayButtons(); if(playing) scheduleNext(); else clearTimeout(timer); }
     playBtn.addEventListener('click', togglePlay); focusPlayBtn.addEventListener('click', togglePlay); defsPlayBtn.addEventListener('click', togglePlay);
@@ -737,9 +745,20 @@
     [chkAnimal, chkName].forEach(el=> el.addEventListener('change', ()=>{ render(current.word,{ keepAnimal:true, keepName:true }); }));
     phoneticToggle.addEventListener('change', ()=>{ phoneticOn=phoneticToggle.checked; render(current.word,{ keepAnimal:false, keepName:false }); });
 
-    // Audio toggle
-    function updateAudioBtn(){ audioBtn.classList.toggle('active', audioOn); }
-    audioBtn.addEventListener('click', ()=>{ audioOn=!audioOn; updateAudioBtn(); if(!audioOn && 'speechSynthesis' in window) window.speechSynthesis.cancel(); });
+    // Audio toggle + icons (topbar & focus)
+    function updateAudioUI(){
+      audioBtn.innerHTML = iconSpeaker(audioOn);
+      focusAudioBtn.innerHTML = (audioOn?iconSpeaker(true):iconSpeaker(false)) + ' <span style="margin-left:6px">Audio</span>';
+      audioBtn.classList.toggle('active', audioOn);
+      focusAudioBtn.classList.toggle('active', audioOn);
+    }
+    function toggleAudio(){ audioOn=!audioOn; updateAudioUI(); if(!audioOn && 'speechSynthesis' in window) window.speechSynthesis.cancel(); }
+    audioBtn.addEventListener('click', toggleAudio);
+    focusAudioBtn.addEventListener('click', toggleAudio);
+
+    // Focus extra toggles
+    function updateAlphaUI(){ focusAlphaBtn.classList.toggle('active', alphaToggle.checked); focusAlphaBtn.textContent = (alphaToggle.checked? 'ABC next (on)' : 'ABC next (off)'); }
+    focusAlphaBtn.addEventListener('click', ()=>{ alphaToggle.checked=!alphaToggle.checked; updateAlphaUI(); });
 
     // Global PC shortcuts (outside inputs)
     document.addEventListener('keydown', e=>{ if(document.activeElement===p1Search) return; if(e.key==='Enter'){ e.preventDefault(); newDifferentLetterPhrase(); } if(e.key==='ArrowRight'){ e.preventDefault(); newPhraseAlpha(+1); } if(e.key==='ArrowLeft'){ e.preventDefault(); newPhraseAlpha(-1); } });
@@ -776,15 +795,19 @@
       defsAlphaBtn.classList.toggle('active', alphaToggle.checked);
     }
     defsEnlargeBtn.addEventListener('click', ()=> document.body.classList.add('focus'));
-    defsAlphaBtn.addEventListener('click', ()=>{ alphaToggle.checked = !alphaToggle.checked; updateDefsBottom(); });
+    defsAlphaBtn.addEventListener('click', ()=>{ alphaToggle.checked = !alphaToggle.checked; updateDefsBottom(); updateAlphaUI(); });
 
     // Boot ------------------------------------------------------------------
-    updatePlayButtons();
-    fillGrids();
-    updateAudioBtn();
-    render('breathing', { keepAnimal:true, keepName:true });
-    updateSettingsHighlights();
-    scheduleNext(); // start in play mode
+    function boot(){
+      updatePlayButtons();
+      fillGrids();
+      updateAudioUI();
+      updateAlphaUI();
+      render('breathing', { keepAnimal:true, keepName:true });
+      updateSettingsHighlights();
+      scheduleNext(); // start in play mode
+    }
+    boot();
   </script>
 </body>
 </html>
